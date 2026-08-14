@@ -1,10 +1,13 @@
 <script setup lang="ts">
-import { Form } from '@inertiajs/vue3';
 import { onMounted } from 'vue';
+import { usePage } from '@inertiajs/vue3';
 
+const page = usePage();
 
-onMounted(() =>{
-    console.log(props.auth.user);
+const user = page.props.auth.user;
+
+onMounted(() => {
+    console.log(user);
 });
 
 </script>
@@ -13,6 +16,6 @@ onMounted(() =>{
 
 <template>
     <div>
-        gz auth
+        gz auth {{ user.name }}
     </div>
 </template>
