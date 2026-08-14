@@ -18,4 +18,6 @@
 
 #### packages
 - Laravel Sail, for local development containerisation using Docker
-- Laravel Telescope, for app monitoring
+- Laravel Telescope & Horizon, for app, event etc monitoring
+- Laravel Fortify, for auth - though I need to properly look into how this works
+- Laravel Reverb, for websocket usage
