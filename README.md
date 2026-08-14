@@ -14,8 +14,6 @@
 6. `./vendor/bin/sail artisan migrate`
 7. app should now be running at 127.0.0.1
 
-
-
 #### packages
 - Laravel Sail, for local development containerisation using Docker
 - Laravel Telescope & Horizon, for app, event etc monitoring
