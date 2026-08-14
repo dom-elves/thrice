@@ -18,3 +18,4 @@
 
 #### packages
 - Laravel Sail, for local development containerisation using Docker
+- Laravel Telescope, for app monitoring
