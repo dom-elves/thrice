@@ -13,8 +13,15 @@ onMounted(() =>{
 
 <template>
     <div>
-        <Form action="/login" method="post">
+        <Form
+            action="/login"
+            method="post"
+            #default="{
+                errors,
+            }"
+            >
             <input type="email" name="email" class="border"/>
+            <p v-if="errors.email">{{ errors.email }}</p>
             <input type="password" name="password"  class="border"/>
             <button type="submit">Login</button>
         </Form>

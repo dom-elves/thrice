@@ -40,6 +40,7 @@ export default defineConfigWithVueTs(
         rules: {
             'vue/multi-word-component-names': 'off',
             '@typescript-eslint/no-explicit-any': 'off',
+            'no-trailing-spaces' : 'error',
             '@typescript-eslint/consistent-type-imports': [
                 'error',
                 {
@@ -96,6 +97,7 @@ export default defineConfigWithVueTs(
         },
         rules: {
             curly: ['error', 'all'],
+            'no-trailing-spaces': 'error',
             '@stylistic/brace-style': ['error', '1tbs', { allowSingleLine: false }],
         },
     },
