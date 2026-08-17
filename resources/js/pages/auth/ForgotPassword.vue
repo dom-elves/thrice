@@ -6,8 +6,8 @@ import GuestLayout from '@/layouts/GuestLayout.vue';
 </script>
 <template>
     <GuestLayout>
-        <Form 
-            action="/forgot-password" 
+        <Form
+            action="/forgot-password"
             method="post"
             #default="{
                 errors,
