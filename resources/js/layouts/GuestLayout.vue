@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
-import { onMounted } from 'vue';
 import { usePage } from '@inertiajs/vue3';
+import { onMounted } from 'vue';
 
 const page = usePage();
 

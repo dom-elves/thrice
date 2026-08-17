@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { Form, usePage } from '@inertiajs/vue3';
+import { Form } from '@inertiajs/vue3';
 import { onMounted } from 'vue';
 import GuestLayout from '@/layouts/GuestLayout.vue';
 
 const props = defineProps<{
-    token: String;
+    token: string;
 }>()
 
 onMounted(() => {
