@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { Form } from '@inertiajs/vue3';
 import { onMounted } from 'vue';
+import GuestLayout from '@/layouts/GuestLayout.vue';
+
 
 
 onMounted(() =>{
@@ -10,7 +12,7 @@ onMounted(() =>{
 </script>
 
 <template>
-    <div>
+    <GuestLayout>
         <Form action="/register" method="post">
             <input type="name" name="name" class="border"/>
             <input type="email" name="email" class="border"/>
@@ -18,5 +20,5 @@ onMounted(() =>{
             <input type="password" name="password_confirmation"  class="border"/>
             <button type="submit">Register</button>
         </Form>
-    </div>
+    </GuestLayout>
 </template>

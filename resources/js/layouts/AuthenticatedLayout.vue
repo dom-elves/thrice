@@ -13,7 +13,12 @@ onMounted(() => {
 </script>
 <template>
     <main>
-        <nav>navbar</nav>
+        <nav>
+            <ul>
+                <li>auth layout</li>
+                <li><a href="/dashboard">dashboard</a></li>
+            </ul>
+        </nav>
         <slot />
     </main>
 </template>
