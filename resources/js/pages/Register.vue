@@ -9,8 +9,6 @@ onMounted(() =>{
 
 </script>
 
-
-
 <template>
     <div>
         <Form action="/register" method="post">
