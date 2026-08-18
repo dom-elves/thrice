@@ -10,7 +10,7 @@ const props = defineProps<{
 <template>
     <input
         class="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-        :type="type"
-        :name="name"
+        :type="props.type"
+        :name="props.name"
     />
 </template>
