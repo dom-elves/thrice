@@ -9,14 +9,14 @@ onMounted(() => {
 });
 </script>
 <template>
-    <div>
+    <div class="flex flex-col min-h-screen">
         <nav>
             <ul>
                 <li>guest layout</li>
             </ul>
         </nav>
         <main
-            class="flex h-screen w-full flex-col items-center justify-center bg-red-100"
+            class="flex w-full flex-1 flex-col items-center justify-center bg-red-100"
         >
             <slot />
         </main>
