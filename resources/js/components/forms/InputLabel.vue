@@ -9,7 +9,7 @@ const props = defineProps<{
 
 <template>
     <label
-        class="block text-sm font-medium text-gray-700"
+        class="block text-sm font-medium text-gray-700 w-full"
         :for="props.for"
     >
         <span v-if="text">{{ text }}</span>

@@ -18,19 +18,21 @@ onMounted(() =>{
 <template>
     <GuestLayout>
         <Form
+            class="flex flex-col gap-2 items-center justify-center p-4"
             action="/login"
             method="post"
             #default="{
                 errors,
             }"
         >
-            <InputLabel :for="'email'" :text="'Email'"/>
+            <InputLabel :for="'email'" :text="'Email'" class="text-center"/>
             <TextInput :type="'email'" :name="'email'"/>
             <p v-if="errors.email">{{ errors.email }}</p>
-            <InputLabel :for="'password'" :text="'Password'"/>
+            <InputLabel :for="'password'" :text="'Password'" class="text-center"/>
             <TextInput :type="'password'" :name="'password'"/>
             <button type="submit">Login</button>
         </Form>
+        <p><a href="/forgot-password">Forgot Password?</a></p>
         <p v-if="(page.props.session as any)?.status">{{ (page.props.session as any).status }} Please log in with your new password.</p>
     </GuestLayout>
 </template>
