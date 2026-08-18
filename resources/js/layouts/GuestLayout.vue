@@ -9,7 +9,7 @@ onMounted(() => {
 });
 </script>
 <template>
-    <div class="flex flex-col min-h-screen">
+    <div class="flex min-h-screen flex-col">
         <nav>
             <ul>
                 <li>guest layout</li>
