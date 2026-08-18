@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { Form } from '@inertiajs/vue3';
 import { onMounted } from 'vue';
+import InputLabel from '@/components/forms/InputLabel.vue';
 import TextInput from '@/components/forms/TextInput.vue';
 import GuestLayout from '@/layouts/GuestLayout.vue';
-import InputLabel from '@/components/forms/InputLabel.vue';
 
 const props = defineProps<{
     token: string;
