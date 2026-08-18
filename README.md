@@ -16,7 +16,8 @@
 
 #### linting
 `./vendor/bin/pint` for anything laravel
-`./vendor/bin/sail npm run lint:check` for anything vue/js
+`./vendor/bin/sail npm run lint:check` for eslint on the frontend
+`./vendor/bin/sail npm run format | grep -v "(unchanged)"` for prettier, only showing results for files that have been changed
 
 I have both of these baked in locally to run pre-push by adding them as a script in .git/hooks/pre-push, so github actions *should* never fail because of either
 
