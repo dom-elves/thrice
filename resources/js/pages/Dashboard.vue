@@ -10,13 +10,10 @@ const user = page.props.auth.user;
 onMounted(() => {
     console.log(user);
 });
-
 </script>
 
 <template>
     <AuthenticatedLayout>
-        <div>
-            gz auth {{ user.name }}
-        </div>
+        <div>gz auth {{ user.name }}</div>
     </AuthenticatedLayout>
 </template>

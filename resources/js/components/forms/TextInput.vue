@@ -1,10 +1,8 @@
 <script setup lang="ts">
-
 const props = defineProps<{
     type: string;
     name: string;
-}>()
-
+}>();
 </script>
 
 <template>
