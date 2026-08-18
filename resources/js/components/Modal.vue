@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 
-const emit = defineEmits(["close"]);
+const emit = defineEmits(['close']);
 
 const props = defineProps({
     show: {
@@ -77,47 +77,41 @@ const maxWidthClass = computed(() => {
 
 <template>
     <dialog
-    ref="dialog"
-    class="z-50 m-0 min-h-full min-w-full overflow-y-auto bg-transparent p-0 backdrop:bg-transparent"
->
-    <div class="fixed inset-0 z-50 overflow-y-auto px-4 py-6 sm:px-0">
-
-        <!-- Overlay -->
-        <Transition
-            enter-active-class="ease-out duration-300"
-            enter-from-class="opacity-0"
-            enter-to-class="opacity-100"
-            leave-active-class="ease-in duration-200"
-            leave-from-class="opacity-100"
-            leave-to-class="opacity-0"
-        >
-            <div
-                v-show="show"
-                class="fixed inset-0 z-0"
-                @click="close"
+        ref="dialog"
+        class="z-50 m-0 min-h-full min-w-full overflow-y-auto bg-transparent p-0 backdrop:bg-transparent"
+    >
+        <div class="fixed inset-0 z-50 overflow-y-auto px-4 py-6 sm:px-0">
+            <!-- Overlay -->
+            <Transition
+                enter-active-class="ease-out duration-300"
+                enter-from-class="opacity-0"
+                enter-to-class="opacity-100"
+                leave-active-class="ease-in duration-200"
+                leave-from-class="opacity-100"
+                leave-to-class="opacity-0"
             >
-                <div class="absolute inset-0 bg-gray-500/75" />
-            </div>
-        </Transition>
+                <div v-show="show" class="fixed inset-0 z-0" @click="close">
+                    <div class="absolute inset-0 bg-gray-500/75" />
+                </div>
+            </Transition>
 
-        <!-- Content -->
-        <Transition
-            enter-active-class="ease-out duration-300"
-            enter-from-class="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-            enter-to-class="opacity-100 translate-y-0 sm:scale-100"
-            leave-active-class="ease-in duration-200"
-            leave-from-class="opacity-100 translate-y-0 sm:scale-100"
-            leave-to-class="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-        >
-            <div
-                v-show="show"
-                class="relative z-10 mb-6 overflow-hidden rounded-lg bg-white shadow-xl sm:mx-auto sm:w-full"
-                :class="maxWidthClass"
+            <!-- Content -->
+            <Transition
+                enter-active-class="ease-out duration-300"
+                enter-from-class="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                enter-to-class="opacity-100 translate-y-0 sm:scale-100"
+                leave-active-class="ease-in duration-200"
+                leave-from-class="opacity-100 translate-y-0 sm:scale-100"
+                leave-to-class="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-                <slot v-if="showSlot" />
-            </div>
-        </Transition>
-
-    </div>
-</dialog>
+                <div
+                    v-show="show"
+                    class="relative z-10 mb-6 overflow-hidden rounded-lg bg-white shadow-xl sm:mx-auto sm:w-full"
+                    :class="maxWidthClass"
+                >
+                    <slot v-if="showSlot" />
+                </div>
+            </Transition>
+        </div>
+    </dialog>
 </template>
