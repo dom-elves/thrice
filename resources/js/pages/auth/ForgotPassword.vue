@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { Form } from '@inertiajs/vue3';
-import GuestLayout from '@/layouts/GuestLayout.vue';
+import InputLabel from '@/components/forms/InputLabel.vue';
 import TextInput from '@/components/forms/TextInput.vue';
-
+import GuestLayout from '@/layouts/GuestLayout.vue';
 
 </script>
 <template>
@@ -14,7 +14,7 @@ import TextInput from '@/components/forms/TextInput.vue';
                 errors,
             }"
         >
-            <label for="email">Enter your email to reset your password</label>
+            <InputLabel :for="'email'" :text="'Enter your email to reset your password'"/>
             <TextInput :type="'email'" :name="'email'" />
             <p v-if="errors.email">{{ errors.email }}</p>
             <button type="submit">Reset</button>

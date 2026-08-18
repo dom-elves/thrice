@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { Form, usePage } from '@inertiajs/vue3';
 import { onMounted } from 'vue';
-import GuestLayout from '@/layouts/GuestLayout.vue';
-import TextInput from '@/components/forms/TextInput.vue';
 import InputLabel from '@/components/forms/InputLabel.vue';
+import TextInput from '@/components/forms/TextInput.vue';
+import GuestLayout from '@/layouts/GuestLayout.vue';
 
 const page = usePage();
 

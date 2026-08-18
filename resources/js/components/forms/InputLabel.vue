@@ -10,7 +10,7 @@ const props = defineProps<{
 <template>
     <label
         class="block text-sm font-medium text-gray-700"
-        :for="for"
+        :for="props.for"
     >
         <span v-if="text">{{ text }}</span>
         <span v-else><slot /></span>
