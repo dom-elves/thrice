@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Form } from '@inertiajs/vue3';
 import GuestLayout from '@/layouts/GuestLayout.vue';
+import TextInput from '@/components/forms/TextInput.vue';
 
 
 </script>
@@ -14,7 +15,7 @@ import GuestLayout from '@/layouts/GuestLayout.vue';
             }"
         >
             <label for="email">Enter your email to reset your password</label>
-            <input type="email" name="email" class="border"/>
+            <TextInput :type="'email'" :name="'email'" />
             <p v-if="errors.email">{{ errors.email }}</p>
             <button type="submit">Reset</button>
         </Form>

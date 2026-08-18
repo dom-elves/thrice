@@ -2,6 +2,8 @@
 import { Form, usePage } from '@inertiajs/vue3';
 import { onMounted } from 'vue';
 import GuestLayout from '@/layouts/GuestLayout.vue';
+import TextInput from '@/components/forms/TextInput.vue';
+import InputLabel from '@/components/forms/InputLabel.vue';
 
 const page = usePage();
 
@@ -22,9 +24,11 @@ onMounted(() =>{
                 errors,
             }"
         >
-            <input type="email" name="email" class="border"/>
+            <InputLabel :for="'email'" :text="'Email'"/>
+            <TextInput :type="'email'" :name="'email'"/>
             <p v-if="errors.email">{{ errors.email }}</p>
-            <input type="password" name="password"  class="border"/>
+            <InputLabel :for="'password'" :text="'Password'"/>
+            <TextInput :type="'password'" :name="'password'"/>
             <button type="submit">Login</button>
         </Form>
         <p v-if="(page.props.session as any)?.status">{{ (page.props.session as any).status }} Please log in with your new password.</p>

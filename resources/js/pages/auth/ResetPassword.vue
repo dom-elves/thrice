@@ -2,6 +2,8 @@
 import { Form } from '@inertiajs/vue3';
 import { onMounted } from 'vue';
 import GuestLayout from '@/layouts/GuestLayout.vue';
+import TextInput from '@/components/forms/TextInput.vue';
+import InputLabel from '@/components/forms/InputLabel.vue';
 
 const props = defineProps<{
     token: string;
@@ -21,14 +23,14 @@ onMounted(() => {
                 errors,
             }"
         >
-            <label for="email">Email</label>
-            <input type="email" name="email" class="border"/>
+            <InputLabel :for="'email'" :text="'Email'"/>
+            <TextInput :type="'email'" :name="'email'" />
             <p v-if="errors.email">{{ errors.email }}</p>
-            <label for="password">password</label>
-            <input type="password" name="password" class="border"/>
+            <InputLabel :for="'password'" :text="'Password'"/>
+            <TextInput :type="'password'" :name="'password'" />
             <p v-if="errors.password">{{ errors.password }}</p>
-            <label for="password_confirmation">password_confirmation</label>
-            <input type="password" name="password_confirmation" class="border"/>
+            <InputLabel :for="'password_confirmation'" :text="'Confirm Password'"/>
+            <TextInput :type="'password'" :name="'password_confirmation'" />
             <p v-if="errors.password_confirmation">{{ errors.password_confirmation }}</p>
             <input type="hidden" name="token" :value="token"/>
             <button type="submit">Reset</button>
