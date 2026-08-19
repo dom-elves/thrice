@@ -2,15 +2,12 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Database\Factories\GameFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use App\Models\User;
-use App\Models\GameUser;
-use App\Models\InviteLink;
 use Illuminate\Support\Carbon;
 
 /**
@@ -30,8 +27,8 @@ class Game extends Model
 
     /**
      * Users from a given game.
-     * 
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     *
+     * @return BelongsToMany
      */
     public function users()
     {
@@ -40,8 +37,8 @@ class Game extends Model
 
     /**
      * Representation of the user in a game, unique per game.
-     * 
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     *
+     * @return HasMany
      */
     public function gameUsers()
     {
@@ -50,12 +47,11 @@ class Game extends Model
 
     /**
      * Invite link generated for the game.
-     * 
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     *
+     * @return HasOne
      */
     public function inviteLink()
     {
         return $this->hasOne(InviteLink::class);
     }
-
 }

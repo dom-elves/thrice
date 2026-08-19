@@ -4,10 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Database\Factories\GameUserFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use App\Models\Game;
-use App\Models\User;
 use Illuminate\Support\Carbon;
 
 /**
@@ -28,8 +25,8 @@ class GameUser extends Model
 
     /**
      * Game that the game user is in, unique.
-     * 
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     *
+     * @return BelongsTo
      */
     public function game()
     {
@@ -38,8 +35,8 @@ class GameUser extends Model
 
     /**
      * User that the game user represents in a game.
-     * 
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     *
+     * @return BelongsTo
      */
     public function user()
     {
