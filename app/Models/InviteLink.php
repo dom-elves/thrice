@@ -2,10 +2,14 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Database\Factories\InviteLinkFactory;
 use Illuminate\Support\Carbon;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Models\Game;
+use App\Models\User;
 
 /**
  * @property int $id
@@ -23,8 +27,8 @@ class InviteLink extends Model
 
     /**
      * Game that the invite link is for.
-     *
-     * @return BelongsTo
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function game()
     {
@@ -33,8 +37,8 @@ class InviteLink extends Model
 
     /**
      * User that generated the invite link.
-     *
-     * @return BelongsTo
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function user()
     {

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Database\Factories\GameFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -12,13 +13,14 @@ use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
+ * @property string|null $name
  * @property string|null $password
  * @property int|null $hands
  * @property bool $finished
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['password', 'hands', 'finished'])]
+#[Fillable(['name', 'password', 'hands', 'finished'])]
 
 class Game extends Model
 {
