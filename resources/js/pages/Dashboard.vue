@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { usePage, Form } from '@inertiajs/vue3';
 import { onMounted, ref, watch } from 'vue';
-import Modal from '@/components/Modal.vue';
 import InputLabel from '@/components/forms/InputLabel.vue';
 import TextInput from '@/components/forms/TextInput.vue';
+import Modal from '@/components/Modal.vue';
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue';
 
 const page = usePage();
@@ -24,8 +24,8 @@ watch(
         if (creatingGame.value) {
             // perform request
         }
-    }
-)
+    },
+);
 
 onMounted(() => {
     console.log(user);
@@ -63,10 +63,18 @@ onMounted(() => {
                     method="post"
                     #default="{ errors }"
                 >
-                    <InputLabel :for="'name'" :text="'Game Name'" class="text-center" />
+                    <InputLabel
+                        :for="'name'"
+                        :text="'Game Name'"
+                        class="text-center"
+                    />
                     <TextInput :type="'name'" :name="'name'" />
                     <p v-if="errors.name">{{ errors.name }}</p>
-                    <InputLabel :for="'password'" :text="'Password'" class="text-center" />
+                    <InputLabel
+                        :for="'password'"
+                        :text="'Password'"
+                        class="text-center"
+                    />
                     <TextInput :type="'password'" :name="'password'" />
                     <p v-if="errors.password">{{ errors.password }}</p>
                     <button type="submit">Create Game</button>

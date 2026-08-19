@@ -2,7 +2,5 @@
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue';
 </script>
 <template>
-    <AuthenticatedLayout>
-        i am the game
-    </AuthenticatedLayout>
+    <AuthenticatedLayout> i am the game </AuthenticatedLayout>
 </template>
