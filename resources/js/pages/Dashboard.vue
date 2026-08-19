@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { usePage } from '@inertiajs/vue3';
-import { onMounted, ref } from 'vue';
+import { usePage, Form } from '@inertiajs/vue3';
+import { onMounted, ref, watch } from 'vue';
 import Modal from '@/components/Modal.vue';
+import InputLabel from '@/components/forms/InputLabel.vue';
+import TextInput from '@/components/forms/TextInput.vue';
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue';
 
 const page = usePage();
@@ -15,6 +17,15 @@ function closeModal() {
     creatingGame.value = false;
     joiningGame.value = false;
 }
+
+watch(
+    () => creatingGame.value,
+    () => {
+        if (creatingGame.value) {
+            // perform request
+        }
+    }
+)
 
 onMounted(() => {
     console.log(user);
@@ -45,8 +56,22 @@ onMounted(() => {
             </button>
         </div>
         <Modal :show="showModal" @close="closeModal">
-            <p v-if="creatingGame">Creating..</p>
-            <p v-if="joiningGame">Joining..</p>
+            <div v-if="creatingGame">
+                <Form
+                    class="flex flex-col items-center justify-center gap-2 p-4"
+                    action="/create-game"
+                    method="post"
+                    #default="{ errors }"
+                >
+                    <InputLabel :for="'name'" :text="'Game Name'" class="text-center" />
+                    <TextInput :type="'name'" :name="'name'" />
+                    <p v-if="errors.name">{{ errors.name }}</p>
+                    <InputLabel :for="'password'" :text="'Password'" class="text-center" />
+                    <TextInput :type="'password'" :name="'password'" />
+                    <p v-if="errors.password">{{ errors.password }}</p>
+                    <button type="submit">Create Game</button>
+                </Form>
+            </div>
         </Modal>
     </AuthenticatedLayout>
 </template>
