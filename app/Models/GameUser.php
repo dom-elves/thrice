@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\GameUserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -21,7 +22,7 @@ use Illuminate\Support\Carbon;
 #[Fillable(['game_id', 'user_id', 'start_balance', 'end_balance', 'duration'])]
 class GameUser extends Model
 {
-    /** @use HasFactory<\Database\Factories\GameUserFactory> */
+    /** @use HasFactory<GameUserFactory> */
     use HasFactory;
 
     /**
