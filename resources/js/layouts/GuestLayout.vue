@@ -1,12 +1,5 @@
 <script setup lang="ts">
-import { usePage } from '@inertiajs/vue3';
-import { onMounted } from 'vue';
 
-// const page = usePage();
-
-onMounted(() => {
-    // console.log('page', page);
-});
 </script>
 <template>
     <div class="flex min-h-screen flex-col">

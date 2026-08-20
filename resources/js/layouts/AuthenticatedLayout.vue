@@ -1,17 +1,10 @@
 <script setup lang="ts">
-import { usePage, router } from '@inertiajs/vue3';
-// import { onMounted } from 'vue';
-
-// const page = usePage();
-// const user = page.props.auth.user;
+import { router } from '@inertiajs/vue3';
 
 const logout = () => {
     router.post('/logout');
 };
 
-// onMounted(() => {
-//     console.log();
-// });
 </script>
 <template>
     <div class="flex min-h-screen flex-col">
