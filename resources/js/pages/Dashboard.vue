@@ -28,7 +28,7 @@ watch(
 );
 
 onMounted(() => {
-    console.log(user);
+    // console.log(page.props);
 });
 </script>
 
@@ -79,6 +79,7 @@ onMounted(() => {
                     <p v-if="errors.password">{{ errors.password }}</p>
                     <button type="submit">Create Game</button>
                 </Form>
+                <!-- todo: join game that indexes active games-->
             </div>
         </Modal>
     </AuthenticatedLayout>

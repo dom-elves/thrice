@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
 
 /**
@@ -25,7 +26,7 @@ use Illuminate\Support\Carbon;
 class Game extends Model
 {
     /** @use HasFactory<GameFactory> */
-    use HasFactory;
+    use HasFactory, Notifiable;
 
     /**
      * Users from a given game.

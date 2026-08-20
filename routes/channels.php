@@ -7,6 +7,6 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
 });
 
 Broadcast::channel('App.Models.Game.{id}', function ($game, $id) {
-    dump($game);
-    return (int) $game->id === (int) $id;
+    // return (int) $game->id === (int) $id;
+    return true;
 });

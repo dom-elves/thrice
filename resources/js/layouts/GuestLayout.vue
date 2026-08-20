@@ -5,7 +5,7 @@ import { onMounted } from 'vue';
 const page = usePage();
 
 onMounted(() => {
-    console.log('page', page);
+    // console.log('page', page);
 });
 </script>
 <template>

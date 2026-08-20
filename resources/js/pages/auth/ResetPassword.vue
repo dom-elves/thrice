@@ -10,7 +10,7 @@ const props = defineProps<{
 }>();
 
 onMounted(() => {
-    console.log(props.token);
+    // console.log(props.token);
 });
 </script>
 <template>
