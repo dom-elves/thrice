@@ -29,7 +29,7 @@ class GameUserCreated
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel(`App.Models.Game.{$this->gameUser->game->id}`),
+            new PrivateChannel("App.Models.Game.{$this->gameUser->game->id}"),
         ];
     }
 }
