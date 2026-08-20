@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Models\GameUser;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -14,7 +15,7 @@ class GameUserJoinedNotification extends Notification implements ShouldBroadcast
     /**
      * Create a new notification instance.
      */
-    public function __construct()
+    public function __construct(public GameUser $gameUser)
     {
         //
     }
