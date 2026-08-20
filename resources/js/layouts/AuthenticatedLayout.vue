@@ -4,7 +4,6 @@ import { router } from '@inertiajs/vue3';
 const logout = () => {
     router.post('/logout');
 };
-
 </script>
 <template>
     <div class="flex min-h-screen flex-col">
