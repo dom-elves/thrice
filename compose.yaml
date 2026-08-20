@@ -64,6 +64,27 @@ services:
                 - ping
             retries: 3
             timeout: 5s
+    reverb:
+        image: sail-8.4/app
+        command: ["php", "/var/www/html/artisan", "reverb:start"]
+        restart: unless-stopped
+        stop_signal: SIGTERM
+        ports:
+            - '8080:8080'
+        depends_on:
+            - redis
+            - mysql
+        environment:
+            WWWUSER: '${WWWUSER}'
+            LARAVEL_SAIL: 1
+            DB_HOST: mysql
+            REDIS_HOST: redis
+        env_file:
+            - .env
+        volumes:
+            - '.:/var/www/html'
+        networks:
+            - sail
 networks:
     sail:
         driver: bridge
