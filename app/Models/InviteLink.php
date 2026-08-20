@@ -26,7 +26,7 @@ class InviteLink extends Model
     /**
      * Game that the invite link is for.
      *
-     * @return BelongsTo
+     * @return BelongsTo<Game, $this>
      */
     public function game()
     {
@@ -36,7 +36,7 @@ class InviteLink extends Model
     /**
      * User that generated the invite link.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User, $this>
      */
     public function user()
     {
