@@ -2,7 +2,7 @@
 import { usePage, Form } from '@inertiajs/vue3';
 import { onMounted } from 'vue';
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue';
-import { useEchoNotification } from "@laravel/echo-vue";
+import { useEchoNotification } from '@laravel/echo-vue';
 
 interface PageProps {
     [key: string]: unknown;
@@ -25,21 +25,12 @@ console.log({
     scheme: import.meta.env.VITE_REVERB_SCHEME,
 });
 
-useEchoNotification(
-    `App.Models.Game.${game.id}`,
-    (notification) => {
-        console.log('hit', notification);
-    },
-);
-
-
-onMounted(() => {
-
+useEchoNotification(`App.Models.Game.${game.id}`, (notification) => {
+    console.log('hit', notification);
 });
 
+onMounted(() => {});
 </script>
 <template>
-    <AuthenticatedLayout>
-         i am the game {{ game.name }}
-    </AuthenticatedLayout>
+    <AuthenticatedLayout> i am the game {{ game.name }} </AuthenticatedLayout>
 </template>

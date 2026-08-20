@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\GameUserCreated;
 use App\Models\Game;
 use App\Models\GameUser;
 use App\Models\InviteLink;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
-use App\Events\GameUserCreated;
-use Illuminate\Support\Facades\Redis;
 
 class GameController extends Controller
 {
@@ -19,7 +19,7 @@ class GameController extends Controller
         $gameId = $request->route('id');
 
         dd($request->session());
-        
+
         if (Game::findOrFail($gameId)) {
             return Inertia::render('Game', [
                 'game' => json_decode(Redis::get(`game:$gameId`)),
@@ -29,7 +29,7 @@ class GameController extends Controller
             return response(404);
         }
     }
-    
+
     public function create(Request $request)
     {
         $validated = $request->validate([
@@ -65,8 +65,8 @@ class GameController extends Controller
 
         return redirect()
             ->action([self::class, 'show'], ['id' => $game->id]);
-            // ->with([
-            //     'inviteLink' => $inviteLink,
-            // ]);
+        // ->with([
+        //     'inviteLink' => $inviteLink,
+        // ]);
     }
 }

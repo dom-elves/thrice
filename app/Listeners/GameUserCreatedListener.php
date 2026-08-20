@@ -3,9 +3,8 @@
 namespace App\Listeners;
 
 use App\Events\GameUserCreated;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 use App\Notifications\GameUserJoinedNotification;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
 class GameUserCreatedListener implements ShouldQueue
 {

@@ -2,7 +2,7 @@
 import { usePage, router } from '@inertiajs/vue3';
 // import { onMounted } from 'vue';
 
-const page = usePage();
+// const page = usePage();
 // const user = page.props.auth.user;
 
 const logout = () => {
