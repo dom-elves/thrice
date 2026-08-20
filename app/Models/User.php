@@ -7,7 +7,7 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -46,7 +46,7 @@ class User extends Authenticatable
     /**
      * Games that the user has participated in.
      *
-     * @return BelongsTo
+     * @return BelongsToMany<Game, $this>
      */
     public function games()
     {
@@ -56,7 +56,7 @@ class User extends Authenticatable
     /**
      * Representation of the user in a game, unique per game.
      *
-     * @return HasMany
+     * @return HasMany<GameUser, $this>
      */
     public function gameUsers()
     {
@@ -66,7 +66,7 @@ class User extends Authenticatable
     /**
      * Invite links created by the user.
      *
-     * @return \Illuminate\Database\Eloquent\Relationship\HasMany
+     * @return HasMany<InviteLink, $this>
      */
     public function inviteLinks()
     {

@@ -28,7 +28,7 @@ class GameUser extends Model
     /**
      * Game that the game user is in, unique.
      *
-     * @return BelongsTo
+     * @return BelongsTo<Game, $this>
      */
     public function game()
     {
@@ -38,7 +38,7 @@ class GameUser extends Model
     /**
      * User that the game user represents in a game.
      *
-     * @return BelongsTo
+     * @return BelongsTo<User, $this>
      */
     public function user()
     {

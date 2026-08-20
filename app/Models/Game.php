@@ -31,7 +31,7 @@ class Game extends Model
     /**
      * Users from a given game.
      *
-     * @return BelongsToMany
+     * @return BelongsToMany<User, $this>
      */
     public function users()
     {
@@ -41,7 +41,7 @@ class Game extends Model
     /**
      * Representation of the user in a game, unique per game.
      *
-     * @return HasMany
+     * @return HasMany<GameUser, $this>
      */
     public function gameUsers()
     {
@@ -51,7 +51,7 @@ class Game extends Model
     /**
      * Invite link generated for the game.
      *
-     * @return HasOne
+     * @return HasOne<InviteLink, $this>
      */
     public function inviteLink()
     {
