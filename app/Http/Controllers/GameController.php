@@ -17,15 +17,18 @@ use Inertia\Response as InertiaResponse;
 
 class GameController extends Controller
 {
-    public function show(Request $request): InertiaResponse|Response
+    public function show(string $id): InertiaResponse|Response
     {
-        $gameId = (string) $request->route('id');
+        $game = Game::findOrFail($id);
+        $game->hands = Redis::hget("game:$id", 'hands');
 
-        return Inertia::render('Game', [
-            'game' => json_decode(Redis::get("game:$gameId")),
-            // 'inviteLink' => $request->session()->get('inviteLink'),
-        ]);
+        if ($game) {
+            return Inertia::render('Game', [
+                'game' => $game,
+            ]);
+        }
 
+        return Inertia::render('Game');
     }
 
     public function create(Request $request): RedirectResponse
@@ -58,13 +61,14 @@ class GameController extends Controller
 
         event(new GameUserCreated($gameUser));
 
-        Redis::set("game:$game->id", $game->toJson());
-        // Redis::set();
+        Redis::hset("game:$game->id", 'hands', 0);
 
         return redirect()
             ->action([self::class, 'show'], ['id' => $game->id]);
-        // ->with([
-        //     'inviteLink' => $inviteLink,
-        // ]);
     }
+
+    // public function play(Request $request)
+    // {
+    //     Redis::hincrby("game:{$request->game_id}", 'hands', 1);
+    // }
 }

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { usePage } from '@inertiajs/vue3';
+import { usePage, router } from '@inertiajs/vue3';
 import { useEchoNotification } from '@laravel/echo-vue';
 import { onMounted } from 'vue';
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue';
@@ -9,6 +9,7 @@ interface PageProps {
     game: {
         id: number;
         name: string;
+        hands: number;
     };
     // inviteLink: {
     //     token: string;
@@ -19,11 +20,9 @@ const page = usePage<PageProps>();
 const game = page.props.game;
 // const inviteLink = page.props.inviteLink;
 
-console.log({
-    host: import.meta.env.VITE_REVERB_HOST,
-    port: import.meta.env.VITE_REVERB_PORT,
-    scheme: import.meta.env.VITE_REVERB_SCHEME,
-});
+function playHand() {
+    router.post('/play-hand', { game_id: game.id });
+}
 
 useEchoNotification(`App.Models.Game.${game.id}`, (notification) => {
     console.log('hit', notification);
@@ -32,5 +31,9 @@ useEchoNotification(`App.Models.Game.${game.id}`, (notification) => {
 onMounted(() => {});
 </script>
 <template>
-    <AuthenticatedLayout> i am the game {{ game.name }} </AuthenticatedLayout>
+    <AuthenticatedLayout>
+        <p>i am the game {{ game.name }}</p>
+        <p>we are on hand {{ game.hands }}</p>
+        <button @click="playHand" class="border border-1 rounded m-4 p-4">play a hand</button>    
+    </AuthenticatedLayout>
 </template>

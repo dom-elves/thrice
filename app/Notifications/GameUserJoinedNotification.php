@@ -50,6 +50,7 @@ class GameUserJoinedNotification extends Notification implements ShouldBroadcast
     {
         return [
             'test' => $notifiable,
+            'gameUser' => $this->gameUser,
         ];
     }
 }

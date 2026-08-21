@@ -15,4 +15,7 @@ Route::middleware('auth')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::get('/game/{id}', [GameController::class, 'show'])->name('game.show');
     Route::post('/create-game', [GameController::class, 'create'])->name('game.create');
+
+    // this is just for testing
+    Route::post('/play-hand', [GameController::class, 'play'])->name('play.hand');
 });
