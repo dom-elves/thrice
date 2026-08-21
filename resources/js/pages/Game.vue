@@ -30,6 +30,6 @@ onMounted(() => {});
     <AuthenticatedLayout>
         <p>i am the game {{ game.name }}</p>
         <p>we are on hand {{ game.hands }}</p>
-        <button @click="playHand" class="border border-1 rounded m-4 p-4">play a hand</button>    
+        <button @click="playHand" class="border border-1 rounded m-4 p-4">play a hand</button>   
     </AuthenticatedLayout>
 </template>
