@@ -22,13 +22,9 @@ class GameController extends Controller
         $game = Game::findOrFail($id);
         $game->hands = Redis::hget("game:$id", 'hands');
 
-        if ($game) {
-            return Inertia::render('Game', [
-                'game' => $game,
-            ]);
-        }
-
-        return Inertia::render('Game');
+        return Inertia::render('Game', [
+            'game' => $game,
+        ]);
     }
 
     public function create(Request $request): RedirectResponse
