@@ -16,7 +16,7 @@ use Illuminate\Support\Carbon;
  * @property int $id
  * @property string|null $name
  * @property string|null $password
- * @property int|null $hands
+ * @property int|string|null $hands
  * @property bool $finished
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
