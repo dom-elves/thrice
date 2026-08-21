@@ -10,14 +10,10 @@ interface PageProps {
         id: number;
         name: string;
     };
-    // inviteLink: {
-    //     token: string;
-    // }
 }
 
 const page = usePage<PageProps>();
 const game = page.props.game;
-// const inviteLink = page.props.inviteLink;
 
 console.log({
     host: import.meta.env.VITE_REVERB_HOST,
