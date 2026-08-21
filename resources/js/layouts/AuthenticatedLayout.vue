@@ -1,20 +1,12 @@
 <script setup lang="ts">
-import { usePage, router } from '@inertiajs/vue3';
-import { onMounted } from 'vue';
-
-const page = usePage();
-const user = page.props.auth.user;
+import { router } from '@inertiajs/vue3';
 
 const logout = () => {
     router.post('/logout');
 };
-
-onMounted(() => {
-    console.log('auth user', user);
-});
 </script>
 <template>
-    <div>
+    <div class="flex min-h-screen flex-col">
         <nav>
             <ul>
                 <li>auth layout</li>
@@ -30,7 +22,7 @@ onMounted(() => {
             </ul>
         </nav>
         <main
-            class="flex h-screen w-full flex-col items-center justify-center bg-red-100"
+            class="flex w-full flex-1 flex-col items-center justify-center bg-red-100"
         >
             <slot />
         </main>
