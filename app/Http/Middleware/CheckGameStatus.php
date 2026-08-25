@@ -18,8 +18,9 @@ class CheckGameStatus
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $game = Game::query()->find($request->route('id'));
-
+        $gameId = (int) $request->route('id');
+        $game = Game::query()->find($gameId);
+        
         // game does not exist
         if (!$game) {
             Inertia::flash([
