@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\GameUserCreated;
+use App\Actions\Game\CreateGameUser;
 use App\Models\Game;
 use App\Models\GameUser;
 use App\Models\InviteLink;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Str;
@@ -31,35 +30,32 @@ class GameController extends Controller
         ]);
     }
 
-    public function create(Request $request): RedirectResponse
+    public function create(Request $request, CreateGameUser $createGameUser): RedirectResponse
     {
         $validated = $request->validate([
             'name' => 'nullable|string|max:255',
             'password' => 'nullable|string|max:255',
         ]);
 
-        [$game, $gameUser, $inviteLink] = DB::transaction(function () use ($validated) {
+        [$game, $inviteLink] = DB::transaction(function () use ($validated, $createGameUser) {
+
+            $user = auth()->user();
+
             $game = Game::create([
                 'name' => $validated['name'],
                 'password' => bcrypt($validated['password']),
             ]);
 
-            $gameUser = GameUser::create([
-                'game_id' => $game->id,
-                'user_id' => auth()->user()->id,
-                'start_balance' => 1000,
-            ]);
+            $createGameUser->create($game->id, $user->id);
 
             $inviteLink = InviteLink::create([
                 'game_id' => $game->id,
-                'user_id' => auth()->user()->id,
+                'user_id' => $user->id,
                 'token' => Str::random(8),
             ]);
 
-            return [$game, $gameUser, $inviteLink];
+            return [$game, $inviteLink];
         });
-
-        event(new GameUserCreated($gameUser));
 
         Redis::hset("game:$game->id", 'hands', 0);
 

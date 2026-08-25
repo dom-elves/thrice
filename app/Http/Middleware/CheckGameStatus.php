@@ -2,11 +2,11 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Game;
 use Closure;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
-use App\Models\Game;
 use Inertia\Inertia;
+use Symfony\Component\HttpFoundation\Response;
 
 class CheckGameStatus
 {
@@ -20,9 +20,9 @@ class CheckGameStatus
     {
         $gameId = (int) $request->route('id');
         $game = Game::query()->find($gameId);
-        
+
         // game does not exist
-        if (!$game) {
+        if (! $game) {
             Inertia::flash([
                 'message' => 'Game does not exist',
             ]);
@@ -39,7 +39,7 @@ class CheckGameStatus
             return redirect('dashboard');
         }
 
-        // game is full        
+        // game is full
         if ($game->users->count() >= 6) {
             Inertia::flash([
                 'message' => 'Game is full',

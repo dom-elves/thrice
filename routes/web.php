@@ -1,8 +1,11 @@
 <?php
 
 use App\Http\Controllers\GameController;
-use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\CheckGameStatus;
+use Illuminate\Support\Facades\Route;
+use App\Models\GameUser;
+
+// dd(GameUser::all());
 
 Route::inertia('/', 'Welcome')->name('home');
 
@@ -12,10 +15,13 @@ Route::middleware('auth')->group(function () {
 });
 
 // game
-Route::middleware(['auth', CheckGameStatus::class])->group(function () {
-    Route::get('/game/{id}', [GameController::class, 'show'])->name('game.show');
+Route::middleware('auth')->group(function () {
     Route::post('/create-game', [GameController::class, 'create'])->name('game.create');
 
     // this is just for testing
     Route::post('/play-hand', [GameController::class, 'play'])->name('play.hand');
+});
+
+Route::middleware(CheckGameStatus::class)->group(function () {
+    Route::get('/game/{id}', [GameController::class, 'show'])->name('game.show');
 });
