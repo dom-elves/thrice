@@ -17,10 +17,14 @@ use Inertia\Response as InertiaResponse;
 
 class GameController extends Controller
 {
-    public function show(string $id): InertiaResponse|Response
+    /**
+     * show() method assumes the user has made it past the checks in CheckGameStatus middleware.
+     * It checks if the game exists, is finished, is full, then if the user is already in the game.
+     * These checks then assume the game is active and with an empty space, so a user is created.
+     */
+    public function show(string $id): InertiaResponse|RedirectResponse
     {
         $game = Game::findOrFail($id);
-        $game->hands = Redis::hget("game:$id", 'hands');
 
         return Inertia::render('Game', [
             'game' => $game,
@@ -37,7 +41,7 @@ class GameController extends Controller
         [$game, $gameUser, $inviteLink] = DB::transaction(function () use ($validated) {
             $game = Game::create([
                 'name' => $validated['name'],
-                'password' => $validated['password'],
+                'password' => bcrypt($validated['password']),
             ]);
 
             $gameUser = GameUser::create([

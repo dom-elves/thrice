@@ -28,7 +28,7 @@ watch(
 );
 
 onMounted(() => {
-    // console.log(page.props);
+    // console.log(page.flash);
 });
 </script>
 
@@ -55,6 +55,7 @@ onMounted(() => {
                 Join
             </button>
         </div>
+        <p>{{ page.flash.message }}</p>
         <Modal :show="showModal" @close="closeModal">
             <div v-if="creatingGame">
                 <Form
