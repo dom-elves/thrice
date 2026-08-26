@@ -11,7 +11,7 @@ beforeEach( function () {
     Event::fake();
 });
 
-test('user can create a game', function() {
+test('user can create a game, and a game user for them is created', function() {
     $response = $this->post(route('game.create'), [
         'name' => 'test game',
         'password' => 'password',
@@ -27,5 +27,10 @@ test('user can create a game', function() {
     $this->assertDatabaseHas('games', [
         'name' => $game->name,
         'password' => $game->password,
+    ]);
+
+    $this->assertDatabaseHas('game_users', [
+        'user_id' => $this->user->id,
+        'game_id' => $game->id,
     ]);
 });
