@@ -12,7 +12,6 @@ class CheckGameStatus
 {
     /**
      * Handle an incoming request.
-     * todo: refactor this, just need it working for now
      *
      * @param  Closure(Request): (Response)  $next
      */
@@ -21,28 +20,23 @@ class CheckGameStatus
         $gameId = (int) $request->route('id');
         $game = Game::query()->find($gameId);
 
-        // game does not exist
-        if (!$game) {
-            Inertia::flash([
-                'message' => 'Game does not exist',
-            ]);
-
-            return redirect('dashboard');
+        switch($game) {
+            case !$game:
+                $message = 'Game does not exist';
+                break;
+            case $game->finished == true: // some annoying type error stops me using $game->finished
+                $message = 'Game is finished';
+                break;
+            case $game->users->count() >= 6:
+                $message = 'Game is full';
+                break;
+            default:
+                return $next($request);
         }
 
-        // game is finished
-        if ($game->finished) {
+        if ($message) {
             Inertia::flash([
-                'message' => 'Game is finished',
-            ]);
-
-            return redirect('dashboard');
-        }
-
-        // game is full
-        if ($game->users->count() >= 6) {
-            Inertia::flash([
-                'message' => 'Game is full',
+                'message' => $message,
             ]);
 
             return redirect('dashboard');
