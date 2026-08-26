@@ -7,7 +7,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Event;
 use Inertia\Testing\AssertableInertia as Assert;
 
-beforeEach( function () {
+beforeEach(function () {
     $this->user = User::factory()->create([
         'name' => 'Dom Elves',
         'email' => 'dom@example.com',
@@ -18,7 +18,7 @@ beforeEach( function () {
     Event::fake();
 });
 
-test('user can create a game, and a game user for them is created', function() {
+test('user can create a game, and a game user for them is created', function () {
     $response = $this->post(route('game.create'), [
         'name' => 'test game',
         'password' => 'password',
@@ -42,7 +42,7 @@ test('user can create a game, and a game user for them is created', function() {
     ]);
 });
 
-test('user can join a created game, and has a user created for them', function() {
+test('user can join a created game, and has a user created for them', function () {
     $game = Game::factory()->create();
     $user = User::factory()->create();
 
@@ -50,10 +50,9 @@ test('user can join a created game, and has a user created for them', function()
 
     Event::assertDispatched(GameUserCreated::class);
 
-    $response->assertInertia(fn (Assert $page) =>
-        $page->component('Game')
-            ->has('game')
-            ->where('game.id', $game->id)
+    $response->assertInertia(fn (Assert $page) => $page->component('Game')
+        ->has('game')
+        ->where('game.id', $game->id)
     );
 
     $this->assertDatabaseHas('games', [
@@ -67,7 +66,7 @@ test('user can join a created game, and has a user created for them', function()
     ]);
 });
 
-test('user can not join a game that does not exist', function() {
+test('user can not join a game that does not exist', function () {
     $response = $this->get(route('game.show', ['id' => 1000]));
 
     Event::assertNotDispatched(GameUserCreated::class);
@@ -80,7 +79,7 @@ test('user can not join a game that does not exist', function() {
     ]);
 });
 
-test('user can not join a game that has finished', function() {
+test('user can not join a game that has finished', function () {
     $game = Game::factory()->create([
         'finished' => 1,
     ]);
@@ -98,7 +97,7 @@ test('user can not join a game that has finished', function() {
     ]);
 });
 
-test('user can not join a game that is full', function() {
+test('user can not join a game that is full', function () {
     $game = Game::factory()->create();
     $users = User::all();
 

@@ -2,8 +2,8 @@
 
 use App\Http\Controllers\GameController;
 use App\Http\Middleware\CheckGameStatus;
-use Illuminate\Support\Facades\Route;
 use App\Models\GameUser;
+use Illuminate\Support\Facades\Route;
 
 // dd(GameUser::all());
 

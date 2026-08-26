@@ -28,10 +28,10 @@ class GameController extends Controller
         $game = Game::findOrFail($gameId);
         $user = auth()->user();
 
-        if (!$game->users->pluck('id')->contains($user->id)) {
-            $createGameUser = new CreateGameUser();
+        if (! $game->users->pluck('id')->contains($user->id)) {
+            $createGameUser = new CreateGameUser;
             $createGameUser->create($game->id, $user->id);
-        };
+        }
 
         return Inertia::render('Game', [
             'game' => $game,

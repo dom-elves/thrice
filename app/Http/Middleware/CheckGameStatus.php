@@ -32,7 +32,7 @@ class CheckGameStatus
         }
 
         Inertia::flash([
-            'message' => $message
+            'message' => $message,
         ]);
 
         return redirect('dashboard');

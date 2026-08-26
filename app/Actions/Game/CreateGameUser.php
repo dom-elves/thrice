@@ -10,9 +10,6 @@ class CreateGameUser
 {
     /**
      * Create a GameUser when the user wishes to join a given game.
-     *
-     * @param int $gameId
-     * @param int $userId
      */
     public function create(int $gameId, int $userId): GameUser
     {
