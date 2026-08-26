@@ -24,9 +24,13 @@ class CheckGameStatus
             case !$game:
                 $message = 'Game does not exist';
                 break;
-            case $game->finished == true: // some annoying type error stops me using $game->finished
+            // some annoying type error stops me using $game->finished
+            case $game->finished == true:
                 $message = 'Game is finished';
                 break;
+            // further in the future this will need to change to check redis, 
+            // as game->users or even game->game_users can go beyond 6 
+            // if a game last long enough
             case $game->users->count() >= 6:
                 $message = 'Game is full';
                 break;
