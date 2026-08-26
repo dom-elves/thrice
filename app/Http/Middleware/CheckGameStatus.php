@@ -19,33 +19,22 @@ class CheckGameStatus
     {
         $gameId = (int) $request->route('id');
         $game = Game::query()->find($gameId);
-        
-        switch(true) {
-            case $game == null:
-                $message = 'Game does not exist';
-                break;
-            // some annoying type error stops me using $game->finished
-            case $game->finished == true:
-                $message = 'Game is finished';
-                break;
-            // further in the future this will need to change to check redis, 
-            // as game->users or even game->game_users can go beyond 6 
-            // if a game last long enough
-            case $game->users->count() >= 6:
-                $message = 'Game is full';
-                break;
-            default:
-                return $next($request);
+
+        if ($game === null) {
+            $message = 'Game does not exist';
+        } elseif ($game->finished) {
+            $message = 'Game is finished';
+        } elseif ($game->users->count() >= 6) {
+            // todo: check redis instead, once games can exceed 6 users
+            $message = 'Game is full';
+        } else {
+            return $next($request);
         }
 
-        if ($message) {
-            Inertia::flash([
-                'message' => $message,
-            ]);
+        Inertia::flash([
+            'message' => $message
+        ]);
 
-            return redirect('dashboard');
-        }
-
-        return $next($request);
+        return redirect('dashboard');
     }
 }
