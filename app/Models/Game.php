@@ -21,7 +21,8 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['name', 'password', 'hands', 'finished'])]
+#[Fillable(['name', 'hands', 'finished'])]
+#[Hidden(['password'])]
 
 class Game extends Model
 {
