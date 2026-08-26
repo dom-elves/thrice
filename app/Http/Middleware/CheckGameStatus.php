@@ -22,7 +22,7 @@ class CheckGameStatus
         $game = Game::query()->find($gameId);
 
         // game does not exist
-        if (! $game) {
+        if (!$game) {
             Inertia::flash([
                 'message' => 'Game does not exist',
             ]);

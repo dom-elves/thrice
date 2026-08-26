@@ -19,11 +19,19 @@ class GameController extends Controller
     /**
      * show() method assumes the user has made it past the checks in CheckGameStatus middleware.
      * It checks if the game exists, is finished, is full, then if the user is already in the game.
-     * These checks then assume the game is active and with an empty space, so a user is created.
+     * These checks then assume the game is active and with an empty space.
+     * If the user is already in the game, just return the game.
+     * Otherwise, create a new GameUser for them first.
      */
-    public function show(string $id): InertiaResponse|RedirectResponse
+    public function show(string $gameId): InertiaResponse|RedirectResponse
     {
-        $game = Game::findOrFail($id);
+        $game = Game::findOrFail($gameId);
+        $user = auth()->user();
+
+        if (!$game->users->pluck('id')->contains($user->id)) {
+            $createGameUser = new CreateGameUser();
+            $createGameUser->create($game->id, $user->id);
+        };
 
         return Inertia::render('Game', [
             'game' => $game,
