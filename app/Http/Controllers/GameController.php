@@ -65,7 +65,7 @@ class GameController extends Controller
             return [$game, $inviteLink];
         });
 
-        Redis::hset("game:$game->id", 'hands', 0);
+        // Redis::hset("game:$game->id", 'hands', 0);
 
         return redirect()
             ->action([self::class, 'show'], ['id' => $game->id]);
