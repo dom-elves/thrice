@@ -2,12 +2,18 @@
 
 use App\Events\GameUserCreated;
 use App\Models\Game;
+use App\Models\GameUser;
 use App\Models\User;
 use Illuminate\Support\Facades\Event;
 use Inertia\Testing\AssertableInertia as Assert;
 
 beforeEach( function () {
-    $this->user = User::factory()->create();
+    $this->user = User::factory()->create([
+        'name' => 'Dom Elves',
+        'email' => 'dom@example.com',
+    ]);
+
+    $this->users = User::factory()->count(5)->create();
     $this->actingAs($this->user);
     Event::fake();
 });
@@ -62,15 +68,63 @@ test('user can join a created game, and has a user created for them', function()
 });
 
 test('user can not join a game that does not exist', function() {
+    $response = $this->get(route('game.show', ['id' => 1000]));
 
+    Event::assertNotDispatched(GameUserCreated::class);
+
+    $response->assertRedirect('dashboard')
+        ->assertInertiaFlash('message', 'Game does not exist');
+
+    $this->assertDatabaseMissing('game_users', [
+        'user_id' => $this->user->id,
+    ]);
 });
 
 test('user can not join a game that has finished', function() {
+    $game = Game::factory()->create([
+        'finished' => 1,
+    ]);
 
+    $response = $this->get(route('game.show', $game));
+
+    Event::assertNotDispatched(GameUserCreated::class);
+
+    $response->assertRedirect('dashboard')
+        ->assertInertiaFlash('message', 'Game is finished');
+
+    $this->assertDatabaseMissing('game_users', [
+        'user_id' => $this->user->id,
+        'game_id' => $game->id,
+    ]);
 });
 
 test('user can not join a game that is full', function() {
+    $game = Game::factory()->create();
+    $users = User::all();
 
+    $extra_user = User::factory()->create([
+        'name' => 'Do not let me join',
+        'email' => 'donotletmejoin@example.com',
+    ]);
+
+    foreach ($users as $user) {
+        GameUser::factory()->create([
+            'user_id' => $user->id,
+            'game_id' => $game->id,
+        ]);
+    }
+
+    $response = $this->actingAs($extra_user)->get(route('game.show', $game));
+
+    Event::assertNotDispatched(GameUserCreated::class);
+
+    $response->assertRedirect('dashboard')
+        ->assertInertiaFlash('message', 'Game is full');
+
+    $this->assertDatabaseMissing('game_users', [
+        'user_id' => $extra_user->id,
+        'game_id' => $game->id,
+    ]);
 });
 
 // todo: tests for invites etc, when that is built

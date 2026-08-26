@@ -19,9 +19,9 @@ class CheckGameStatus
     {
         $gameId = (int) $request->route('id');
         $game = Game::query()->find($gameId);
-
-        switch($game) {
-            case !$game:
+        
+        switch(true) {
+            case $game == null:
                 $message = 'Game does not exist';
                 break;
             // some annoying type error stops me using $game->finished
