@@ -4,7 +4,9 @@ namespace App\Actions\Game;
 
 use App\Events\GameUserCreated;
 use App\Models\GameUser;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redis;
 
 class CreateGameUser
 {
@@ -21,6 +23,17 @@ class CreateGameUser
             ]);
 
             event(new GameUserCreated($gameUser));
+
+            DB::afterCommit(function () use ($gameUser) {
+                Redis::hset("game_user:$gameUser->id", [
+                    'game_id' => $gameUser->game->id,
+                    'user_id' => $gameUser->user->id,
+                    'start_balance' => $gameUser->start_balance,
+                    'end_balance' => $gameUser->end_balance,
+                    'join_time' => Carbon::now()->toDateTimeString(),
+                    'leave_time' => null,
+                ]);
+            });
 
             return $gameUser;
         });

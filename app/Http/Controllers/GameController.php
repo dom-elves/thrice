@@ -54,9 +54,6 @@ class GameController extends Controller
         //     'token' => Str::random(8),
         // ]);
 
-        // Redis::hset("game:$game->id", 'hands', 0);
-        // Redis::hset("game_user:$gameUser->id");
-
         return redirect()
             ->action([self::class, 'show'], ['id' => $game->id]);
     }
