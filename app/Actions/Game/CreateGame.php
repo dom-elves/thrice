@@ -14,8 +14,8 @@ class CreateGame
 
     /**
      * Create a Game.
-     * 
-     * @param array{name: string, password: string} $data
+     *
+     * @param  array{name: string, password: string}  $data
      */
     public function create(array $data): Game
     {
