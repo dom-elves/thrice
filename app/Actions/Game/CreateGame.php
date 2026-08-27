@@ -15,7 +15,7 @@ class CreateGame
     /**
      * Create a Game.
      */
-    public function create($data): Game
+    public function create(array $data): Game
     {
         return DB::transaction(function () use ($data) {
             $game = Game::create([
@@ -28,13 +28,12 @@ class CreateGame
             $this->createGameUser->create($game->id, $userId);
 
             DB::afterCommit(function () use ($game) {
-                Redis::hset("game:{$game->id}", [
-                    'name' => $game->name,
-                    // i think not to store the game pw in redis, keep that in mysql
-                    'hands' => 0,
-                    'finished' => $game->finished,
-                    'start' => $game->created_at->toDateTimeString(),
-                ]);
+                Redis::pipeline(function ($pipe) use ($game) {
+                    $pipe->hset("game:{$game->id}", 'name', $game->name); // omitting password for now as rather just have it in mysql db
+                    $pipe->hset("game:{$game->id}", 'hands', 0);
+                    $pipe->hset("game:{$game->id}", 'finished', $game->finished ? '1' : '0');
+                    $pipe->hset("game:{$game->id}", 'start', $game->created_at->toDateTimeString());
+                });
             });
 
             return $game;
