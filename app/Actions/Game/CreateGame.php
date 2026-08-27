@@ -2,7 +2,6 @@
 
 namespace App\Actions\Game;
 
-use App\Actions\Game\CreateGameUser;
 use App\Models\Game;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
@@ -34,11 +33,11 @@ class CreateGame
                     // i think not to store the game pw in redis, keep that in mysql
                     'hands' => 0,
                     'finished' => $game->finished,
-                    'start' => $game->created_at->toDateTimeString(), 
+                    'start' => $game->created_at->toDateTimeString(),
                 ]);
             });
 
             return $game;
-        });    
+        });
     }
 }

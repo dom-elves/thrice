@@ -9,7 +9,6 @@ use App\Models\GameUser;
 use App\Models\InviteLink;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
