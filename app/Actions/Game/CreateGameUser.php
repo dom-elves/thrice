@@ -13,16 +13,16 @@ class CreateGameUser
      */
     public function create(int $gameId, int $userId): GameUser
     {
-        $gameUser = DB::transaction(function () use ($gameId, $userId) {
-            return GameUser::create([
+        return DB::transaction(function () use ($gameId, $userId) {
+            $gameUser = GameUser::create([
                 'game_id' => $gameId,
                 'user_id' => $userId,
                 'start_balance' => 1000,
             ]);
+
+            event(new GameUserCreated($gameUser));
+
+            return $gameUser;
         });
-
-        event(new GameUserCreated($gameUser));
-
-        return $gameUser;
     }
 }
