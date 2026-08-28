@@ -20,9 +20,10 @@ class CreateGame
     public function create(array $data): Game
     {
         return DB::transaction(function () use ($data) {
+
             $game = Game::create([
                 'name' => $data['name'],
-                'password' => bcrypt($data['password']),
+                'password' => isset($data['password']) ? bcrypt($data['password']) : '',
             ]);
 
             $userId = auth()->user()->id;

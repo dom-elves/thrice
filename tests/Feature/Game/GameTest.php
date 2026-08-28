@@ -42,6 +42,22 @@ test('user can create a game, and a game user for them is created', function () 
     ]);
 });
 
+test('creating a game with no name defaults it to the users name', function () {
+    $response = $this->post(route('game.create'));
+
+    Event::assertDispatched(GameUserCreated::class);
+
+    $game = Game::first();
+
+    $response->assertSessionHasNoErrors()
+        ->assertRedirect("game/{$game->id}");
+
+    $this->assertDatabaseHas('games', [
+        'name' => $this->user->name . "'s Game",
+        'password' => $game->password,
+    ]);
+});
+
 test('user can join a created game, and has a user created for them', function () {
     $game = Game::factory()->create();
     $user = User::factory()->create();
@@ -64,6 +80,24 @@ test('user can join a created game, and has a user created for them', function (
         'user_id' => $user->id,
         'game_id' => $game->id,
     ]);
+});
+
+test('user can join a game with no password', function () {
+    $game = Game::factory()->create();
+    $user = User::factory()->create();
+
+    $response = $this->actingAs($user)->get(route('game.show', $game));
+
+    Event::assertDispatched(GameUserCreated::class);
+
+    $response->assertInertia(fn (Assert $page) => $page->component('Game')
+        ->has('game')
+        ->where('game.id', $game->id)
+    );
+});
+
+test('user can join a game with a password', function () {
+
 });
 
 test('user can not join a game that does not exist', function () {
@@ -126,5 +160,14 @@ test('user can not join a game that is full', function () {
     ]);
 });
 
+test('leaving the game via the button removes the user from the game', function () {
+
+});
+
+// no iea how to actually do this, must look into it
+test('leaving the game via closing the active tab/window removes the user from the game', function () {
+
+});
+
 // todo: tests for invites etc, when that is built
-// as well as looking into how to test redis
+

@@ -45,6 +45,10 @@ class GameController extends Controller
             'password' => 'nullable|string|max:255',
         ]);
 
+        if (!isset($validated['name'])) {
+            $validated['name'] = auth()->user()->name . "'s Game";
+        }
+
         $game = $createGame->create($validated);
 
         // $inviteLink = InviteLink::create([
