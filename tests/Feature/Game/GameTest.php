@@ -53,7 +53,7 @@ test('creating a game with no name defaults it to the users name', function () {
         ->assertRedirect("game/{$game->id}");
 
     $this->assertDatabaseHas('games', [
-        'name' => $this->user->name . "'s Game",
+        'name' => $this->user->name."'s Game",
         'password' => $game->password,
     ]);
 });
@@ -96,9 +96,7 @@ test('user can join a game with no password', function () {
     );
 });
 
-test('user can join a game with a password', function () {
-
-});
+test('user can join a game with a password', function () {});
 
 test('user can not join a game that does not exist', function () {
     $response = $this->get(route('game.show', ['id' => 1000]));
@@ -160,14 +158,9 @@ test('user can not join a game that is full', function () {
     ]);
 });
 
-test('leaving the game via the button removes the user from the game', function () {
-
-});
+test('leaving the game via the button removes the user from the game', function () {});
 
 // no iea how to actually do this, must look into it
-test('leaving the game via closing the active tab/window removes the user from the game', function () {
-
-});
+test('leaving the game via closing the active tab/window removes the user from the game', function () {});
 
 // todo: tests for invites etc, when that is built
-
