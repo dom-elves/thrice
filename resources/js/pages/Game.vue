@@ -20,11 +20,18 @@ function playHand() {
     router.post('/play-hand', { game_id: game.id });
 }
 
-useEchoNotification(`App.Models.Game.${game.id}`, (notification) => {
-    console.log('hit', notification);
+function leaveGame() {
+    console.log(game.id);
+    router.get(`/leave-game/${game.id}`);
+}
+
+useEchoNotification(`App.Models.Game.${game.id}`, (notification: any) => {
+    console.log('hit', notification.gameUser);
 });
 
-onMounted(() => {});
+onMounted(() => {
+    console.log(page.props)
+});
 </script>
 <template>
     <AuthenticatedLayout>
@@ -32,6 +39,10 @@ onMounted(() => {});
         <p>we are on hand {{ game.hands }}</p>
         <button @click="playHand" class="m-4 rounded border border-1 p-4">
             play a hand
+        </button>
+
+        <button @click="leaveGame" class="m-4 rounded border border-1 p-4">
+            leave game
         </button>
     </AuthenticatedLayout>
 </template>
