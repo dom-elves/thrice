@@ -15,7 +15,7 @@ use Illuminate\Support\Carbon;
  * @property int $user_id
  * @property int $start_balance
  * @property int $end_balance
- * @property boolean $in_game
+ * @property bool $in_game
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */

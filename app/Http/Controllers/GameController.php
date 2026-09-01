@@ -38,7 +38,6 @@ class GameController extends Controller
         // but then again, i need to build proper invite links etc so
         // the games are unique and can't be guessed
 
-
         if (! $gameUser) {
             $createGameUser = new CreateGameUser;
             $createGameUser->create($game->id, $user->id);
@@ -79,10 +78,7 @@ class GameController extends Controller
             ->action([self::class, 'show'], ['id' => $game->id]);
     }
 
-    public function leave(Request $request)
-    {
-
-    }
+    public function leave(Request $request) {}
 
     // public function play(Request $request)
     // {
