@@ -78,7 +78,7 @@ class GameController extends Controller
             ->action([self::class, 'show'], ['id' => $game->id]);
     }
 
-    public function leave(Request $request) {}
+    // public function leave(Request $request) {}
 
     // public function play(Request $request)
     // {
