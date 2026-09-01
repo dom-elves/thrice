@@ -15,11 +15,11 @@ use Illuminate\Support\Carbon;
  * @property int $user_id
  * @property int $start_balance
  * @property int $end_balance
- * @property Carbon|null $duration
+ * @property bool $in_game
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['game_id', 'user_id', 'start_balance', 'end_balance', 'duration'])]
+#[Fillable(['game_id', 'user_id', 'start_balance', 'end_balance', 'in_game'])]
 class GameUser extends Model
 {
     /** @use HasFactory<GameUserFactory> */

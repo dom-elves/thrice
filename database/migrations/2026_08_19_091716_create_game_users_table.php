@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('game_users', function (Blueprint $table) {
             $table->id();
             $table->foreignId('game_id')->references('id')->on('games');
-            $table->foreignId('user_id')->references('id')->on('users');
+            $table->foreignId('user_id')->unique()->references('id')->on('users');
             $table->integer('start_balance')->default(0);
             $table->integer('end_balance')->default(0);
-            $table->datetime('duration')->nullable();
+            $table->boolean('in_game')->default(false);
             $table->timestamps();
         });
     }
