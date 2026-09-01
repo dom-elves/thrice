@@ -30,7 +30,7 @@ useEchoNotification(`App.Models.Game.${game.id}`, (notification: any) => {
 });
 
 onMounted(() => {
-    console.log(page.props)
+    console.log(page.props);
 });
 </script>
 <template>
