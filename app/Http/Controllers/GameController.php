@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Actions\Game\CreateGame;
 use App\Actions\Game\CreateGameUser;
+use App\Events\GameUserCreated;
 use App\Models\Game;
 use App\Models\GameUser;
 use App\Models\InviteLink;
@@ -27,10 +28,27 @@ class GameController extends Controller
     {
         $game = Game::findOrFail($gameId);
         $user = auth()->user();
+        $gameUser = GameUser::where('game_id', $game->id)
+            ->where('user_id', $user->id)
+            ->first();
 
-        if (! $game->users->pluck('id')->contains($user->id)) {
+        // maybe here i can just check redis for a user session
+        // rather than game->users
+        // that way, they can be redirected to the correct game
+        // but then again, i need to build proper invite links etc so
+        // the games are unique and can't be guessed
+
+
+        if (! $gameUser) {
             $createGameUser = new CreateGameUser;
             $createGameUser->create($game->id, $user->id);
+        } else {
+            // todo: either add an identical broadcast or change the name of this
+            // depends if further down the line any sort of distinction between
+            // game user being created and immediately joining a game
+            // or just joining a game
+
+            event(new GameUserCreated($gameUser));
         }
 
         return Inertia::render('Game', [
@@ -59,6 +77,11 @@ class GameController extends Controller
 
         return redirect()
             ->action([self::class, 'show'], ['id' => $game->id]);
+    }
+
+    public function leave(Request $request)
+    {
+
     }
 
     // public function play(Request $request)

@@ -17,11 +17,12 @@ Route::middleware('auth')->group(function () {
 // game
 Route::middleware('auth')->group(function () {
     Route::post('/create-game', [GameController::class, 'create'])->name('game.create');
+    Route::get('/leave-game/{id}', [GameController::class, 'leave'])->name('game.leave');
 
     // this is just for testing
     Route::post('/play-hand', [GameController::class, 'play'])->name('play.hand');
 });
 
-Route::middleware(CheckGameStatus::class)->group(function () {
+Route::middleware([CheckGameStatus::class, 'auth'])->group(function () {
     Route::get('/game/{id}', [GameController::class, 'show'])->name('game.show');
 });
