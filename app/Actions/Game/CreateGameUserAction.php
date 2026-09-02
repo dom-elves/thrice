@@ -15,7 +15,7 @@ class CreateGameUserAction
     /**
      * Create a GameUser when the user wishes to join a given game.
      */
-    public function create(int $gameId, int $userId): GameUser
+    public function execute(int $gameId, int $userId): GameUser
     {
         return DB::transaction(function () use ($gameId, $userId) {
             $gameUser = GameUser::create([

@@ -31,7 +31,7 @@ class CreateGameAction
 
             $userId = auth()->user()->id;
 
-            $this->createGameUserAction->create($game->id, $userId);
+            $this->createGameUserAction->execute($game->id, $userId);
 
             return $game;
         });

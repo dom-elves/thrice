@@ -35,6 +35,10 @@ class GameService
             $pipe->hset("game_user:{$gameUser->id}", 'leave_time', null);
         });
 
+        $gameUser->update([
+            'in_game' => true,
+        ]);
+
         event(new GameUserJoined($gameUser));
     }
 }
