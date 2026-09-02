@@ -10,7 +10,7 @@ use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class GameUserJoinedNotification extends Notification implements ShouldBroadcast
+class GameUserLeftNotification extends Notification implements ShouldBroadcast
 {
     use Queueable;
 
@@ -49,7 +49,7 @@ class GameUserJoinedNotification extends Notification implements ShouldBroadcast
     public function toBroadcast(object $notifiable): BroadcastMessage
     {
         return new BroadcastMessage([
-            'event' => 'game user ' . $this->gameUser->id . ' joined',
+            'event' => 'game user ' . $this->gameUser->id . ' left',
             'gameUser' => $this->gameUser,
         ]);
     }
@@ -62,7 +62,7 @@ class GameUserJoinedNotification extends Notification implements ShouldBroadcast
     // public function toArray(object $notifiable): array
     // {
     //     return [
-    //         'event' => 'game user ' . $this->gameUser->id . ' joined',
+    //         'event' => 'game user ' . $this->gameUser->id . ' left',
     //         'gameUser' => $this->gameUser,
     //     ];
     // }

@@ -3,6 +3,9 @@
 namespace App\Services;
 
 use App\Events\GameUserJoined;
+use App\Events\GameUserLeft;
+use App\Models\Game;
+use App\Models\GameUser;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Redis;
 
@@ -21,7 +24,7 @@ class GameService
      * @param Game $game
      * @return void
      */
-    public function createGame(Game $game): void
+    public function createGame($game): void
     {
         Redis::pipeline(function ($pipe) use ($game) {
             $pipe->hmset("game:{$game->id}", [
@@ -86,6 +89,6 @@ class GameService
             'in_game' => false,
         ]);
 
-        // broadcast eventually
+        event(new GameUserLeft($gameUser));
     }
 }
