@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Actions\Game\CreateGame;
-use App\Actions\Game\CreateGameUser;
+use App\Actions\Game\CreateGameAction;
+use App\Actions\Game\Action;
 use App\Events\GameUserCreated;
 use App\Models\Game;
 use App\Models\GameUser;
@@ -39,14 +39,18 @@ class GameController extends Controller
         // the games are unique and can't be guessed
 
         if (! $gameUser) {
-            $createGameUser = new CreateGameUser;
-            $createGameUser->create($game->id, $user->id);
+            $createGameUserAction = new CreateGameUserAction(
+                app()->make(\App\Services\GameService::class)
+            );
+            
+            $createGameUserAction->create($game->id, $user->id);
         } else {
             // todo: either add an identical broadcast or change the name of this
             // depends if further down the line any sort of distinction between
             // game user being created and immediately joining a game
             // or just joining a game
 
+            // change this to redis join
             event(new GameUserCreated($gameUser));
         }
 
@@ -55,7 +59,7 @@ class GameController extends Controller
         ]);
     }
 
-    public function create(Request $request, CreateGame $createGame): RedirectResponse
+    public function create(Request $request, CreateGameAction $createGameAction): RedirectResponse
     {
         $validated = $request->validate([
             'name' => 'nullable|string|max:255',
@@ -66,7 +70,7 @@ class GameController extends Controller
             $validated['name'] = auth()->user()->name."'s Game";
         }
 
-        $game = $createGame->create($validated);
+        $game = $createGameAction->execute($validated);
 
         // $inviteLink = InviteLink::create([
         //     'game_id' => $game->id,
