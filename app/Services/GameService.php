@@ -8,7 +8,4 @@ namespace App\Services;
  * - Leaving
  * - gameplay logic, tbc
  */
-class GameService
-{
-
-}
+class GameService {}
