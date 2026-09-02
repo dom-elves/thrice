@@ -72,14 +72,19 @@ class GameService
         // but for now, just as if the user is leaving the game without doing anything
 
         $key = "game_user:{$gameUser->id}";
+        $state = Redis::hgetall($key);
 
         Redis::pipeline(function ($pipe) use ($gameUser) {
-            $pipe->hmset("game_user:{$gameUser->id}", [
-                'leave_time' => Carbon::now()->toDateTimeString(),
+            $pipe->hgetdel("game_user:{$gameUser->id}", [
+                'game_id',
+                'user_id',
+                'start_balance',
+                'end_balance',
+                'join_time',
+                'leave_time',
+                'in_game',
             ]);
         });
-
-        $state = Redis::hgetall($key);
 
         $gameUser->update([
             // balance incr
