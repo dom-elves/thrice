@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Redis;
 
 /**
  * Service layer for handing game logic, basically anything that interacts with Redis.
+ * - Game creation
  * - Joining
  * - Leaving
  * - gameplay logic, tbc
@@ -17,22 +18,27 @@ class GameService
     public function createGame($game)
     {
         Redis::pipeline(function ($pipe) use ($game) {
-            $pipe->hset("game:{$game->id}", 'name', $game->name); // omitting password for now as rather just have it in mysql db
-            $pipe->hset("game:{$game->id}", 'hands', 0);
-            $pipe->hset("game:{$game->id}", 'finished', $game->finished ? '1' : '0');
-            $pipe->hset("game:{$game->id}", 'start', $game->created_at->toDateTimeString());
+           $pipe->hmset("game:{$game->id}", [
+                'name'     => $game->name,
+                'hands'    => 0,
+                'finished' => $game->finished ? '1' : '0',
+                'start'    => $game->created_at->toDateTimeString(),
+            ]); 
         });
     }
 
     public function joinGame($gameUser)
     {
         Redis::pipeline(function ($pipe) use ($gameUser) {
-            $pipe->hset("game_user:{$gameUser->id}", 'game_id', $gameUser->game->id);
-            $pipe->hset("game_user:{$gameUser->id}", 'user_id', $gameUser->user->id);
-            $pipe->hset("game_user:{$gameUser->id}", 'start_balance', $gameUser->start_balance);
-            $pipe->hset("game_user:{$gameUser->id}", 'end_balance', $gameUser->end_balance);
-            $pipe->hset("game_user:{$gameUser->id}", 'join_time', Carbon::now()->toDateTimeString());
-            $pipe->hset("game_user:{$gameUser->id}", 'leave_time', null);
+            $pipe->hmset("game_user:{$gameUser->id}", [
+                'game_id'       => $gameUser->game->id,
+                'user_id'       => $gameUser->user->id,
+                'start_balance' => $gameUser->start_balance,
+                'end_balance'   => $gameUser->end_balance,
+                'join_time'     => Carbon::now()->toDateTimeString(),
+                'leave_time'    => '',
+                'in_game'       => 1,
+            ]);
         });
 
         $gameUser->update([
@@ -40,5 +46,15 @@ class GameService
         ]);
 
         event(new GameUserJoined($gameUser));
+    }
+
+    public function leaveGame($gameUser)
+    {
+        // this will eventually need to include a bunch of logic for game state
+        // but for now, just as if the user is leaving the game without doing anything
+
+        Redis::pipeline(function ($pipe) use ($gameUser) {
+            $pipe->hset("game_user:{$gameUser->id}", 'leave_time', Carbon::now()->toDateTimeString());
+        });
     }
 }
