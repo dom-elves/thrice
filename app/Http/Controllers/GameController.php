@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Actions\Game\CreateGame;
-use App\Actions\Game\CreateGameUser;
-use App\Events\GameUserCreated;
+use App\Actions\Game\CreateGameAction;
+use App\Actions\Game\CreateGameUserAction;
+use App\Events\GameUserJoined;
 use App\Models\Game;
 use App\Models\GameUser;
 use App\Models\InviteLink;
+use App\Services\GameService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
@@ -21,8 +22,10 @@ class GameController extends Controller
      * show() method assumes the user has made it past the checks in CheckGameStatus middleware.
      * It checks if the game exists, is finished, is full, then if the user is already in the game.
      * These checks then assume the game is active and with an empty space.
-     * If the user is already in the game, just return the game.
-     * Otherwise, create a new GameUser for them first.
+     *
+     * If game user does not exist, create & join
+     * If game is exists & not in game, just join
+     * Finally if game user is in game, broadcast join event
      */
     public function show(string $gameId): InertiaResponse|RedirectResponse
     {
@@ -32,22 +35,17 @@ class GameController extends Controller
             ->where('user_id', $user->id)
             ->first();
 
-        // maybe here i can just check redis for a user session
-        // rather than game->users
-        // that way, they can be redirected to the correct game
-        // but then again, i need to build proper invite links etc so
-        // the games are unique and can't be guessed
-
         if (! $gameUser) {
-            $createGameUser = new CreateGameUser;
-            $createGameUser->create($game->id, $user->id);
-        } else {
-            // todo: either add an identical broadcast or change the name of this
-            // depends if further down the line any sort of distinction between
-            // game user being created and immediately joining a game
-            // or just joining a game
+            $createGameUserAction = new CreateGameUserAction(
+                app()->make(GameService::class)
+            );
 
-            event(new GameUserCreated($gameUser));
+            $createGameUserAction->execute($game->id, $user->id);
+        } elseif (! $gameUser->in_game) {
+            $gameService = new GameService;
+            $gameService->joinGame($gameUser);
+        } else {
+            event(new GameUserJoined($gameUser));
         }
 
         return Inertia::render('Game', [
@@ -55,7 +53,7 @@ class GameController extends Controller
         ]);
     }
 
-    public function create(Request $request, CreateGame $createGame): RedirectResponse
+    public function create(Request $request, CreateGameAction $createGameAction): RedirectResponse
     {
         $validated = $request->validate([
             'name' => 'nullable|string|max:255',
@@ -66,7 +64,7 @@ class GameController extends Controller
             $validated['name'] = auth()->user()->name."'s Game";
         }
 
-        $game = $createGame->create($validated);
+        $game = $createGameAction->execute($validated);
 
         // $inviteLink = InviteLink::create([
         //     'game_id' => $game->id,
@@ -78,7 +76,17 @@ class GameController extends Controller
             ->action([self::class, 'show'], ['id' => $game->id]);
     }
 
-    // public function leave(Request $request) {}
+    public function leave(Request $request): RedirectResponse
+    {
+        $gameUser = GameUser::where('game_id', $request->route('id'))
+            ->where('user_id', auth()->id())
+            ->firstOrFail();
+
+        $gameService = new GameService;
+        $gameService->leaveGame($gameUser);
+
+        return redirect('dashboard');
+    }
 
     // public function play(Request $request)
     // {

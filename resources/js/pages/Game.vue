@@ -26,7 +26,7 @@ function leaveGame() {
 }
 
 useEchoNotification(`App.Models.Game.${game.id}`, (notification: any) => {
-    console.log('hit', notification.gameUser);
+    console.log('hit', notification);
 });
 
 onMounted(() => {

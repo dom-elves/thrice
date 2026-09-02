@@ -2,11 +2,11 @@
 
 namespace App\Listeners;
 
-use App\Events\GameUserCreated;
+use App\Events\GameUserJoined;
 use App\Notifications\GameUserJoinedNotification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class GameUserCreatedListener implements ShouldQueue
+class GameUserJoinedListener implements ShouldQueue
 {
     /**
      * Create the event listener.
@@ -19,7 +19,7 @@ class GameUserCreatedListener implements ShouldQueue
     /**
      * Handle the event.
      */
-    public function handle(GameUserCreated $event): void
+    public function handle(GameUserJoined $event): void
     {
         $event->gameUser->game->notify(new GameUserJoinedNotification($event->gameUser));
     }
