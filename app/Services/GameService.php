@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Events\GameUserCreated;
+use App\Events\GameUserJoined;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Redis;
 
@@ -35,6 +35,6 @@ class GameService
             $pipe->hset("game_user:{$gameUser->id}", 'leave_time', null);
         });
 
-        event(new GameUserCreated($gameUser));
+        event(new GameUserJoined($gameUser));
     }
 }

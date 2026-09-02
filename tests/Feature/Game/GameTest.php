@@ -1,6 +1,6 @@
 <?php
 
-use App\Events\GameUserCreated;
+use App\Events\GameUserJoined;
 use App\Models\Game;
 use App\Models\GameUser;
 use App\Models\User;
@@ -24,7 +24,7 @@ test('user can create a game, and a game user for them is created', function () 
         'password' => 'password',
     ]);
 
-    Event::assertDispatched(GameUserCreated::class);
+    Event::assertDispatched(GameUserJoined::class);
 
     $game = Game::where('name', 'test game')->first();
 
@@ -45,7 +45,7 @@ test('user can create a game, and a game user for them is created', function () 
 test('creating a game with no name defaults it to the users name', function () {
     $response = $this->post(route('game.create'));
 
-    Event::assertDispatched(GameUserCreated::class);
+    Event::assertDispatched(GameUserJoined::class);
 
     $game = Game::first();
 
@@ -64,7 +64,7 @@ test('user can join a created game, and has a user created for them', function (
 
     $response = $this->actingAs($user)->get(route('game.show', $game));
 
-    Event::assertDispatched(GameUserCreated::class);
+    Event::assertDispatched(GameUserJoined::class);
 
     $response->assertInertia(fn (Assert $page) => $page->component('Game')
         ->has('game')
@@ -88,7 +88,7 @@ test('user can join a game with no password', function () {
 
     $response = $this->actingAs($user)->get(route('game.show', $game));
 
-    Event::assertDispatched(GameUserCreated::class);
+    Event::assertDispatched(GameUserJoined::class);
 
     $response->assertInertia(fn (Assert $page) => $page->component('Game')
         ->has('game')
@@ -101,7 +101,7 @@ test('user can join a game with a password', function () {});
 test('user can not join a game that does not exist', function () {
     $response = $this->get(route('game.show', ['id' => 1000]));
 
-    Event::assertNotDispatched(GameUserCreated::class);
+    Event::assertNotDispatched(GameUserJoined::class);
 
     $response->assertRedirect('dashboard')
         ->assertInertiaFlash('message', 'Game does not exist');
@@ -118,7 +118,7 @@ test('user can not join a game that has finished', function () {
 
     $response = $this->get(route('game.show', $game));
 
-    Event::assertNotDispatched(GameUserCreated::class);
+    Event::assertNotDispatched(GameUserJoined::class);
 
     $response->assertRedirect('dashboard')
         ->assertInertiaFlash('message', 'Game is finished');
@@ -147,7 +147,7 @@ test('user can not join a game that is full', function () {
 
     $response = $this->actingAs($extra_user)->get(route('game.show', $game));
 
-    Event::assertNotDispatched(GameUserCreated::class);
+    Event::assertNotDispatched(GameUserJoined::class);
 
     $response->assertRedirect('dashboard')
         ->assertInertiaFlash('message', 'Game is full');

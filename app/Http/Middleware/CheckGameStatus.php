@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Symfony\Component\HttpFoundation\Response;
 
-class CheckGameStatus extends Middlware
+class CheckGameStatus
 {
     /**
      * Handle an incoming request.

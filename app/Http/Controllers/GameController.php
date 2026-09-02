@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Actions\Game\CreateGameAction;
 use App\Actions\Game\Action;
-use App\Events\GameUserCreated;
+use App\Events\GameUserJoined;
 use App\Models\Game;
 use App\Models\GameUser;
 use App\Models\InviteLink;
@@ -42,8 +42,8 @@ class GameController extends Controller
             $createGameUserAction = new CreateGameUserAction(
                 app()->make(\App\Services\GameService::class)
             );
-            
-            $createGameUserAction->create($game->id, $user->id);
+
+            $createGameUserAction->execute($game->id, $user->id);
         } else {
             // todo: either add an identical broadcast or change the name of this
             // depends if further down the line any sort of distinction between
@@ -51,7 +51,7 @@ class GameController extends Controller
             // or just joining a game
 
             // change this to redis join
-            event(new GameUserCreated($gameUser));
+            event(new GameUserJoined($gameUser));
         }
 
         return Inertia::render('Game', [

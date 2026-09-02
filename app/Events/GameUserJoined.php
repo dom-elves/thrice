@@ -9,7 +9,7 @@ use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class GameUserCreated
+class GameUserJoined
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
