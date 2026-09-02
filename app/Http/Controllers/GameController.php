@@ -76,7 +76,7 @@ class GameController extends Controller
             ->action([self::class, 'show'], ['id' => $game->id]);
     }
 
-    public function leave(Request $request)
+    public function leave(Request $request): RedirectResponse
     {
         $gameUser = GameUser::where('game_id', $request->route('id'))
             ->where('user_id', auth()->id())
@@ -84,6 +84,8 @@ class GameController extends Controller
 
         $gameService = new GameService;
         $gameService->leaveGame($gameUser);
+
+        return redirect('dashboard');
     }
 
     // public function play(Request $request)

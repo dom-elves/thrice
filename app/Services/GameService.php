@@ -15,7 +15,13 @@ use Illuminate\Support\Facades\Redis;
  */
 class GameService
 {
-    public function createGame($game)
+    /**
+     * Create an instance of the game in Redis
+     * 
+     * @param Game $game
+     * @return void
+     */
+    public function createGame(Game $game): void
     {
         Redis::pipeline(function ($pipe) use ($game) {
             $pipe->hmset("game:{$game->id}", [
@@ -27,7 +33,13 @@ class GameService
         });
     }
 
-    public function joinGame($gameUser)
+    /**
+     * Join a game, set the game user in Redis and broadcast the join event to the fe
+     * 
+     * @param GameUser $gameUser
+     * @return void
+     */
+    public function joinGame($gameUser): void
     {
         Redis::pipeline(function ($pipe) use ($gameUser) {
             $pipe->hmset("game_user:{$gameUser->id}", [
@@ -48,7 +60,13 @@ class GameService
         event(new GameUserJoined($gameUser));
     }
 
-    public function leaveGame($gameUser)
+    /**
+     * Leave a game, set the game user in Redis and broadcast the leave event to the fe
+     * 
+     * @param GameUser $gameUser
+     * @return void
+     */
+    public function leaveGame($gameUser): void
     {
         // this will eventually need to include a bunch of logic for game state
         // but for now, just as if the user is leaving the game without doing anything
@@ -62,10 +80,12 @@ class GameService
         });
 
         $state = Redis::hgetall($key);
-        dd($state);
+
         $gameUser->update([
             // balance incr
-            //
+            'in_game' => false,
         ]);
+
+        // broadcast eventually
     }
 }
