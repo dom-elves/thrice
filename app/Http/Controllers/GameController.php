@@ -52,7 +52,6 @@ class GameController extends Controller
         return Inertia::render('Game', [
             'game' => $game,
         ]);
-
     }
 
     public function create(Request $request, CreateGameAction $createGameAction): RedirectResponse
@@ -78,7 +77,15 @@ class GameController extends Controller
             ->action([self::class, 'show'], ['id' => $game->id]);
     }
 
-    // public function leave(Request $request) {}
+    public function leave(Request $request)
+    {
+        $gameUser = GameUser::where('game_id', $request->route('id'))
+            ->where('user_id', auth()->id())
+            ->firstOrFail();
+
+        $gameService = new GameService();
+        $gameService->leaveGame($gameUser);
+    }
 
     // public function play(Request $request)
     // {

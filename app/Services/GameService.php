@@ -19,10 +19,10 @@ class GameService
     {
         Redis::pipeline(function ($pipe) use ($game) {
            $pipe->hmset("game:{$game->id}", [
-                'name'     => $game->name,
-                'hands'    => 0,
+                'name' => $game->name,
+                'hands' => 0,
                 'finished' => $game->finished ? '1' : '0',
-                'start'    => $game->created_at->toDateTimeString(),
+                'start' => $game->created_at->toDateTimeString(),
             ]); 
         });
     }
@@ -31,13 +31,13 @@ class GameService
     {
         Redis::pipeline(function ($pipe) use ($gameUser) {
             $pipe->hmset("game_user:{$gameUser->id}", [
-                'game_id'       => $gameUser->game->id,
-                'user_id'       => $gameUser->user->id,
+                'game_id' => $gameUser->game->id,
+                'user_id' => $gameUser->user->id,
                 'start_balance' => $gameUser->start_balance,
-                'end_balance'   => $gameUser->end_balance,
-                'join_time'     => Carbon::now()->toDateTimeString(),
-                'leave_time'    => '',
-                'in_game'       => 1,
+                'end_balance' => $gameUser->end_balance,
+                'join_time' => Carbon::now()->toDateTimeString(),
+                'leave_time' => '',
+                'in_game' => 1,
             ]);
         });
 
@@ -53,8 +53,19 @@ class GameService
         // this will eventually need to include a bunch of logic for game state
         // but for now, just as if the user is leaving the game without doing anything
 
+        $key = "game_user:{$gameUser->id}";
+
         Redis::pipeline(function ($pipe) use ($gameUser) {
-            $pipe->hset("game_user:{$gameUser->id}", 'leave_time', Carbon::now()->toDateTimeString());
+            $pipe->hmset("game_user:{$gameUser->id}", [
+                'leave_time' => Carbon::now()->toDateTimeString(),
+            ]);
         });
+
+        $state = Redis::hgetall($key);
+        dd($state);
+        $gameUser->update([
+            // balance incr
+            //
+        ]);
     }
 }
