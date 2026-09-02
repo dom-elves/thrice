@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Actions\Game\CreateGameAction;
 use App\Actions\Game\CreateGameUserAction;
-use App\Actions\Game\Action;
 use App\Events\GameUserJoined;
 use App\Models\Game;
 use App\Models\GameUser;
@@ -23,7 +22,7 @@ class GameController extends Controller
      * show() method assumes the user has made it past the checks in CheckGameStatus middleware.
      * It checks if the game exists, is finished, is full, then if the user is already in the game.
      * These checks then assume the game is active and with an empty space.
-     * 
+     *
      * If game user does not exist, create & join
      * If game is exists & not in game, just join
      * Finally if game user is in game, broadcast join event
@@ -38,12 +37,12 @@ class GameController extends Controller
 
         if (! $gameUser) {
             $createGameUserAction = new CreateGameUserAction(
-                app()->make(\App\Services\GameService::class)
+                app()->make(GameService::class)
             );
 
             $createGameUserAction->execute($game->id, $user->id);
         } elseif (! $gameUser->in_game) {
-            $gameService = new GameService();
+            $gameService = new GameService;
             $gameService->joinGame($gameUser);
         } else {
             event(new GameUserJoined($gameUser));
@@ -83,7 +82,7 @@ class GameController extends Controller
             ->where('user_id', auth()->id())
             ->firstOrFail();
 
-        $gameService = new GameService();
+        $gameService = new GameService;
         $gameService->leaveGame($gameUser);
     }
 

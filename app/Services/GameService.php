@@ -13,17 +13,17 @@ use Illuminate\Support\Facades\Redis;
  * - Leaving
  * - gameplay logic, tbc
  */
-class GameService 
+class GameService
 {
     public function createGame($game)
     {
         Redis::pipeline(function ($pipe) use ($game) {
-           $pipe->hmset("game:{$game->id}", [
+            $pipe->hmset("game:{$game->id}", [
                 'name' => $game->name,
                 'hands' => 0,
                 'finished' => $game->finished ? '1' : '0',
                 'start' => $game->created_at->toDateTimeString(),
-            ]); 
+            ]);
         });
     }
 

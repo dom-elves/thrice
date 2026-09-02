@@ -5,13 +5,13 @@ namespace App\Actions\Game;
 use App\Models\GameUser;
 use App\Services\GameService;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Redis;
 
 class CreateGameUserAction
 {
     public function __construct(
         private GameService $gameService,
     ) {}
+
     /**
      * Create a GameUser when the user wishes to join a given game.
      */
