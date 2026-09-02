@@ -5,7 +5,6 @@ namespace App\Listeners;
 use App\Events\GameUserLeft;
 use App\Notifications\GameUserLeftNotification;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 
 class GameUserLeftListener implements ShouldQueue
 {

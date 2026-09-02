@@ -4,7 +4,6 @@ namespace App\Notifications;
 
 use App\Models\GameUser;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -49,7 +48,7 @@ class GameUserLeftNotification extends Notification implements ShouldBroadcast
     public function toBroadcast(object $notifiable): BroadcastMessage
     {
         return new BroadcastMessage([
-            'event' => 'game user ' . $this->gameUser->id . ' left',
+            'event' => 'game user '.$this->gameUser->id.' left',
             'gameUser' => $this->gameUser,
         ]);
     }

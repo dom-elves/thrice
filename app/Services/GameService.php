@@ -20,9 +20,8 @@ class GameService
 {
     /**
      * Create an instance of the game in Redis
-     * 
-     * @param Game $game
-     * @return void
+     *
+     * @param  Game  $game
      */
     public function createGame($game): void
     {
@@ -38,9 +37,8 @@ class GameService
 
     /**
      * Join a game, set the game user in Redis and broadcast the join event to the fe
-     * 
-     * @param GameUser $gameUser
-     * @return void
+     *
+     * @param  GameUser  $gameUser
      */
     public function joinGame($gameUser): void
     {
@@ -65,9 +63,8 @@ class GameService
 
     /**
      * Leave a game, set the game user in Redis and broadcast the leave event to the fe
-     * 
-     * @param GameUser $gameUser
-     * @return void
+     *
+     * @param  GameUser  $gameUser
      */
     public function leaveGame($gameUser): void
     {
