@@ -72,8 +72,7 @@ class GameController extends Controller
         //     'token' => Str::random(8),
         // ]);
 
-        return redirect()
-            ->action([self::class, 'show'], ['id' => $game->id]);
+        return redirect()->route('game.show', $game);
     }
 
     public function leave(Request $request): RedirectResponse
