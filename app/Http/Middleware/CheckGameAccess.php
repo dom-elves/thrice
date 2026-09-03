@@ -19,6 +19,7 @@ class CheckGameAccess
      */
     public function handle(Request $request, Closure $next): Response
     {
+        /** @var Game $game */
         $game = Game::findOrFail($request->route('game'));
         $userId = auth()->user()->id;
         $gameUser = GameUser::where('game_id', $game->id)
@@ -35,7 +36,7 @@ class CheckGameAccess
 
         // still need to figure out how to keep the active session
         // and not replace/break it
-        $ingame = Redis::sismember("game:{$game->id}:game_user_ids", $gameUserId);
+        $ingame = Redis::sismember("game:{$game->id}:game_user_ids", $gameUser->id);
 
         // todo: figure out best game is full condition
         // user has never been in game
