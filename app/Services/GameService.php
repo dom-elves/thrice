@@ -54,6 +54,8 @@ class GameService
             ]);
         });
 
+        Redis::sadd("game:{$gameUser->game->id}:game_user_ids", $gameUser->id);
+
         $gameUser->update([
             'in_game' => true,
         ]);
@@ -86,6 +88,8 @@ class GameService
             ]);
         });
 
+        Redis::srem("game:{$gameUser->game->id}:game_user_ids", $gameUser->id);
+
         $gameUser->update([
             // balance incr
             'in_game' => false,
@@ -93,6 +97,15 @@ class GameService
 
         event(new GameUserLeft($gameUser));
 
-        // todo: takedown game if empty
+        if (! Redis::exists("game:{$gameUser->game->id}:game_user_ids")) {
+            dd('games gone');
+        } else {
+            dd('games back');
+        }
+
+        // todo: destroy game job
+        // - check mysql game->players or w/e
+        // - destroy game, containing logic to take down redis users too
+        // doesn't need to happen instantly, hence job
     }
 }
