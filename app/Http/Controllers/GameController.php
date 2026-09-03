@@ -34,6 +34,7 @@ class GameController extends Controller
             ->where('user_id', $user->id)
             ->first();
 
+        // todo: maybe move all this to be after a game password check
         $gameService = app(GameService::class);
 
         if (! $gameUser) {

@@ -32,14 +32,10 @@ class CheckGameAccess
 
             return redirect('dashboard');
         }
-  
+
         // still need to figure out how to keep the active session
         // and not replace/break it
         $ingame = Redis::sismember("game:{$game->id}:game_user_ids", $gameUserId);
-        
-        
-
-        
 
         // todo: figure out best game is full condition
         // user has never been in game

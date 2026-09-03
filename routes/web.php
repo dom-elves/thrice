@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\GameController;
-use App\Http\Middleware\CheckGameStatus;
 use App\Models\GameUser;
 use Illuminate\Support\Facades\Route;
 

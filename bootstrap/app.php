@@ -23,8 +23,8 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         $middleware->alias([
-            'game.status' => \App\Http\Middleware\CheckGameStatus::class,
-            'game.access' => \App\Http\Middleware\CheckGameAccess::class,
+            'game.status' => CheckGameStatus::class,
+            'game.access' => CheckGameAccess::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
