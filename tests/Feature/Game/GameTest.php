@@ -179,10 +179,10 @@ test('user can not join a game that is full, that they been in before', function
 
     // manually create the game user, but set them out of game
     GameUser::factory()->create([
-            'user_id' => $extra_user->id,
-            'game_id' => $game->id,
-            'in_game' => 0,
-        ]);
+        'user_id' => $extra_user->id,
+        'game_id' => $game->id,
+        'in_game' => 0,
+    ]);
 
     $response = $this->actingAs($extra_user)->get(route('game.show', $game));
 

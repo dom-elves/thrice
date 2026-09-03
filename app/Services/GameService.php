@@ -92,5 +92,7 @@ class GameService
         ]);
 
         event(new GameUserLeft($gameUser));
+
+        // todo: takedown game if empty
     }
 }

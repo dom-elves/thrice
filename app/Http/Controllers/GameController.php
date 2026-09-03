@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Actions\Game\CreateGameAction;
 use App\Actions\Game\CreateGameUserAction;
-use App\Events\GameUserJoined;
 use App\Models\Game;
 use App\Models\GameUser;
 use App\Models\InviteLink;
