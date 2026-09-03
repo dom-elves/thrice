@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Middleware\CheckGameAccess;
+use App\Http\Middleware\CheckGameStatus;
 use App\Http\Middleware\HandleInertiaRequests;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -18,6 +20,11 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(append: [
             HandleInertiaRequests::class,
             AddLinkHeadersForPreloadedAssets::class,
+        ]);
+
+        $middleware->alias([
+            'game.status' => \App\Http\Middleware\CheckGameStatus::class,
+            'game.access' => \App\Http\Middleware\CheckGameAccess::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
