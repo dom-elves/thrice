@@ -19,7 +19,6 @@ class CheckGameAccess
      */
     public function handle(Request $request, Closure $next): Response
     {
-        /** @var Game $game */
         $game = Game::findOrFail($request->route('game'));
         $userId = auth()->user()->id;
         $gameUser = GameUser::where('game_id', $game->id)
