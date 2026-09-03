@@ -23,8 +23,8 @@ class GameController extends Controller
      * These checks then assume the game is active and with an empty space.
      *
      * If game user does not exist, create & join
-     * If game is exists & not in game, just join
-     * Finally if game user is in game, broadcast join event
+     * If game exists & user is not in game, join
+     * Otherwise, just return the game
      */
     public function show(string $gameId): InertiaResponse|RedirectResponse
     {
