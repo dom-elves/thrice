@@ -98,9 +98,9 @@ class GameService
         event(new GameUserLeft($gameUser));
 
         if (! Redis::exists("game:{$gameUser->game->id}:game_user_ids")) {
-            dd('games gone');
+            // dd('games gone');
         } else {
-            dd('games back');
+            // dd('games back');
         }
 
         // todo: destroy game job

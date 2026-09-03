@@ -23,5 +23,5 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::middleware(['auth', 'game.status', 'game.access'])->group(function () {
-    Route::get('/game/{game}', [GameController::class, 'show'])->name('game.show');
+    Route::get('/game/{id}', [GameController::class, 'show'])->name('game.show');
 });

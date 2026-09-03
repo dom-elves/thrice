@@ -104,8 +104,7 @@ test('user can not join a game that does not exist', function () {
 
     Event::assertNotDispatched(GameUserJoined::class);
 
-    $response->assertRedirect('dashboard')
-        ->assertInertiaFlash('message', 'Game does not exist');
+    $response->assertStatus(404);
 
     $this->assertDatabaseMissing('game_users', [
         'user_id' => $this->user->id,

@@ -19,7 +19,7 @@ class CheckGameStatus
     {
         // todo: this causes 404 where find() causes null
         // so eventually, build a proper 404 page
-        $game = Game::findOrFail((int)$request->route('game'));
+        $game = Game::findOrFail((int) $request->route('id'));
 
         if ($game->finished) {
             Inertia::flash([
