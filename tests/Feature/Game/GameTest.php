@@ -130,7 +130,7 @@ test('user can not join a game that has finished', function () {
     ]);
 });
 
-test('user can not join a game that is full', function () {
+test('user can not join a game that is full, that they have never been in', function () {
     $game = Game::factory()->create();
     $users = User::all();
 
@@ -143,6 +143,7 @@ test('user can not join a game that is full', function () {
         GameUser::factory()->create([
             'user_id' => $user->id,
             'game_id' => $game->id,
+            'in_game' => 1,
         ]);
     }
 
@@ -156,6 +157,44 @@ test('user can not join a game that is full', function () {
     $this->assertDatabaseMissing('game_users', [
         'user_id' => $extra_user->id,
         'game_id' => $game->id,
+    ]);
+});
+
+test('user can not join a game that is full, that they been in before', function () {
+    $game = Game::factory()->create();
+    $users = User::all();
+    // each user is 6 (self + 5 others)
+    foreach ($users as $user) {
+        GameUser::factory()->create([
+            'user_id' => $user->id,
+            'game_id' => $game->id,
+            'in_game' => 1,
+        ]);
+    }
+
+    $extra_user = User::factory()->create([
+        'name' => 'Do not let me join',
+        'email' => 'donotletmejoin@example.com',
+    ]);
+
+    // manually create the game user, but set them out of game
+    GameUser::factory()->create([
+            'user_id' => $extra_user->id,
+            'game_id' => $game->id,
+            'in_game' => 0,
+        ]);
+
+    $response = $this->actingAs($extra_user)->get(route('game.show', $game));
+
+    Event::assertNotDispatched(GameUserJoined::class);
+
+    $response->assertRedirect('dashboard')
+        ->assertInertiaFlash('message', 'Game is full');
+
+    $this->assertDatabaseHas('game_users', [
+        'user_id' => $extra_user->id,
+        'game_id' => $game->id,
+        'in_game' => 0,
     ]);
 });
 
