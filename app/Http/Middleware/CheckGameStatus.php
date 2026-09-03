@@ -17,24 +17,18 @@ class CheckGameStatus
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $gameId = (int) $request->route('id');
-        $game = Game::query()->find($gameId);
+        // todo: this causes 404 where find() causes null
+        // so eventually, build a proper 404 page
+        $game = Game::findOrFail($request->route('game'));
+        
+        if ($game->finished) {
+            Inertia::flash([
+                'message' => 'Game is finished',
+            ]);
 
-        if ($game === null) {
-            $message = 'Game does not exist';
-        } elseif ($game->finished) {
-            $message = 'Game is finished';
-        } elseif ($game->users->count() >= 6) {
-            // todo: check redis instead, once games can exceed 6 users
-            $message = 'Game is full';
-        } else {
-            return $next($request);
+            return redirect('dashboard');
         }
 
-        Inertia::flash([
-            'message' => $message,
-        ]);
-
-        return redirect('dashboard');
+        return $next($request);
     }
 }
