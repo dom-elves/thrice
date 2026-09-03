@@ -26,8 +26,9 @@ class GameController extends Controller
      * If game exists & user is not in game, join
      * Otherwise, just return the game
      */
-    public function show(Game $game): InertiaResponse|RedirectResponse
+    public function show(string $gameId): InertiaResponse|RedirectResponse
     {
+        $game = Game::findOrFail($gameId);
         $user = auth()->user();
         $gameUser = GameUser::where('game_id', $game->id)
             ->where('user_id', $user->id)
