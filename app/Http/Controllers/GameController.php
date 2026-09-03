@@ -35,17 +35,13 @@ class GameController extends Controller
             ->where('user_id', $user->id)
             ->first();
 
-        if (! $gameUser) {
-            $createGameUserAction = new CreateGameUserAction(
-                app()->make(GameService::class)
-            );
+        $gameService = app(GameService::class);
 
+        if (! $gameUser) {
+            $createGameUserAction = new CreateGameUserAction($gameService);
             $createGameUserAction->execute($game->id, $user->id);
         } elseif (! $gameUser->in_game) {
-            $gameService = new GameService;
             $gameService->joinGame($gameUser);
-        } else {
-            event(new GameUserJoined($gameUser));
         }
 
         return Inertia::render('Game', [
