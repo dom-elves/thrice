@@ -25,6 +25,12 @@ class CheckGameAccess
             ->where('user_id', $userId)
             ->first();
 
+        $activeSessionId = Redis::hget("game_user:{$gameUser->id}", 'user_session_id');
+
+        if ($activeSessionId !== session()->getId()) {
+            // dd('not allowed');
+        }
+
         if (Redis::scard("game:{$game->id}:game_user_ids") === 6) {
             Inertia::flash([
                 'message' => 'Game is full',
@@ -36,7 +42,7 @@ class CheckGameAccess
         // still need to figure out how to keep the active session
         // and not replace/break it
         $ingame = Redis::sismember("game:{$game->id}:game_user_ids", $gameUser->id);
-
+        // dd($ingame);
         // todo: figure out best game is full condition
         // user has never been in game
         // user has previously been in game
