@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\GameController;
-use App\Http\Middleware\CheckGameStatus;
 use App\Models\GameUser;
 use Illuminate\Support\Facades\Route;
 
@@ -23,6 +22,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/play-hand', [GameController::class, 'play'])->name('play.hand');
 });
 
-Route::middleware([CheckGameStatus::class, 'auth'])->group(function () {
+Route::middleware(['auth', 'game.access'])->group(function () {
     Route::get('/game/{id}', [GameController::class, 'show'])->name('game.show');
 });

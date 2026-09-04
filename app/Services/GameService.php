@@ -51,8 +51,11 @@ class GameService
                 'join_time' => Carbon::now()->toDateTimeString(),
                 'leave_time' => '',
                 'in_game' => 1,
+                'user_session_id' => session()->getId(),
             ]);
         });
+
+        Redis::sadd("game:{$gameUser->game->id}:game_user_ids", $gameUser->id);
 
         $gameUser->update([
             'in_game' => true,
@@ -72,14 +75,22 @@ class GameService
         // but for now, just as if the user is leaving the game without doing anything
 
         $key = "game_user:{$gameUser->id}";
+        $state = Redis::hgetall($key);
 
         Redis::pipeline(function ($pipe) use ($gameUser) {
-            $pipe->hmset("game_user:{$gameUser->id}", [
-                'leave_time' => Carbon::now()->toDateTimeString(),
+            $pipe->hgetdel("game_user:{$gameUser->id}", [
+                'game_id',
+                'user_id',
+                'start_balance',
+                'end_balance',
+                'join_time',
+                'leave_time',
+                'in_game',
+                'user_session_id',
             ]);
         });
 
-        $state = Redis::hgetall($key);
+        Redis::srem("game:{$gameUser->game->id}:game_user_ids", $gameUser->id);
 
         $gameUser->update([
             // balance incr
@@ -87,5 +98,16 @@ class GameService
         ]);
 
         event(new GameUserLeft($gameUser));
+
+        if (! Redis::exists("game:{$gameUser->game->id}:game_user_ids")) {
+            // dd('games gone');
+        } else {
+            // dd('games back');
+        }
+
+        // todo: destroy game job
+        // - check mysql game->players or w/e
+        // - destroy game, containing logic to take down redis users too
+        // doesn't need to happen instantly, hence job
     }
 }
