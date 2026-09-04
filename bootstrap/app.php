@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Middleware\CheckGameAccess;
-use App\Http\Middleware\CheckGameStatus;
 use App\Http\Middleware\HandleInertiaRequests;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -23,7 +22,6 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         $middleware->alias([
-            'game.status' => CheckGameStatus::class,
             'game.access' => CheckGameAccess::class,
         ]);
     })
