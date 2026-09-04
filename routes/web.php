@@ -22,6 +22,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/play-hand', [GameController::class, 'play'])->name('play.hand');
 });
 
-Route::middleware(['auth', 'game.status', 'game.access'])->group(function () {
+Route::middleware(['auth', 'game.access'])->group(function () {
     Route::get('/game/{id}', [GameController::class, 'show'])->name('game.show');
 });
