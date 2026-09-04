@@ -23,7 +23,7 @@ class CheckGameAccess
 
         if (! $game) {
             Inertia::flash([
-                'message' => "Game does not exist",
+                'message' => 'Game does not exist',
             ]);
 
             return redirect('dashboard');
@@ -35,7 +35,7 @@ class CheckGameAccess
 
         if ($game->finished) {
             Inertia::flash([
-                'message' => "Game is finished",
+                'message' => 'Game is finished',
             ]);
 
             return redirect('dashboard');
@@ -43,7 +43,7 @@ class CheckGameAccess
 
         if (Redis::scard("game:{$game->id}:game_user_ids") === 6) {
             Inertia::flash([
-                'message' => "Game is full",
+                'message' => 'Game is full',
             ]);
 
             return redirect('dashboard');
