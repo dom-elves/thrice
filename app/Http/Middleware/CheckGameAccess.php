@@ -19,34 +19,54 @@ class CheckGameAccess
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $game = Game::findOrFail((int) $request->route('id'));
-        $userId = auth()->user()->id;
-        $gameUser = GameUser::where('game_id', $game->id)
-            ->where('user_id', $userId)
-            ->first();
+        $game = Game::find((int) $request->route('id'));
 
-        $activeSessionId = Redis::hget("game_user:{$gameUser->id}", 'user_session_id');
-
-        if ($activeSessionId !== session()->getId()) {
-            // dd('not allowed');
-        }
-
-        if (Redis::scard("game:{$game->id}:game_user_ids") === 6) {
+        if (! $game) {
             Inertia::flash([
-                'message' => 'Game is full',
+                'message' => "Game does not exist",
             ]);
 
             return redirect('dashboard');
         }
 
-        // still need to figure out how to keep the active session
-        // and not replace/break it
-        $ingame = Redis::sismember("game:{$game->id}:game_user_ids", $gameUser->id);
-        // dd($ingame);
-        // todo: figure out best game is full condition
-        // user has never been in game
-        // user has previously been in game
-        // user is in game?
+        if ($request->session()->pull('new_game') === $game->id) {
+            return $next($request);
+        }
+
+        if ($game->finished) {
+            Inertia::flash([
+                'message' => "Game is finished",
+            ]);
+
+            return redirect('dashboard');
+        }
+
+        if (Redis::scard("game:{$game->id}:game_user_ids") === 6) {
+            Inertia::flash([
+                'message' => "Game is full",
+            ]);
+
+            return redirect('dashboard');
+        }
+
+        $userId = auth()->user()->id;
+        $gameUser = GameUser::where('game_id', $game->id)
+            ->where('user_id', $userId)
+            ->first();
+
+        if (! $gameUser) {
+            return $next($request);
+        }
+
+        $activeSessionId = Redis::hget("game_user:{$gameUser->id}", 'user_session_id');
+
+        if ($activeSessionId && $activeSessionId !== session()->getId()) {
+            Inertia::flash([
+                'message' => "You're already in this game in another browser",
+            ]);
+
+            return redirect('dashboard');
+        }
 
         return $next($request);
     }

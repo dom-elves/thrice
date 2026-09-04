@@ -62,11 +62,7 @@ class GameController extends Controller
 
         $game = $createGameAction->execute($validated);
 
-        // $inviteLink = InviteLink::create([
-        //     'game_id' => $game->id,
-        //     'user_id' => $user->id,
-        //     'token' => Str::random(8),
-        // ]);
+        $request->session()->put('new_game', $game->id);
 
         return redirect()->route('game.show', $game);
     }
