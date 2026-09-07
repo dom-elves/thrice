@@ -50,6 +50,7 @@ class GameUserJoinedNotification extends Notification implements ShouldBroadcast
         return new BroadcastMessage([
             'event' => 'game user '.$this->gameUser->id.' joined',
             'gameUser' => $this->gameUser,
+            'name' => $this->gameUser->user->name,
         ]);
     }
 
