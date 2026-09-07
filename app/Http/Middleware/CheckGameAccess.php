@@ -55,11 +55,10 @@ class CheckGameAccess
          * - if game is new (just been made bu the user)
          * - if game is finished
          * - if game is full
-         * 
+         *
          * From here, the game is considered to be in a "joinable" state
          * Which just means it is active, and not full
          */
-
         $userId = auth()->user()->id;
         $gameUser = GameUser::where('game_id', $game->id)
             ->where('user_id', $userId)

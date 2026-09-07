@@ -6,7 +6,6 @@ use App\Models\Game;
 use App\Models\GameUser;
 use App\Models\User;
 use Carbon\Carbon;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Redis;
 
@@ -14,13 +13,13 @@ class LiveGameSeeder extends Seeder
 {
     /**
      * Run the database seeds.
-     * 
+     *
      * Can't figure out a way to also have my session be the same as a seeded one
      * So the run is like this:
      * - flush redis db, as this will always run off the back of migrate:fresh --seed
      * - create user (mysql)
      * - loop over other names, creating user, gameUser, redis gameUser and redis set
-     * 
+     *
      * The end result is a game with 5/6 people, leaving space for myself to join
      */
     public function run(): void
@@ -51,7 +50,6 @@ class LiveGameSeeder extends Seeder
             'password' => bcrypt('password'),
         ]);
 
-
         // same process, but everyone else too
         $names = ['harry', 'ty', 'bag', 'lewis', 'remi'];
 
@@ -59,7 +57,7 @@ class LiveGameSeeder extends Seeder
 
             $user = User::create([
                 'name' => $name,
-                'email' => $name . '@example.com',
+                'email' => $name.'@example.com',
                 'password' => bcrypt('password'),
             ]);
 
