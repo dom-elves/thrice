@@ -28,5 +28,26 @@ class DatabaseSeeder extends Seeder
             'email' => 'dom2@example.com',
             'password' => bcrypt('password'),
         ]);
+
+        $names = ['harry', 'ty', 'bag', 'lewis', 'remi'];
+
+        $game = Game::create([
+            'name' => 'test game',
+            'password' => '',
+            'finished' => 0,
+        ]);
+
+        foreach ($names as $name) {
+            $user = User::create([
+                'name' => $name,
+                'email' => $name.'@example.com',
+                'password' => bcrypt('password'),
+            ]);
+
+            $gameUser = GameUser::create([
+                'game_id' => $game->id,
+                'user_id' => $user->id,
+            ]);
+        }
     }
 }
