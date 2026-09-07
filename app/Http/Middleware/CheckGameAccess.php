@@ -49,11 +49,30 @@ class CheckGameAccess
             return redirect('dashboard');
         }
 
+        /**
+         * At this point, we've checked the following:
+         * - game existence
+         * - if game is new (just been made bu the user)
+         * - if game is finished
+         * - if game is full
+         * 
+         * From here, the game is considered to be in a "joinable" state
+         * Which just means it is active, and not full
+         */
+
         $userId = auth()->user()->id;
         $gameUser = GameUser::where('game_id', $game->id)
             ->where('user_id', $userId)
             ->first();
 
+        // this has to exist because a null varaible in the redis::hget for active ssession
+        // will then mess with the comparison further down the line
+        // so just throw the user into the controller, even if that means 1 extra query
+        // otherwise, i'd have to move the session id check into the controller
+        // which doesn't really make sense, as when you get to the show() method,
+        // should mean the game is fully joinable
+        // unless further down the line, polling prevents this check from
+        // even being necesary
         if (! $gameUser) {
             return $next($request);
         }
