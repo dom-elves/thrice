@@ -196,6 +196,8 @@ test('leaving the game via the button removes the user from the game', function 
     ]);
 });
 
+test('leaving the game via logging out removes the user from the game', function () {});
+
 // no iea how to actually do this, must look into it
 test('leaving the game via closing the active tab/window removes the user from the game', function () {});
 

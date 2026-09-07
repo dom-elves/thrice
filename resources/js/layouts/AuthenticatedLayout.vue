@@ -22,7 +22,7 @@ const logout = () => {
             </ul>
         </nav>
         <main
-            class="flex w-full flex-1 flex-col items-center justify-center bg-red-100"
+            class="flex flex-col w-full flex-1 items-center bg-cyan-100"
         >
             <slot />
         </main>
