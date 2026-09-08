@@ -15,8 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('password')->nullable();
-            $table->integer('hands')->nullable();
+            $table->boolean('started')->default(false);
             $table->boolean('finished')->default(false);
+            $table->integer('hands')->nullable();
             $table->timestamps();
         });
     }

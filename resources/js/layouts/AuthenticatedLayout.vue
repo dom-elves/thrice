@@ -21,9 +21,7 @@ const logout = () => {
                 </li>
             </ul>
         </nav>
-        <main
-            class="flex w-full flex-1 flex-col items-center justify-center bg-red-100"
-        >
+        <main class="flex w-full flex-1 flex-col items-center bg-cyan-100">
             <slot />
         </main>
     </div>

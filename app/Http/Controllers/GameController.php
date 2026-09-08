@@ -65,6 +65,17 @@ class GameController extends Controller
         return redirect()->route('game.show', $game);
     }
 
+    public function ready(Game $game): void
+    {
+        if ($game->users->pluck('id')->contains(auth()->user()->id)) {
+            // not sure if to check redis or like
+            // just have an enitrely separate lobby/room thing
+            // maybe the game just sits there an exists
+            // and then don't even make game users until lobby checks are done
+            // becausae people can always leave...?
+        }
+    }
+
     public function leave(Request $request): RedirectResponse
     {
         $gameUser = GameUser::where('game_id', $request->route('id'))
