@@ -6,13 +6,32 @@ use App\Services\LobbyService;
 use Inertia\Response as InertiaResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 
 class LobbyController extends Controller
 {
-    public function show($code): InertiaResponse
+    /**
+     * Check the existsence of a lobby
+     * Then stick the user in if they're not already there
+     *
+     * Redis sets just overwrite so no dupe data from create() to worry about
+     */
+    public function show($code): RedirectResponse|InertiaResponse
     {
+        if (! Redis::exists("lobby:{$code}:user_ids")) {
+            Inertia::flash([
+                'message' => 'Lobby does not exist',
+            ]);
+
+            return redirect('dashboard');
+        }
+
+        if (! Redis::sismember("lobby:{$code}:user_ids", auth()->user()->id)) {
+            Redis::sadd("lobby:{$code}:user_ids", auth()->user()->id);
+        }
+
         return Inertia::render('Lobby', [
             'code' => $code,
         ]);
