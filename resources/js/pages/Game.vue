@@ -32,6 +32,10 @@ const playerReady = ref(false);
 useEchoNotification(`App.Models.Game.${game.id}`, (notification: any) => {
     console.log('hit', notification);
     activePlayers.value.push(notification.gameUser.user.name);
+
+    setTimeout( () => {
+        router.get('/dashboard')
+    }, 3000);
 });
 
 function ready() {
