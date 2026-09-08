@@ -13,7 +13,9 @@ class LobbyController extends Controller
 {
     public function show($code): InertiaResponse
     {
-        return Inertia::render('Lobby');
+        return Inertia::render('Lobby', [
+            'code' => $code,
+        ]);
     }
 
     public function create(Request $request, LobbyService $lobbyService): RedirectResponse

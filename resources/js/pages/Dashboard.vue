@@ -58,7 +58,7 @@ onMounted(() => {});
             <div v-if="creatingGame">
                 <Form
                     class="flex flex-col items-center justify-center gap-2 p-4"
-                    action="/create-game"
+                    action="/lobby/create"
                     method="post"
                     #default="{ errors }"
                 >
