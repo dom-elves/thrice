@@ -7,6 +7,7 @@ import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue';
 interface PageProps {
     [key: string]: unknown;
     code: string;
+    user: object;
 }
 
 const page = usePage<PageProps>();
@@ -53,7 +54,7 @@ onUnmounted(() => {
             <p>welcome to the lobby</p>
             <p>here are the users:</p>
             <ul>
-                <li v-for="user in users">
+                <li v-for="user in users" :key="user.id">
                     {{ user.name }}
                 </li>
             </ul>
