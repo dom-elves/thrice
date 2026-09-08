@@ -33,8 +33,8 @@ useEchoNotification(`App.Models.Game.${game.id}`, (notification: any) => {
     console.log('hit', notification);
     activePlayers.value.push(notification.gameUser.user.name);
 
-    setTimeout( () => {
-        router.get('/dashboard')
+    setTimeout(() => {
+        router.get('/dashboard');
     }, 3000);
 });
 
@@ -62,11 +62,14 @@ onMounted(() => {
         <div class="flex flex-col">
             <h1 class="text-2xl">{{ game.name }}</h1>
             <div class="grid grid-cols-4 text-center">
-                <div class="p-2 bg-blue-100">col1</div>
-                <div class="p-2 bg-blue-100 col-span-2">col2</div>
-                <div class="p-2 bg-blue-100">
+                <div class="bg-blue-100 p-2">col1</div>
+                <div class="col-span-2 bg-blue-100 p-2">col2</div>
+                <div class="bg-blue-100 p-2">
                     <p>active players</p>
-                    <p v-for="activePlayer in activePlayers" :key="activePlayer">
+                    <p
+                        v-for="activePlayer in activePlayers"
+                        :key="activePlayer"
+                    >
                         {{ activePlayer }}
                     </p>
                 </div>
@@ -74,12 +77,15 @@ onMounted(() => {
             <div>
                 <button
                     @click="ready"
-                    class="m-4 rounded border border-1 p-4 bg-green-100"
+                    class="m-4 rounded border border-1 bg-green-100 p-4"
                     :disabled="playerReady"
                 >
                     start game
                 </button>
-                <button @click="leaveGame" class="m-4 rounded border border-1 p-4 bg-red-300">
+                <button
+                    @click="leaveGame"
+                    class="m-4 rounded border border-1 bg-red-300 p-4"
+                >
                     leave game
                 </button>
             </div>
