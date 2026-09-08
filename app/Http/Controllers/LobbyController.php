@@ -19,7 +19,7 @@ class LobbyController extends Controller
      * - If not already in, add
      * - Enter
      */
-    public function show($code): RedirectResponse|InertiaResponse
+    public function show(string $code): RedirectResponse|InertiaResponse
     {
         if (! Redis::exists("lobby:{$code}:user_ids")) {
             Inertia::flash([
@@ -45,6 +45,7 @@ class LobbyController extends Controller
             $lobbyService = app(LobbyService::class);
             // will need to possibly add user/pw details here in the future
             $data['join_code'] = $code;
+            // currently using create when i could have an identical join but, we'll see
             $lobbyService->create($user, $data);
         }
 
@@ -71,5 +72,14 @@ class LobbyController extends Controller
         $lobbyService->create(auth()->user(), $data);
 
         return redirect()->route('lobby.show', $code);
+    }
+
+    public function leave(Request $request, string $code): RedirectResponse
+    {
+        $lobbyService = app(LobbyService::class);
+
+        $lobbyService->leave(auth()->user(), $code);
+
+        return redirect()->route('dashboard');
     }
 }
