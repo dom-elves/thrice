@@ -23,7 +23,7 @@ const { channel } = useEchoPresence(
 channel()
     .here((activeUsers) => {
         users.value = activeUsers;
-        console.log(users.value, ' is jere')
+        console.log(users.value, ' is jere');
     })
     .joining((user) => {
         console.log(user.name, ' joined');
@@ -46,7 +46,6 @@ function leaveLobby() {
 onUnmounted(() => {
     leaveLobby();
 });
-
 </script>
 <template>
     <AuthenticatedLayout>
@@ -59,11 +58,11 @@ onUnmounted(() => {
                 </li>
             </ul>
             <button
-                    @click="leaveLobby"
-                    class="m-4 rounded border border-1 bg-red-300 p-4"
-                >
-                    leave lobby
-                </button>
+                @click="leaveLobby"
+                class="m-4 rounded border border-1 bg-red-300 p-4"
+            >
+                leave lobby
+            </button>
         </div>
     </AuthenticatedLayout>
 </template>
