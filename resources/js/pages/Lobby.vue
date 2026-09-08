@@ -11,8 +11,8 @@ interface PageProps {
 }
 
 interface User {
-    id: number
-    name: string
+    id: number;
+    name: string;
 }
 
 const page = usePage<PageProps>();
