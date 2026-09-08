@@ -16,7 +16,7 @@ interface PageProps {
         name: string;
         hands: number;
     };
-    user: Object;
+    user: object;
 }
 
 const page = usePage<PageProps>();
@@ -72,8 +72,8 @@ onMounted(() => {
                 </div>
             </div>
             <div>
-                <button 
-                    @click="ready" 
+                <button
+                    @click="ready"
                     class="m-4 rounded border border-1 p-4 bg-green-100"
                     :disabled="playerReady"
                 >
