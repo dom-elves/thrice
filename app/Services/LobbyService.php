@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Events\Lobby\UserJoined;
 use App\Models\User;
 use Illuminate\Support\Facades\Redis;
 
@@ -17,9 +16,6 @@ class LobbyService
     public function create($user, $data): void
     {
         Redis::sadd("lobby:{$data['join_code']}:user_ids", $user->id);
-
-        // todo: find out why this is supposedly not needed
-        // event(new UserJoined($data['join_code']));
     }
 
     /**

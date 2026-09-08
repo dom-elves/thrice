@@ -2,6 +2,7 @@
 
 use App\Models\User;
 use Illuminate\Support\Facades\Event;
+use Inertia\Testing\AssertableInertia as Assert;
 
 beforeEach(function () {
     $this->user = User::factory()->create([
@@ -15,7 +16,6 @@ beforeEach(function () {
 });
 
 test('a user can create a lobby', function () {
-    // game name and pw are optional, will be tested in game controller
     $response = $this->post(route('lobby.create'));
 
     $response->assertSessionHasNoErrors()
@@ -23,10 +23,6 @@ test('a user can create a lobby', function () {
 });
 
 test('a user can join a lobby', function () {
-    // as this is all redis, gotta just create on again
-    // then join as a different user
-    // todo: page assertions when frontend is built, page contains etc
-
     $response = $this->post(route('lobby.create'));
     $joinCode = basename($response->getTargetUrl());
 
@@ -36,6 +32,11 @@ test('a user can join a lobby', function () {
         ]));
 
     $response->assertSessionHasNoErrors();
+
+    $response->assertInertia(fn (Assert $page) => $page->component('Lobby')
+        ->has('code')
+        ->where('code', $joinCode)
+    );
 });
 
 test('a user can not join a lobby that does not exist', function () {
@@ -49,4 +50,21 @@ test('a user can not join a lobby that does not exist', function () {
 
     $response->assertRedirect('dashboard')
         ->assertInertiaFlash('message', 'Lobby does not exist');
+});
+
+test('a user can leave a lobby', function () {
+    $response = $this->post(route('lobby.create'));
+    $joinCode = basename($response->getTargetUrl());
+
+    $this->actingAs($this->users[0])
+        ->get(route('lobby.show', [
+            'code' => $joinCode,
+        ]));
+
+    $response = $this->actingAs($this->users[0])
+        ->post(route('lobby.leave', [
+            'code' => $joinCode,
+        ]));
+
+    $response->assertRedirect('dashboard');
 });
