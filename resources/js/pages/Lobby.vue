@@ -10,9 +10,14 @@ interface PageProps {
     user: object;
 }
 
+interface User {
+    id: number
+    name: string
+}
+
 const page = usePage<PageProps>();
 const code = page.props.code;
-const users = ref([]);
+const users = ref(<User[]>[]);
 
 const { channel } = useEchoPresence(
     `lobby.${code}`,
@@ -21,17 +26,17 @@ const { channel } = useEchoPresence(
 );
 
 channel()
-    .here((activeUsers) => {
+    .here((activeUsers: User[]) => {
         users.value = activeUsers;
         console.log(users.value, ' is jere');
     })
-    .joining((user) => {
+    .joining((user: User) => {
         console.log(user.name, ' joined');
     })
-    .leaving((user) => {
+    .leaving((user: User) => {
         console.log(user.name, ' left');
     })
-    .error((error) => {
+    .error((error: unknown) => {
         console.error('e', error);
     });
 
