@@ -13,10 +13,11 @@ use Inertia\Inertia;
 class LobbyController extends Controller
 {
     /**
-     * Check the existsence of a lobby
-     * Then stick the user in if they're not already there
-     *
-     * Redis sets just overwrite so no dupe data from create() to worry about
+     * Brief logic explanation:
+     * - If no lobby, redirect
+     * - If full & not already in, redirect
+     * - If not already in, add
+     * - Enter
      */
     public function show($code): RedirectResponse|InertiaResponse
     {
@@ -28,8 +29,23 @@ class LobbyController extends Controller
             return redirect('dashboard');
         }
 
-        if (! Redis::sismember("lobby:{$code}:user_ids", auth()->user()->id)) {
-            Redis::sadd("lobby:{$code}:user_ids", auth()->user()->id);
+        $user = auth()->user();
+        $member = Redis::sismember("lobby:{$code}:user_ids", $user->id);
+        $full = Redis::scard("lobby:{$code}:user_ids)") === 6;
+
+        if ($full && !$member) {
+            Inertia::flash([
+                'message' => 'Lobby is full',
+            ]);
+
+            return redirect('dashboard');
+        }
+
+        if (!$member) {
+            $lobbyService = app(LobbyService::class);
+            // will need to possibly add user/pw details here in the future
+            $data['join_code'] = $code;
+            $lobbyService->create($user, $data);
         }
 
         return Inertia::render('Lobby', [
