@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { usePage } from '@inertiajs/vue3';
+import { usePage, router } from '@inertiajs/vue3';
 import { useEchoPresence } from '@laravel/echo-vue';
-import { ref } from 'vue';
+import { ref, onUnmounted } from 'vue';
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue';
 
 interface PageProps {
@@ -22,16 +22,29 @@ const { channel } = useEchoPresence(
 channel()
     .here((activeUsers) => {
         users.value = activeUsers;
+        console.log(users.value, ' is jere')
     })
     .joining((user) => {
-        console.log(user.name);
+        console.log(user.name, ' joined');
     })
     .leaving((user) => {
-        console.log(user.name);
+        console.log(user.name, ' left');
     })
     .error((error) => {
-        console.error(error);
+        console.error('e', error);
     });
+
+function leaveLobby() {
+    router.post(`/lobby/${code}/leave`, {
+        preserveState: true,
+        preserveScroll: true,
+        code: code,
+    });
+}
+
+onUnmounted(() => {
+    leaveLobby();
+});
 
 </script>
 <template>
@@ -44,6 +57,12 @@ channel()
                     {{ user.name }}
                 </li>
             </ul>
+            <button
+                    @click="leaveLobby"
+                    class="m-4 rounded border border-1 bg-red-300 p-4"
+                >
+                    leave lobby
+                </button>
         </div>
     </AuthenticatedLayout>
 </template>
