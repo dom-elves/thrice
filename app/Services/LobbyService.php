@@ -12,7 +12,7 @@ class LobbyService
      * Join a lobby in Redis.
      *
      * @param  User  $user;
-     * @param  array  $data;
+     * @param  array<string>  $data;
      */
     public function create($user, $data): void
     {
