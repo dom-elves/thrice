@@ -68,7 +68,7 @@ onMounted(() => {
                     <p>active players</p>
                     <p
                         v-for="activePlayer in activePlayers"
-                        :key="activePlayer"
+                        :key="activePlayer.id"
                     >
                         {{ activePlayer }}
                     </p>
