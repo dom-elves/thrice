@@ -65,7 +65,7 @@ class GameController extends Controller
         return redirect()->route('game.show', $game);
     }
 
-    public function ready(Game $game)
+    public function ready(Game $game): void
     {
         if ($game->users->pluck('id')->contains(auth()->user()->id)) {
             // not sure if to check redis or like
