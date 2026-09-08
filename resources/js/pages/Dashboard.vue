@@ -27,9 +27,7 @@ watch(
     },
 );
 
-onMounted(() => {
-    // console.log(page.flash);
-});
+onMounted(() => {});
 </script>
 
 <template>
