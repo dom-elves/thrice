@@ -32,7 +32,7 @@ test('a user can join a lobby', function () {
 
     $response = $this->actingAs($this->users[0])
         ->get(route('lobby.show', [
-            'code' => $joinCode
+            'code' => $joinCode,
         ]));
 
     $response->assertSessionHasNoErrors();
@@ -44,7 +44,7 @@ test('a user can not join a lobby that does not exist', function () {
 
     $response = $this->actingAs($this->users[0])
         ->get(route('lobby.show', [
-            'code' => $joinCode . '-not-a-real-code'
+            'code' => $joinCode.'-not-a-real-code',
         ]));
 
     $response->assertRedirect('dashboard')

@@ -11,8 +11,8 @@ class LobbyService
     /**
      * Join a lobby in Redis.
      *
-     * @param User $user;
-     * @param array $data;
+     * @param  User  $user;
+     * @param  array  $data;
      */
     public function create($user, $data): void
     {
@@ -25,8 +25,8 @@ class LobbyService
     /**
      * Leave a lobby in Redis.
      *
-     * @param User $user;
-     * @param string $code;
+     * @param  User  $user;
+     * @param  string  $code;
      */
     public function leave($user, $code): void
     {

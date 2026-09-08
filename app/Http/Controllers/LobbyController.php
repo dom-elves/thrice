@@ -3,12 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Services\LobbyService;
-use Inertia\Response as InertiaResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
+use Inertia\Response as InertiaResponse;
 
 class LobbyController extends Controller
 {
@@ -33,7 +33,7 @@ class LobbyController extends Controller
         $member = Redis::sismember("lobby:{$code}:user_ids", $user->id);
         $full = Redis::scard("lobby:{$code}:user_ids)") === 6;
 
-        if ($full && !$member) {
+        if ($full && ! $member) {
             Inertia::flash([
                 'message' => 'Lobby is full',
             ]);
@@ -41,7 +41,7 @@ class LobbyController extends Controller
             return redirect('dashboard');
         }
 
-        if (!$member) {
+        if (! $member) {
             $lobbyService = app(LobbyService::class);
             // will need to possibly add user/pw details here in the future
             $data['join_code'] = $code;
