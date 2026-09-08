@@ -17,7 +17,6 @@ Route::middleware('auth')->group(function () {
 // lobby
 Route::middleware('auth')->group( function () {
     Route::post('/lobby/create', [LobbyController::class, 'create'])->name('lobby.create');
-
     Route::get('/lobby/{code}', [LobbyController::class, 'show'])->name('lobby.show');
 });
 

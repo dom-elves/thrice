@@ -12,5 +12,6 @@ Broadcast::channel('App.Models.Game.{id}', function ($game, $id) {
 });
 
 Broadcast::channel('lobby.{code}', function ($user, $code) {
+    // add more info where necessary
     return ['id' => $user->id, 'name' => $user->name];
 });
