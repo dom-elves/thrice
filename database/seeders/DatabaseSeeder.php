@@ -2,13 +2,12 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 use App\Models\Game;
 use App\Models\GameUser;
+use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Redis;
-
 
 class DatabaseSeeder extends Seeder
 {

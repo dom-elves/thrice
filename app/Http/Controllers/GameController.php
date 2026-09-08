@@ -73,7 +73,7 @@ class GameController extends Controller
             // maybe the game just sits there an exists
             // and then don't even make game users until lobby checks are done
             // becausae people can always leave...?
-        };
+        }
     }
 
     public function leave(Request $request): RedirectResponse
