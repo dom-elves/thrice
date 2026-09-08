@@ -34,20 +34,20 @@ class DatabaseSeeder extends Seeder
             'password' => bcrypt('password'),
         ]);
 
-        $game = Game::create([
-            'name' => 'test game',
-            'password' => '',
-            'finished' => 0,
-        ]);
+        // $game = Game::create([
+        //     'name' => 'test game',
+        //     'password' => '',
+        //     'finished' => 0,
+        // ]);
 
-        Redis::pipeline(function ($pipe) use ($game) {
-            $pipe->hmset("game:{$game->id}", [
-                'name' => $game->name,
-                'hands' => 0,
-                'finished' => $game->finished ? '1' : '0',
-                'start' => $game->created_at->toDateTimeString(),
-            ]);
-        });
+        // Redis::pipeline(function ($pipe) use ($game) {
+        //     $pipe->hmset("game:{$game->id}", [
+        //         'name' => $game->name,
+        //         'hands' => 0,
+        //         'finished' => $game->finished ? '1' : '0',
+        //         'start' => $game->created_at->toDateTimeString(),
+        //     ]);
+        // });
 
         $names = ['harry', 'ty', 'bag', 'lewis', 'remi'];
 
@@ -58,10 +58,10 @@ class DatabaseSeeder extends Seeder
                 'password' => bcrypt('password'),
             ]);
 
-            $gameUser = GameUser::create([
-                'game_id' => $game->id,
-                'user_id' => $user->id,
-            ]);
+            // $gameUser = GameUser::create([
+            //     'game_id' => $game->id,
+            //     'user_id' => $user->id,
+            // ]);
         }
     }
 }
