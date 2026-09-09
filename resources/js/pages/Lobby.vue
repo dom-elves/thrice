@@ -18,7 +18,7 @@ interface User {
 const page = usePage<PageProps>();
 const code = page.props.code;
 const users = ref(<User[]>[]);
-const isReady = ref(null);
+const isReady = ref(false);
 
 const { channel } = useEchoPresence(
     `lobby.${code}`,
@@ -47,7 +47,18 @@ function ready() {
     router.post(`/lobby/${code}/ready`, {
         preserveState: true,
         preserveScroll: true,
-    });
+    },
+    {
+        onSuccess: (response) => {
+            console.log('r', response);
+            isReady.value = true;
+        },
+        onError: (error) => {
+            console.log(error);
+            isReady.value = false;
+        },
+    }
+);
 }
 
 function leaveLobby() {
@@ -58,6 +69,7 @@ function leaveLobby() {
 }
 
 onUnmounted(() => {
+    console.log('random unmount');
     leaveLobby();
 });
 </script>
@@ -73,7 +85,9 @@ onUnmounted(() => {
             </ul>
             <button
                 @click="ready"
-                class="m-4 rounded border border-1 bg-red-300 p-4"
+                class="m-4 rounded border border-1 p-4"
+                :class="isReady ? 'bg-green-300 cursor-not-allowed' : 'bg-blue-300 cursor-pointer'"
+                :disabled="isReady"
             >
                 ready
             </button>

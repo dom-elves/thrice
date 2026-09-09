@@ -39,6 +39,7 @@ class LobbyService
      */
     public function ready($user, $code): array
     {
+        // put a 1s lock or something on this to prevent race conditions
         Redis::sadd("lobby:{$code}:ready_user_ids", $user->id);
 
         // sdiff returns an array of values that do not match

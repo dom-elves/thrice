@@ -23,8 +23,10 @@ class LobbyController extends Controller
      * - check lobby is full & user is not in
      * - so if lobby is not full and user is not member, join
      */
-    public function show(string $code): RedirectResponse|InertiaResponse
+    public function show(Request $request): RedirectResponse|InertiaResponse
     {
+        $code = $request->route('code');
+
         if (! Redis::exists("lobby:{$code}:user_ids")) {
             Inertia::flash([
                 'message' => 'Lobby does not exist',
@@ -83,40 +85,26 @@ class LobbyController extends Controller
 
     /**
      * - set self to ready, return bool on $allReady, int on player count
-     * - return back if just 1 player (though may be able to remove this)
-     * - return back if not everyone is ready
-     * - if neither conditions met, create game
+     * - todo: figre out best way to trigger game start from here
      */
-    public function ready(Request $request): InertiaResponse
+    public function ready(Request $request): RedirectResponse
     {
         [$allReady, $playerCount] = $this->lobbyService->ready(auth()->user(), $request->route('code'));
         
-        
-        return redirect()->route('lobby.show');
-
-    
-        // if ($playerCount === 1) {
-        //     Inertia::flash([
-        //         'message' => 'Not enough players are ready',
-        //     ]);
-
-        //     return back();
-        // }
-
-        // if (! $allReady) {
-        //     Inertia::flash([
-        //         'message' => 'Not all players are ready',
-        //     ]);
-
-        //     return back();
-        // }
-
-        // // create game job, this is a placeholder
-        // $game = '';
-
-        // return Inertia::render('Game', [
-        //     'game' => $game,
-        // ]);
+        if ($allReady && $playerCount > 1) {
+            // lock on all requests when this conditions is met
+            // make game in mysql & redis
+            // game users in mysql & redis
+            // when complete, broadcast(?) to all users in lobby
+            // or maybe just do if (pc === 6) for user that sent req
+        } else {
+            return redirect()
+                ->route('lobby.show', $request->route('code'))
+                ->with([
+                    'allReady' => $allReady,
+                    'playerCount' => $playerCount,
+                ]);
+        }
     }
 
     /**
