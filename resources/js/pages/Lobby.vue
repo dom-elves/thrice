@@ -18,6 +18,7 @@ interface User {
 const page = usePage<PageProps>();
 const code = page.props.code;
 const users = ref(<User[]>[]);
+const isReady = ref(null);
 
 const { channel } = useEchoPresence(
     `lobby.${code}`,
@@ -25,10 +26,12 @@ const { channel } = useEchoPresence(
     () => {},
 );
 
+// echo
 channel()
     .here((activeUsers: User[]) => {
         users.value = activeUsers;
         console.log(users.value, ' is jere');
+        console.log();
     })
     .joining((user: User) => {
         console.log(user.name, ' joined');
@@ -40,11 +43,17 @@ channel()
         console.error('e', error);
     });
 
+function ready() {
+    router.post(`/lobby/${code}/ready`, {
+        preserveState: true,
+        preserveScroll: true,
+    });
+}
+
 function leaveLobby() {
     router.post(`/lobby/${code}/leave`, {
         preserveState: true,
         preserveScroll: true,
-        code: code,
     });
 }
 
@@ -63,11 +72,18 @@ onUnmounted(() => {
                 </li>
             </ul>
             <button
+                @click="ready"
+                class="m-4 rounded border border-1 bg-red-300 p-4"
+            >
+                ready
+            </button>
+            <button
                 @click="leaveLobby"
                 class="m-4 rounded border border-1 bg-red-300 p-4"
             >
                 leave lobby
             </button>
+            <p>{{ page.flash.message }}</p>
         </div>
     </AuthenticatedLayout>
 </template>
