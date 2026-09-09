@@ -12,12 +12,14 @@ use Inertia\Response as InertiaResponse;
 
 class LobbyController extends Controller
 {
+    public function __construct(
+        private LobbyService $lobbyService
+    ) {}
+
     /**
-     * Brief logic explanation:
-     * - If no lobby, redirect
-     * - If full & not already in, redirect
-     * - If not already in, add
-     * - Enter
+     * - check existence of lobby
+     * - check lobby is full & user is not in
+     * - so if lobby is not full and user is not member, join
      */
     public function show(string $code): RedirectResponse|InertiaResponse
     {
@@ -42,11 +44,7 @@ class LobbyController extends Controller
         }
 
         if (! $member) {
-            $lobbyService = app(LobbyService::class);
-            // will need to possibly add user/pw details here in the future
-            $data['join_code'] = $code;
-            // currently using create when i could have an identical join but, we'll see
-            $lobbyService->create($user, $data);
+            $this->lobbyService->join($user, $code);
         }
 
         return Inertia::render('Lobby', [
@@ -54,7 +52,14 @@ class LobbyController extends Controller
         ]);
     }
 
-    public function create(Request $request, LobbyService $lobbyService): RedirectResponse
+    /**
+     * - validate data
+     * - set a name if one isn't given
+     * - generate lobby code
+     * - append code to $data
+     * - create lobby
+     */
+    public function create(Request $request): RedirectResponse
     {
         $data = $request->validate([
             'name' => 'nullable|string|max:255',
@@ -69,16 +74,18 @@ class LobbyController extends Controller
 
         $data['join_code'] = $code;
 
-        $lobbyService->create(auth()->user(), $data);
+        $this->lobbyService->create(auth()->user(), $data);
 
         return redirect()->route('lobby.show', $code);
     }
 
+    /**
+     * - simple call service & leave
+     * - lobby teardown is in service
+     */
     public function leave(Request $request, string $code): RedirectResponse
     {
-        $lobbyService = app(LobbyService::class);
-
-        $lobbyService->leave(auth()->user(), $code);
+        $this->lobbyService->leave(auth()->user(), $code);
 
         return redirect()->route('dashboard');
     }
