@@ -20,9 +20,9 @@ class LobbyService
 
     /**
      * Join a lobby in Redis.
-     * 
-     * @param User $user;
-     * @param string $code;
+     *
+     * @param  User  $user;
+     * @param  string  $code;
      */
     public function join($user, $code): void
     {
