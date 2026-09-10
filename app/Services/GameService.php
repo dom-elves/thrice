@@ -28,14 +28,14 @@ class GameService
     {
         // $game = app(CreateGameAction::class)->execute($code);
 
-        Redis::pipeline(function ($pipe) use ($game) {
-            $pipe->hmset("game:{$game->id}", [
-                'name' => $game->name,
-                'hands' => 0,
-                'finished' => $game->finished ? '1' : '0',
-                'start' => $game->created_at->toDateTimeString(),
-            ]);
-        });
+        // Redis::pipeline(function ($pipe) use ($game) {
+        //     $pipe->hmset("game:{$game->id}", [
+        //         'name' => $game->name,
+        //         'hands' => 0,
+        //         'finished' => $game->finished ? '1' : '0',
+        //         'start' => $game->created_at->toDateTimeString(),
+        //     ]);
+        // });
     }
 
     // /**
