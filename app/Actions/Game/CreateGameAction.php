@@ -9,8 +9,8 @@ use Illuminate\Support\Facades\DB;
 class CreateGameAction
 {
     public function __construct(
-        private CreateGameUserAction $createGameUserAction,
-        private GameService $gameService,
+        // private CreateGameUserAction $createGameUserAction,
+        // private GameService $gameService,
     ) {}
 
     /**
@@ -21,17 +21,16 @@ class CreateGameAction
     public function execute(array $data): Game
     {
         return DB::transaction(function () use ($data) {
-
             $game = Game::create([
                 'name' => $data['name'],
                 'password' => isset($data['password']) ? bcrypt($data['password']) : '',
             ]);
 
-            DB::afterCommit(fn () => $this->gameService->createGame($game));
+            // DB::afterCommit(fn () => $this->gameService->createGame($game));
 
             $userId = auth()->user()->id;
 
-            $this->createGameUserAction->execute($game->id, $userId);
+            // $this->createGameUserAction->execute($game->id, $userId);
 
             return $game;
         });

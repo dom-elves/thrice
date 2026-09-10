@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 class CreateGameUserAction
 {
     public function __construct(
-        private GameService $gameService,
+        // private GameService $gameService,
     ) {}
 
     /**
@@ -24,7 +24,7 @@ class CreateGameUserAction
                 'start_balance' => 1000,
             ]);
 
-            DB::afterCommit(fn () => $this->gameService->joinGame($gameUser));
+            // DB::afterCommit(fn () => $this->gameService->joinGame($gameUser));
 
             return $gameUser;
         });

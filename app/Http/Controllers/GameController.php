@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Actions\Game\CreateGameAction;
-use App\Actions\Game\CreateGameUserAction;
 use App\Models\Game;
 use App\Models\GameUser;
 use App\Services\GameService;
@@ -36,10 +35,10 @@ class GameController extends Controller
         $gameService = app(GameService::class);
 
         if (! $gameUser) {
-            $createGameUserAction = new CreateGameUserAction($gameService);
-            $createGameUserAction->execute($game->id, $user->id);
+            // $createGameUserAction = new CreateGameUserAction($gameService);
+            // $createGameUserAction->execute($game->id, $user->id);
         } elseif (! $gameUser->in_game) {
-            $gameService->joinGame($gameUser);
+            // $gameService->joinGame($gameUser);
         }
 
         return Inertia::render('Game', [
@@ -83,7 +82,7 @@ class GameController extends Controller
             ->firstOrFail();
 
         $gameService = new GameService;
-        $gameService->leaveGame($gameUser);
+        // $gameService->leaveGame($gameUser);
 
         return redirect('dashboard');
     }
