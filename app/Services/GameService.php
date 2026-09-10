@@ -2,11 +2,11 @@
 
 namespace App\Services;
 
+use App\Actions\CreateGameAction;
 use App\Events\GameUserJoined;
 use App\Events\GameUserLeft;
 use App\Models\Game;
 use App\Models\GameUser;
-use App\Service\CreateGameAction;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Redis;
 

@@ -9,8 +9,8 @@ use Illuminate\Support\Facades\DB;
 class CreateGameAction
 {
     public function __construct(
-        private CreateGameUserAction $createGameUserAction,
-        private GameService $gameService,
+        // private CreateGameUserAction $createGameUserAction,
+        // private GameService $gameService,
     ) {}
 
     /**
@@ -30,7 +30,7 @@ class CreateGameAction
 
             $userId = auth()->user()->id;
 
-            $this->createGameUserAction->execute($game->id, $userId);
+            // $this->createGameUserAction->execute($game->id, $userId);
 
             return $game;
         });
