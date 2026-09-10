@@ -3,24 +3,28 @@
 namespace App\Http\Controllers;
 
 use App\Services\LobbyService;
-use Inertia\Response as InertiaResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
+use Inertia\Response as InertiaResponse;
 
 class LobbyController extends Controller
 {
+    public function __construct(
+        private LobbyService $lobbyService
+    ) {}
+
     /**
-     * Brief logic explanation:
-     * - If no lobby, redirect
-     * - If full & not already in, redirect
-     * - If not already in, add
-     * - Enter
+     * - check existence of lobby
+     * - check lobby is full & user is not in
+     * - so if lobby is not full and user is not member, join
      */
-    public function show(string $code): RedirectResponse|InertiaResponse
+    public function show(Request $request): RedirectResponse|InertiaResponse
     {
+        $code = $request->route('code');
+
         if (! Redis::exists("lobby:{$code}:user_ids")) {
             Inertia::flash([
                 'message' => 'Lobby does not exist',
@@ -33,7 +37,7 @@ class LobbyController extends Controller
         $member = Redis::sismember("lobby:{$code}:user_ids", $user->id);
         $full = Redis::scard("lobby:{$code}:user_ids)") === 6;
 
-        if ($full && !$member) {
+        if ($full && ! $member) {
             Inertia::flash([
                 'message' => 'Lobby is full',
             ]);
@@ -41,12 +45,8 @@ class LobbyController extends Controller
             return redirect('dashboard');
         }
 
-        if (!$member) {
-            $lobbyService = app(LobbyService::class);
-            // will need to possibly add user/pw details here in the future
-            $data['join_code'] = $code;
-            // currently using create when i could have an identical join but, we'll see
-            $lobbyService->create($user, $data);
+        if (! $member) {
+            $this->lobbyService->join($user, $code);
         }
 
         return Inertia::render('Lobby', [
@@ -54,7 +54,14 @@ class LobbyController extends Controller
         ]);
     }
 
-    public function create(Request $request, LobbyService $lobbyService): RedirectResponse
+    /**
+     * - validate data
+     * - set a name if one isn't given
+     * - generate lobby code
+     * - append code to $data
+     * - create lobby
+     */
+    public function create(Request $request): RedirectResponse
     {
         $data = $request->validate([
             'name' => 'nullable|string|max:255',
@@ -69,16 +76,63 @@ class LobbyController extends Controller
 
         $data['join_code'] = $code;
 
-        $lobbyService->create(auth()->user(), $data);
+        $this->lobbyService->create(auth()->user(), $data);
 
         return redirect()->route('lobby.show', $code);
     }
 
-    public function leave(Request $request, string $code): RedirectResponse
+    /**
+     * - set self to ready, return bool on $allReady, int on player count
+     * - check enough players exist
+     * - check all players are ready
+     * - otherwise, start game
+     */
+    public function ready(Request $request): RedirectResponse
     {
-        $lobbyService = app(LobbyService::class);
+        $code = $request->route('code');
 
-        $lobbyService->leave(auth()->user(), $code);
+        $allReady = $this->lobbyService->ready(auth()->user(), $code);
+
+        // check Lobby page for notes re this
+        // as it will possibly be removed/changed
+        $request->session()->put('isReady', true);
+
+        $playerCount = Redis::scard("lobby:{$code}:user_ids");
+
+        if ($playerCount <= 1) {
+            Inertia::flash([
+                'message' => 'Not enough players ready',
+            ]);
+
+            return redirect()->route('lobby.show', $code);
+        }
+
+        if (! $allReady) {
+            Inertia::flash([
+                'message' => 'Not all players are ready',
+            ]);
+
+            return redirect()->route('lobby.show', $code);
+        }
+
+        // lock requests
+        // start game
+        // placeholder redirect to make phpstan happy
+        return redirect('game');
+    }
+
+    /**
+     * - simple call service & leave
+     * - lobby teardown is in service
+     * - remove readiness if exists
+     */
+    public function leave(Request $request): RedirectResponse
+    {
+        $this->lobbyService->leave(auth()->user(), $request->route('code'));
+
+        if ($request->session()->has('isReady')) {
+            $request->session()->pull('isReady');
+        }
 
         return redirect()->route('dashboard');
     }
