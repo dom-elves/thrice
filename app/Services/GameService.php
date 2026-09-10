@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Actions\Game\CreateGameAction;
+// use App\Actions\Game\CreateGameAction;
 use App\Events\GameUserJoined;
 use App\Events\GameUserLeft;
 use App\Models\Game;
@@ -26,7 +26,7 @@ class GameService
      */
     public function create($code): void
     {
-        $game = app(CreateGameAction::class)->execute($code);
+        // $game = app(CreateGameAction::class)->execute($code);
 
         Redis::pipeline(function ($pipe) use ($game) {
             $pipe->hmset("game:{$game->id}", [
