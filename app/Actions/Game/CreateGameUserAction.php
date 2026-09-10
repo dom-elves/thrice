@@ -24,7 +24,7 @@ class CreateGameUserAction
                 'start_balance' => 1000,
             ]);
 
-            DB::afterCommit(fn () => $this->gameService->joinGame($gameUser));
+            // DB::afterCommit(fn () => $this->gameService->joinGame($gameUser));
 
             return $gameUser;
         });

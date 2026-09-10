@@ -17,12 +17,9 @@ class LobbyService
     {
         Redis::sadd("lobby:{$data['join_code']}:user_ids", $user->id);
 
-        // set game hash
-        Redis::hset("game:{$data['join_code']}", [
-            'code' => $data['join_code'],
-            'name' => $data['name'],
-            'password' => $data['password'],
-        ]);
+        foreach ($data as $field => $value) {
+            Redis::hset("game:{$data['join_code']}", $field, $value);
+        }
     }
 
     /**

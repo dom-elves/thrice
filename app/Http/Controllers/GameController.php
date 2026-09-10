@@ -39,7 +39,7 @@ class GameController extends Controller
             $createGameUserAction = new CreateGameUserAction($gameService);
             $createGameUserAction->execute($game->id, $user->id);
         } elseif (! $gameUser->in_game) {
-            $gameService->joinGame($gameUser);
+            // $gameService->joinGame($gameUser);
         }
 
         return Inertia::render('Game', [
@@ -83,7 +83,7 @@ class GameController extends Controller
             ->firstOrFail();
 
         $gameService = new GameService;
-        $gameService->leaveGame($gameUser);
+        // $gameService->leaveGame($gameUser);
 
         return redirect('dashboard');
     }

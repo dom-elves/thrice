@@ -26,7 +26,7 @@ class CreateGameAction
                 'password' => isset($data['password']) ? bcrypt($data['password']) : '',
             ]);
 
-            DB::afterCommit(fn () => $this->gameService->createGame($game));
+            // DB::afterCommit(fn () => $this->gameService->createGame($game));
 
             $userId = auth()->user()->id;
 
