@@ -85,35 +85,50 @@ class LobbyController extends Controller
 
     /**
      * - set self to ready, return bool on $allReady, int on player count
-     * - todo: figre out best way to trigger game start from here
+     * - check enough players exist
+     * - check all players are ready
+     * - otherwise, start game
      */
     public function ready(Request $request): RedirectResponse
     {
-        [$allReady, $playerCount] = $this->lobbyService->ready(auth()->user(), $request->route('code'));
+        $code = $request->route('code');
+
+        [$allReady, $playerCount] = $this->lobbyService->ready(auth()->user(), $code);
         
-        if ($allReady && $playerCount > 1) {
-            // lock on all requests when this conditions is met
-            // make game in mysql & redis
-            // game users in mysql & redis
-            // when complete, broadcast(?) to all users in lobby
-            // or maybe just do if (pc === 6) for user that sent req
-        } else {
-            return redirect()
-                ->route('lobby.show', $request->route('code'))
-                ->with([
-                    'allReady' => $allReady,
-                    'playerCount' => $playerCount,
-                ]);
+        $request->session()->put('isReady', [$code => true]);
+
+        if ($playerCount <= 1) {
+            Inertia::flash([
+                'message' => 'Not enough players ready',
+            ]);
+
+            return redirect()->route('lobby.show', $code);
         }
+
+        if (! $allReady) {
+            Inertia::flash([
+                'message' => 'Not all players are ready',
+            ]);
+
+            return redirect()->route('lobby.show', $code);
+        }
+
+        // lock requests
+        // start game
     }
 
     /**
      * - simple call service & leave
      * - lobby teardown is in service
+     * - remove readiness if exists
      */
     public function leave(Request $request): RedirectResponse
     {
         $this->lobbyService->leave(auth()->user(), $request->route('code'));
+
+        if ($request->session()->has('isReady')) {
+            $request->session()->pull('isReady');
+        }
 
         return redirect()->route('dashboard');
     }

@@ -1,13 +1,18 @@
 <script setup lang="ts">
 import { usePage, router } from '@inertiajs/vue3';
 import { useEchoPresence } from '@laravel/echo-vue';
-import { ref, onUnmounted } from 'vue';
+import { ref, onUnmounted, onMounted } from 'vue';
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue';
 
 interface PageProps {
     [key: string]: unknown;
     code: string;
     user: object;
+    session: {
+        isReady: {
+            [key: string]: boolean;
+        };
+    };
 }
 
 interface User {
@@ -18,7 +23,7 @@ interface User {
 const page = usePage<PageProps>();
 const code = page.props.code;
 const users = ref(<User[]>[]);
-const isReady = ref(false);
+const isReady = ref<boolean>(page.props.session.isReady[code] ?? false);
 
 const { channel } = useEchoPresence(
     `lobby.${code}`,
@@ -68,6 +73,9 @@ function leaveLobby() {
     });
 }
 
+onMounted(() => {
+    console.log(page.props);
+})
 onUnmounted(() => {
     console.log('random unmount');
     leaveLobby();
