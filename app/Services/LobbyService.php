@@ -70,7 +70,7 @@ class LobbyService
         }
 
         if (! Redis::exists("lobby:{$code}:user_ids")) {
-                Redis::hdel("game:{$code}", 'code', 'name', 'password');
+            Redis::hdel("game:{$code}", 'code', 'name', 'password');
         }
     }
 }

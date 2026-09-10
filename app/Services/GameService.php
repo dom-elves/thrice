@@ -21,7 +21,7 @@ class GameService
     /**
      * Create an instance of the game in Redis
      *
-     * @param  string $code
+     * @param  string  $code
      */
     public function create($code): void
     {
