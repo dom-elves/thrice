@@ -26,7 +26,7 @@ class GameService
      */
     public function create($code): void
     {
-        $game = app(CreateGameAction::class)->execute();
+        $game = app(CreateGameAction::class)->execute($code);
 
         Redis::pipeline(function ($pipe) use ($game) {
             $pipe->hmset("game:{$game->id}", [
