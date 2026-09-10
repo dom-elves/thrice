@@ -49,21 +49,23 @@ channel()
     });
 
 function ready() {
-    router.post(`/lobby/${code}/ready`, {
-        preserveState: true,
-        preserveScroll: true,
-    },
-    {
-        onSuccess: (response) => {
-            console.log('r', response);
-            isReady.value = true;
+    router.post(
+        `/lobby/${code}/ready`,
+        {
+            preserveState: true,
+            preserveScroll: true,
         },
-        onError: (error) => {
-            console.log(error);
-            isReady.value = false;
+        {
+            onSuccess: (response) => {
+                console.log('r', response);
+                isReady.value = true;
+            },
+            onError: (error) => {
+                console.log(error);
+                isReady.value = false;
+            },
         },
-    }
-);
+    );
 }
 
 function leaveLobby() {
@@ -75,7 +77,7 @@ function leaveLobby() {
 
 onMounted(() => {
     console.log(page.props);
-})
+});
 onUnmounted(() => {
     console.log('random unmount');
     leaveLobby();
@@ -94,7 +96,11 @@ onUnmounted(() => {
             <button
                 @click="ready"
                 class="m-4 rounded border border-1 p-4"
-                :class="isReady ? 'bg-green-300 cursor-not-allowed' : 'bg-blue-300 cursor-pointer'"
+                :class="
+                    isReady
+                        ? 'cursor-not-allowed bg-green-300'
+                        : 'cursor-pointer bg-blue-300'
+                "
                 :disabled="isReady"
             >
                 ready
