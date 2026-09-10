@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 class CreateGameUserAction
 {
     public function __construct(
-        private GameService $gameService,
+        // private GameService $gameService,
     ) {}
 
     /**

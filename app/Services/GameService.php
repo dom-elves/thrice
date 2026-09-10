@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Actions\CreateGameAction;
+use App\Actions\Game\CreateGameAction;
 use App\Events\GameUserJoined;
 use App\Events\GameUserLeft;
 use App\Models\Game;
