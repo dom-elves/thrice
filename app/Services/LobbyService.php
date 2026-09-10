@@ -16,6 +16,13 @@ class LobbyService
     public function create($user, $data): void
     {
         Redis::sadd("lobby:{$data['join_code']}:user_ids", $user->id);
+
+        // set game hash
+        Redis::hset("game:{$data['join_code']}", [
+            'code' => $data['join_code'],
+            'name' => $data['name'],
+            'password' => $data['password'],
+        ]);
     }
 
     /**
@@ -60,6 +67,10 @@ class LobbyService
 
         if (Redis::sismember("lobby:{$code}:ready_user_ids", $user->id)) {
             Redis::srem("lobby:{$code}:ready_user_ids", $user->id);
+        }
+
+        if (! Redis::exists("lobby:{$code}:user_ids")) {
+                Redis::hdel("game:{$code}", 'code', 'name', 'password');
         }
     }
 }

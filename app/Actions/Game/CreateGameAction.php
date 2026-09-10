@@ -21,7 +21,6 @@ class CreateGameAction
     public function execute(array $data): Game
     {
         return DB::transaction(function () use ($data) {
-
             $game = Game::create([
                 'name' => $data['name'],
                 'password' => isset($data['password']) ? bcrypt($data['password']) : '',
