@@ -9,9 +9,7 @@ interface PageProps {
     code: string;
     user: object;
     session: {
-        isReady: {
-            [key: string]: boolean;
-        };
+        isReady: boolean;
     };
 }
 
@@ -23,7 +21,9 @@ interface User {
 const page = usePage<PageProps>();
 const code = page.props.code;
 const users = ref(<User[]>[]);
-const isReady = ref<boolean>(page.props.session.isReady[code] ?? false);
+// todo: if i end up with a channel for game start signal
+// change this to proper computed property and make it toggleable
+const isReady = ref<boolean>(page.props.session.isReady ?? false);
 
 const { channel } = useEchoPresence(
     `lobby.${code}`,

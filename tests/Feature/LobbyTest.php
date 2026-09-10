@@ -78,10 +78,11 @@ test('a user can set themselves to ready', function () {
         ->post(route('lobby.ready', ['code' => $joinCode]));
 
     // todo: assert game not started after game start is built
+    $response->assertSessionHas('isReady', true);
 
     $response->assertInertia(fn (Assert $page) => $page->component('Lobby')
-        ->has("session.isReady.{$joinCode}")
-        ->where("session.isReady.{$joinCode}", true)
+        // ->has("session.isReady.{$joinCode}")
+        // ->where("session.isReady.{$joinCode}", true)
         // extra assertion for not enough players
         ->hasFlash('message', 'Not enough players ready')
     );
@@ -98,9 +99,11 @@ test('a user setting themselves to ready will not start the game if not all play
     $response = $this->followingRedirects()
         ->post(route('lobby.ready', ['code' => $joinCode]));
 
+    $response->assertSessionHas('isReady', true);
+
     $response->assertInertia(fn (Assert $page) => $page->component('Lobby')
-        ->has("session.isReady.{$joinCode}")
-        ->where("session.isReady.{$joinCode}", true)
+        // ->has("session.isReady.{$joinCode}")
+        // ->where("session.isReady.{$joinCode}", true)
         ->hasFlash('message', 'Not all players are ready')
     );
 });

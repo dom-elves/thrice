@@ -93,7 +93,9 @@ class LobbyController extends Controller
 
         $allReady = $this->lobbyService->ready(auth()->user(), $code);
 
-        $request->session()->put('isReady', [$code => true]);
+        // check Lobby page for notes re this
+        // as it will possibly be removed/changed
+        $request->session()->put('isReady', true);
 
         $playerCount = Redis::scard("lobby:{$code}:user_ids");
 
