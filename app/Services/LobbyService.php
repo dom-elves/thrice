@@ -58,12 +58,8 @@ class LobbyService
     {
         Redis::srem("lobby:{$code}:user_ids", $user->id);
 
-        if (Redis::exists("lobby:{$code}:ready_user_ids", $user->id)) {
+        if (Redis::sismember("lobby:{$code}:ready_user_ids", $user->id)) {
             Redis::srem("lobby:{$code}:ready_user_ids", $user->id);
-        }
-
-        if (Redis::scard("lobby:{$code}:user_ids") === 0) {
-            Redis::del("lobby:{$code}:user_ids");
         }
     }
 }
