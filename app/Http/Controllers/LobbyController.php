@@ -115,6 +115,8 @@ class LobbyController extends Controller
 
         // lock requests
         // start game
+        // placeholder redirect to make phpstan happy
+        return redirect('game');
     }
 
     /**
