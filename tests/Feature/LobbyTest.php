@@ -68,3 +68,16 @@ test('a user can leave a lobby', function () {
 
     $response->assertRedirect('dashboard');
 });
+
+test('a user can set themselves to ready', function () {
+    $response = $this->post(route('lobby.create'));
+    $joinCode = basename($response->getTargetUrl());
+
+    $response = $this->followingRedirects()
+        ->post(route('lobby.ready', ['code' => $joinCode]));
+
+    $response->assertInertia(fn (Assert $page) => $page->component('Lobby')
+        ->has("session.isReady.{$joinCode}")
+        ->where("session.isReady.{$joinCode}", true)
+    );
+});
