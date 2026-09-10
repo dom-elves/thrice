@@ -104,3 +104,5 @@ test('a user setting themselves to ready will not start the game if not all play
         ->hasFlash('message', 'Not all players are ready')
     );
 });
+
+test('game will start if over two users are all ready', function () {});
