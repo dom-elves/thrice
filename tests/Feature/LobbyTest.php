@@ -2,6 +2,7 @@
 
 use App\Models\User;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Redis;
 use Inertia\Testing\AssertableInertia as Assert;
 
 beforeEach(function () {
@@ -76,8 +77,30 @@ test('a user can set themselves to ready', function () {
     $response = $this->followingRedirects()
         ->post(route('lobby.ready', ['code' => $joinCode]));
 
+    // todo: assert game not started after game start is built
+
     $response->assertInertia(fn (Assert $page) => $page->component('Lobby')
         ->has("session.isReady.{$joinCode}")
         ->where("session.isReady.{$joinCode}", true)
+        // extra assertion for not enough players
+        ->hasFlash('message', 'Not enough players ready')
+    );
+});
+
+test('a user setting themselves to ready will not start the game if not all players are ready', function () {
+    $response = $this->post(route('lobby.create'));
+    $joinCode = basename($response->getTargetUrl());
+
+    for ($i = 2;$i < 5;$i++ ) {
+        Redis::sadd("lobby:{$joinCode}:user_ids", $i);
+    }
+    
+    $response = $this->followingRedirects()
+        ->post(route('lobby.ready', ['code' => $joinCode]));
+
+    $response->assertInertia(fn (Assert $page) => $page->component('Lobby')
+        ->has("session.isReady.{$joinCode}")
+        ->where("session.isReady.{$joinCode}", true)
+        ->hasFlash('message', 'Not all players are ready')
     );
 });

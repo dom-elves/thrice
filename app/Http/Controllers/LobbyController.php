@@ -93,9 +93,11 @@ class LobbyController extends Controller
     {
         $code = $request->route('code');
 
-        [$allReady, $playerCount] = $this->lobbyService->ready(auth()->user(), $code);
-        
+        $allReady = $this->lobbyService->ready(auth()->user(), $code);
+
         $request->session()->put('isReady', [$code => true]);
+
+        $playerCount = Redis::scard("lobby:{$code}:user_ids");
 
         if ($playerCount <= 1) {
             Inertia::flash([

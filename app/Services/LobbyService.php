@@ -37,7 +37,7 @@ class LobbyService
      * @param string $code;
      *
      */
-    public function ready($user, $code): array
+    public function ready($user, $code): bool
     {
         // put a 1s lock or something on this to prevent race conditions
         Redis::sadd("lobby:{$code}:ready_user_ids", $user->id);
@@ -45,9 +45,8 @@ class LobbyService
         // sdiff returns an array of values that do not match
         // e.g. if [1,2,3] are user_ids but only [2,3] are ready, it will return [1]
         $allReady = empty(Redis::sdiff("lobby:{$code}:user_ids", "lobby:{$code}:ready_user_ids"));
-        $playerCount = Redis::scard("lobby:{$code}:ready_user_ids");
 
-        return [$allReady, $playerCount];
+        return $allReady;
     }
 
     /**
