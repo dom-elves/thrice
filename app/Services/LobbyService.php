@@ -33,9 +33,8 @@ class LobbyService
      * Set your status to 'ready'
      * All users being ready will trigger game start
      *
-     * @param User $user;
-     * @param string $code;
-     *
+     * @param  User  $user;
+     * @param  string  $code;
      */
     public function ready($user, $code): bool
     {

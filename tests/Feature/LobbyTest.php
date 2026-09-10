@@ -91,10 +91,10 @@ test('a user setting themselves to ready will not start the game if not all play
     $response = $this->post(route('lobby.create'));
     $joinCode = basename($response->getTargetUrl());
 
-    for ($i = 2;$i < 5;$i++ ) {
+    for ($i = 2; $i < 5; $i++) {
         Redis::sadd("lobby:{$joinCode}:user_ids", $i);
     }
-    
+
     $response = $this->followingRedirects()
         ->post(route('lobby.ready', ['code' => $joinCode]));
 
