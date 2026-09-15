@@ -126,12 +126,12 @@ class LobbyController extends Controller
         // maybe that makes more sense?
 
         $gameService = app(GameService::class);
-        $gameService->create($code);
+        $game = $gameService->create($code);
 
         // lock requests
         // start game
         // placeholder redirect to make phpstan happy
-        return redirect('game');
+        return redirect()->route('game.show', $game);
     }
 
     /**
