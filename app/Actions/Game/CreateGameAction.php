@@ -28,7 +28,7 @@ class CreateGameAction
         $userIds = Redis::smembers($code);
         // dd($userIds); // this is broke
         foreach ($userIds as $userId) {
-            $this->createGameUserAction->execute($game->id, (string) $userId);
+            $this->createGameUserAction->execute($game->id, (int) $userId);
         }
 
         return $game;
