@@ -15,10 +15,10 @@ class LobbyService
      */
     public function create($user, $data): void
     {
-        Redis::sadd("lobby:{$data['join_code']}:user_ids", $user->id);
+        Redis::sadd("lobby:{$data['code']}:user_ids", $user->id);
 
         foreach ($data as $field => $value) {
-            Redis::hset("game:{$data['join_code']}", $field, $value);
+            Redis::hset("game:{$data['code']}", $field, $value);
         }
     }
 

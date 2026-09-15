@@ -4,33 +4,33 @@ namespace App\Actions\Game;
 
 use App\Models\Game;
 use App\Services\GameService;
+use App\Services\GameUserService;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redis;
 
 class CreateGameAction
 {
     public function __construct(
-        // private CreateGameUserAction $createGameUserAction,
-        // private GameService $gameService,
+        private CreateGameUserAction $createGameUserAction,
     ) {}
 
     /**
      * Create a Game.
      *
-     * @param  array{name: string, password?: string}  $data
+     * @param  string $code
      */
-    public function execute(array $data): Game
+    public function execute(string $code): Game
     {
-        return DB::transaction(function () use ($data) {
-            $game = Game::create([
-                'name' => $data['name'],
-                'password' => isset($data['password']) ? bcrypt($data['password']) : '',
-            ]);
+        return DB::transaction(function () use ($code) {
+            $data = Redis::hgetall("game:{$code}");
 
+            $game = Game::create($data);
+            dd($game);
             // DB::afterCommit(fn () => $this->gameService->createGame($game));
 
             $userId = auth()->user()->id;
 
-            // $this->createGameUserAction->execute($game->id, $userId);
+            $this->createGameUserAction->execute($game->id, $userId);
 
             return $game;
         });

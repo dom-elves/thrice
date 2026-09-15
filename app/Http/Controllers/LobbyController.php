@@ -79,7 +79,7 @@ class LobbyController extends Controller
 
         $code = Str::lower(Str::random(12));
 
-        $data['join_code'] = $code;
+        $data['code'] = $code;
 
         $this->lobbyService->create(auth()->user(), $data);
 

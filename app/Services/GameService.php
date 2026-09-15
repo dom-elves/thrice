@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-// use App\Actions\Game\CreateGameAction;
+use App\Actions\Game\CreateGameAction;
 use App\Events\GameUserJoined;
 use App\Events\GameUserLeft;
 use App\Models\Game;
@@ -24,13 +24,9 @@ class GameService
      *
      * @param  string  $code
      */
-    public function create($code): void
+    public function create($code): Game
     {
-        // $game = app(CreateGameAction::class)->execute($code);
-
-        $game = Game::factory()->create([
-            'name' => 'phpstan please stop crying',
-        ]);
+        $game = app(CreateGameAction::class)->execute($code);
 
         Redis::pipeline(function ($pipe) use ($game) {
             $pipe->hmset("game:{$game->id}", [
@@ -40,36 +36,38 @@ class GameService
                 'start' => $game->created_at->toDateTimeString(),
             ]);
         });
+
+        return $game;
     }
 
-    // /**
-    //  * Join a game, set the game user in Redis and broadcast the join event to the fe
-    //  *
-    //  * @param  GameUser  $gameUser
-    //  */
-    // public function joinGame($gameUser): void
-    // {
-    //     Redis::pipeline(function ($pipe) use ($gameUser) {
-    //         $pipe->hmset("game_user:{$gameUser->id}", [
-    //             'game_id' => $gameUser->game->id,
-    //             'user_id' => $gameUser->user->id,
-    //             'start_balance' => $gameUser->start_balance,
-    //             'end_balance' => $gameUser->end_balance,
-    //             'join_time' => Carbon::now()->toDateTimeString(),
-    //             'leave_time' => '',
-    //             'in_game' => 1,
-    //             'user_session_id' => session()->getId(),
-    //         ]);
-    //     });
+    /**
+     * Join a game, set the game user in Redis and broadcast the join event to the fe
+     *
+     * @param  GameUser  $gameUser
+     */
+    public function joinGame($gameUser): void
+    {
+        Redis::pipeline(function ($pipe) use ($gameUser) {
+            $pipe->hmset("game_user:{$gameUser->id}", [
+                'game_id' => $gameUser->game->id,
+                'user_id' => $gameUser->user->id,
+                'start_balance' => $gameUser->start_balance,
+                'end_balance' => $gameUser->end_balance,
+                'join_time' => Carbon::now()->toDateTimeString(),
+                'leave_time' => '',
+                'in_game' => 1,
+                'user_session_id' => session()->getId(),
+            ]);
+        });
 
-    //     Redis::sadd("game:{$gameUser->game->id}:game_user_ids", $gameUser->id);
+        Redis::sadd("game:{$gameUser->game->id}:game_user_ids", $gameUser->id);
 
-    //     $gameUser->update([
-    //         'in_game' => true,
-    //     ]);
+        $gameUser->update([
+            'in_game' => true,
+        ]);
 
-    //     event(new GameUserJoined($gameUser));
-    // }
+        event(new GameUserJoined($gameUser));
+    }
 
     // /**
     //  * Leave a game, set the game user in Redis and broadcast the leave event to the fe
