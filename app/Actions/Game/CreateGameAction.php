@@ -3,8 +3,6 @@
 namespace App\Actions\Game;
 
 use App\Models\Game;
-use App\Services\GameService;
-use App\Services\GameUserService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
 
@@ -16,23 +14,23 @@ class CreateGameAction
 
     /**
      * Create a Game.
-     *
-     * @param  string $code
      */
     public function execute(string $code): Game
     {
-        return DB::transaction(function () use ($code) {
-            $data = Redis::hgetall("game:{$code}");
+        $data = Redis::hgetall("game:{$code}");
 
-            $game = Game::create($data);
-            dd($game);
-            // DB::afterCommit(fn () => $this->gameService->createGame($game));
+        $game = DB::transaction(function () use ($data) {
 
-            $userId = auth()->user()->id;
+            return Game::create($data);
 
-            $this->createGameUserAction->execute($game->id, $userId);
-
-            return $game;
         });
+
+        $userIds = Redis::smembers($code);
+        // dd($userIds); // this is broke
+        foreach ($userIds as $userId) {
+            $this->createGameUserAction->execute($game->id, (string) $userId);
+        }
+
+        return $game;
     }
 }
