@@ -9,15 +9,14 @@ use Illuminate\Support\Facades\Redis;
 
 class CloseLobby implements ShouldQueue
 {
-    use Queueable, Dispatchable;
+    use Dispatchable, Queueable;
 
     /**
      * Create a new job instance.
      */
     public function __construct(
         public string $code,
-    )
-    {
+    ) {
         //
     }
 
