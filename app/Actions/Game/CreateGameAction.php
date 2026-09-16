@@ -22,14 +22,17 @@ class CreateGameAction
         $game = DB::transaction(function () use ($data) {
 
             return Game::create($data);
-
         });
 
-        $userIds = Redis::smembers($code);
-        // dd($userIds); // this is broke
+        $userIds = Redis::smembers("lobby:{$code}:user_ids");
+
         foreach ($userIds as $userId) {
             $this->createGameUserAction->execute($game->id, (int) $userId);
         }
+
+        $game->update(['started' => true]);
+
+        // destroy lobby
 
         return $game;
     }

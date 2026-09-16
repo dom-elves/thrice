@@ -129,8 +129,7 @@ class LobbyController extends Controller
         $game = $gameService->create($code);
 
         // lock requests
-        // start game
-        // placeholder redirect to make phpstan happy
+
         return redirect()->route('game.show', $game);
     }
 

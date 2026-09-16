@@ -35,10 +35,10 @@ class GameController extends Controller
         $gameService = app(GameService::class);
 
         if (! $gameUser) {
-            // $createGameUserAction = new CreateGameUserAction($gameService);
-            // $createGameUserAction->execute($game->id, $user->id);
+            $createGameUserAction = new CreateGameUserAction($gameService);
+            $createGameUserAction->execute($game->id, $user->id);
         } elseif (! $gameUser->in_game) {
-            // $gameService->joinGame($gameUser);
+            $gameService->joinGame($gameUser);
         }
 
         return Inertia::render('Game', [

@@ -45,7 +45,7 @@ class GameService
      *
      * @param  GameUser  $gameUser
      */
-    public function joinGame($gameUser): void
+    public function join($gameUser): void
     {
         Redis::pipeline(function ($pipe) use ($gameUser) {
             $pipe->hmset("game_user:{$gameUser->id}", [
@@ -66,7 +66,7 @@ class GameService
             'in_game' => true,
         ]);
 
-        event(new GameUserJoined($gameUser));
+        // event(new GameUserJoined($gameUser));
     }
 
     // /**

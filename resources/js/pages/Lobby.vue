@@ -80,7 +80,9 @@ onMounted(() => {
 });
 onUnmounted(() => {
     console.log('random unmount');
-    leaveLobby();
+    // todo: think of a better way to detect leaving page
+    // as this is being called after redirect to game, etc
+    // leaveLobby();
 });
 </script>
 <template>
