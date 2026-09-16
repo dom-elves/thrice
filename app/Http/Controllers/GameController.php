@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Actions\Game\CreateGameAction;
+use App\Actions\Game\CreateGameUserAction;
 use App\Models\Game;
 use App\Models\GameUser;
 use App\Services\GameService;
@@ -38,7 +39,7 @@ class GameController extends Controller
             $createGameUserAction = new CreateGameUserAction($gameService);
             $createGameUserAction->execute($game->id, $user->id);
         } elseif (! $gameUser->in_game) {
-            $gameService->joinGame($gameUser);
+            $gameService->join($gameUser);
         }
 
         return Inertia::render('Game', [
