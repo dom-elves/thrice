@@ -16,13 +16,15 @@ use Illuminate\Support\Carbon;
 /**
  * @property int $id
  * @property string|null $name
+ * @property string $code
  * @property string|null $password
  * @property int|string|null $hands
+ * @property bool $started
  * @property bool $finished
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['name', 'hands', 'finished'])]
+#[Fillable(['name', 'code', 'hands', 'started', 'finished'])]
 #[Hidden(['password'])]
 
 class Game extends Model

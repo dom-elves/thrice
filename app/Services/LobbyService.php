@@ -15,7 +15,13 @@ class LobbyService
      */
     public function create($user, $data): void
     {
-        Redis::sadd("lobby:{$data['join_code']}:user_ids", $user->id);
+        Redis::sadd("lobby:{$data['code']}:user_ids", $user->id);
+
+        // at this stage, it's just name, code and password
+        // remaining info gets input if game actually starts
+        foreach ($data as $field => $value) {
+            Redis::hset("game:{$data['code']}", $field, $value);
+        }
     }
 
     /**
@@ -60,6 +66,10 @@ class LobbyService
 
         if (Redis::sismember("lobby:{$code}:ready_user_ids", $user->id)) {
             Redis::srem("lobby:{$code}:ready_user_ids", $user->id);
+        }
+
+        if (! Redis::exists("lobby:{$code}:user_ids")) {
+            Redis::hdel("game:{$code}", 'code', 'name', 'password');
         }
     }
 }

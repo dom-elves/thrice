@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\GameService;
 use App\Services\LobbyService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -72,9 +73,13 @@ class LobbyController extends Controller
             $data['name'] = auth()->user()->name."'s Game";
         }
 
+        if (! isset($data['password'])) {
+            $data['password'] = '';
+        }
+
         $code = Str::lower(Str::random(12));
 
-        $data['join_code'] = $code;
+        $data['code'] = $code;
 
         $this->lobbyService->create(auth()->user(), $data);
 
@@ -115,10 +120,17 @@ class LobbyController extends Controller
             return redirect()->route('lobby.show', $code);
         }
 
+        // maybe scrap this
+        // return game creation signal to last person
+        // their client will request /game/create
+        // maybe that makes more sense?
+
+        $gameService = app(GameService::class);
+        $game = $gameService->create($code);
+
         // lock requests
-        // start game
-        // placeholder redirect to make phpstan happy
-        return redirect('game');
+
+        return redirect()->route('game.show', $game);
     }
 
     /**

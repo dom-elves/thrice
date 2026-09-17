@@ -2,38 +2,40 @@
 
 namespace App\Actions\Game;
 
+use App\Jobs\CloseLobby;
 use App\Models\Game;
-use App\Services\GameService;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redis;
 
 class CreateGameAction
 {
     public function __construct(
         private CreateGameUserAction $createGameUserAction,
-        private GameService $gameService,
     ) {}
 
     /**
      * Create a Game.
-     *
-     * @param  array{name: string, password?: string}  $data
      */
-    public function execute(array $data): Game
+    public function execute(string $code): Game
     {
-        return DB::transaction(function () use ($data) {
+        $data = Redis::hgetall("game:{$code}");
 
-            $game = Game::create([
-                'name' => $data['name'],
-                'password' => isset($data['password']) ? bcrypt($data['password']) : '',
-            ]);
+        $game = DB::transaction(function () use ($data) {
 
-            DB::afterCommit(fn () => $this->gameService->createGame($game));
-
-            $userId = auth()->user()->id;
-
-            $this->createGameUserAction->execute($game->id, $userId);
-
-            return $game;
+            return Game::create($data);
         });
+
+        $userIds = Redis::smembers("lobby:{$code}:user_ids");
+
+        foreach ($userIds as $userId) {
+            $this->createGameUserAction->execute($game->id, (int) $userId);
+        }
+
+        $game->update(['started' => true]);
+
+        // destroy lobby, should use a event+listener but this is the only place that game creation will be
+        CloseLobby::dispatch($code);
+
+        return $game;
     }
 }

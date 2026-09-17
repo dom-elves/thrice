@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Actions\Game\CreateGameAction;
 use App\Events\GameUserJoined;
 use App\Events\GameUserLeft;
 use App\Models\Game;
@@ -21,18 +22,22 @@ class GameService
     /**
      * Create an instance of the game in Redis
      *
-     * @param  Game  $game
+     * @param  string  $code
      */
-    public function createGame($game): void
+    public function create($code): Game
     {
+        $game = app(CreateGameAction::class)->execute($code);
+
         Redis::pipeline(function ($pipe) use ($game) {
-            $pipe->hmset("game:{$game->id}", [
-                'name' => $game->name,
+            $pipe->hmset("game:{$game->code}", [
                 'hands' => 0,
-                'finished' => $game->finished ? '1' : '0',
-                'start' => $game->created_at->toDateTimeString(),
+                'started' => $game->started,
+                'finished' => 0,
+                'start_time' => $game->created_at->toDateTimeString(),
             ]);
         });
+
+        return $game;
     }
 
     /**
@@ -40,7 +45,7 @@ class GameService
      *
      * @param  GameUser  $gameUser
      */
-    public function joinGame($gameUser): void
+    public function join($gameUser): void
     {
         Redis::pipeline(function ($pipe) use ($gameUser) {
             $pipe->hmset("game_user:{$gameUser->id}", [
@@ -61,53 +66,53 @@ class GameService
             'in_game' => true,
         ]);
 
-        event(new GameUserJoined($gameUser));
+        // event(new GameUserJoined($gameUser));
     }
 
-    /**
-     * Leave a game, set the game user in Redis and broadcast the leave event to the fe
-     *
-     * @param  GameUser  $gameUser
-     */
-    public function leaveGame($gameUser): void
-    {
-        // this will eventually need to include a bunch of logic for game state
-        // but for now, just as if the user is leaving the game without doing anything
+    // /**
+    //  * Leave a game, set the game user in Redis and broadcast the leave event to the fe
+    //  *
+    //  * @param  GameUser  $gameUser
+    //  */
+    // public function leaveGame($gameUser): void
+    // {
+    //     // this will eventually need to include a bunch of logic for game state
+    //     // but for now, just as if the user is leaving the game without doing anything
 
-        $key = "game_user:{$gameUser->id}";
-        $state = Redis::hgetall($key);
+    //     $key = "game_user:{$gameUser->id}";
+    //     $state = Redis::hgetall($key);
 
-        Redis::pipeline(function ($pipe) use ($gameUser) {
-            $pipe->hgetdel("game_user:{$gameUser->id}", [
-                'game_id',
-                'user_id',
-                'start_balance',
-                'end_balance',
-                'join_time',
-                'leave_time',
-                'in_game',
-                'user_session_id',
-            ]);
-        });
+    //     Redis::pipeline(function ($pipe) use ($gameUser) {
+    //         $pipe->hgetdel("game_user:{$gameUser->id}", [
+    //             'game_id',
+    //             'user_id',
+    //             'start_balance',
+    //             'end_balance',
+    //             'join_time',
+    //             'leave_time',
+    //             'in_game',
+    //             'user_session_id',
+    //         ]);
+    //     });
 
-        Redis::srem("game:{$gameUser->game->id}:game_user_ids", $gameUser->id);
+    //     Redis::srem("game:{$gameUser->game->id}:game_user_ids", $gameUser->id);
 
-        $gameUser->update([
-            // balance incr
-            'in_game' => false,
-        ]);
+    //     $gameUser->update([
+    //         // balance incr
+    //         'in_game' => false,
+    //     ]);
 
-        event(new GameUserLeft($gameUser));
+    //     event(new GameUserLeft($gameUser));
 
-        if (! Redis::exists("game:{$gameUser->game->id}:game_user_ids")) {
-            // dd('games gone');
-        } else {
-            // dd('games back');
-        }
+    //     if (! Redis::exists("game:{$gameUser->game->id}:game_user_ids")) {
+    //         // dd('games gone');
+    //     } else {
+    //         // dd('games back');
+    //     }
 
-        // todo: destroy game job
-        // - check mysql game->players or w/e
-        // - destroy game, containing logic to take down redis users too
-        // doesn't need to happen instantly, hence job
-    }
+    //     // todo: destroy game job
+    //     // - check mysql game->players or w/e
+    //     // - destroy game, containing logic to take down redis users too
+    //     // doesn't need to happen instantly, hence job
+    // }
 }
