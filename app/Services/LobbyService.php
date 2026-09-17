@@ -17,6 +17,8 @@ class LobbyService
     {
         Redis::sadd("lobby:{$data['code']}:user_ids", $user->id);
 
+        // at this stage, it's just name, code and password
+        // remaining info gets input if game actually starts
         foreach ($data as $field => $value) {
             Redis::hset("game:{$data['code']}", $field, $value);
         }

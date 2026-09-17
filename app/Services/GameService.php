@@ -29,11 +29,11 @@ class GameService
         $game = app(CreateGameAction::class)->execute($code);
 
         Redis::pipeline(function ($pipe) use ($game) {
-            $pipe->hmset("game:{$game->id}", [
-                'name' => $game->name,
+            $pipe->hmset("game:{$game->code}", [
                 'hands' => 0,
-                'finished' => $game->finished ? '1' : '0',
-                'start' => $game->created_at->toDateTimeString(),
+                'started' => $game->started,
+                'finished' => 0,
+                'start_time' => $game->created_at->toDateTimeString(),
             ]);
         });
 

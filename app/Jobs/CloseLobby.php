@@ -23,6 +23,8 @@ class CloseLobby implements ShouldQueue
 
     /**
      * Execute the job.
+     *
+     * Destroy the 'lobby' set & any user ids that were in the 'ready' set.
      */
     public function handle(): void
     {
