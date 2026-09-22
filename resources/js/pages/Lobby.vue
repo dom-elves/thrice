@@ -27,8 +27,10 @@ const isReady = ref<boolean>(page.props.session.isReady ?? false);
 
 const { channel } = useEchoPresence(
     `lobby.${code}`,
-    '', // no custom event to listen for — presence hooks below handle membership
-    () => {},
+    '.game.created',
+    (event) => {
+        console.log('event', event);
+    },
 );
 
 // echo

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\GameCreated;
 use App\Services\GameService;
 use App\Services\LobbyService;
 use Illuminate\Http\RedirectResponse;
@@ -129,6 +130,8 @@ class LobbyController extends Controller
         $game = $gameService->create($code);
 
         // lock requests
+
+        broadcast(new GameCreated($game));
 
         return redirect()->route('game.show', $game);
     }
