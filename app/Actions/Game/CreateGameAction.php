@@ -21,7 +21,6 @@ class CreateGameAction
         $data = Redis::hgetall("game:{$code}");
 
         $game = DB::transaction(function () use ($data) {
-
             return Game::create($data);
         });
 

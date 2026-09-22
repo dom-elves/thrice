@@ -5,8 +5,6 @@ use App\Http\Controllers\LobbyController;
 use App\Models\GameUser;
 use Illuminate\Support\Facades\Route;
 
-// dd(GameUser::all());
-
 Route::inertia('/', 'Welcome')->name('home');
 
 // auth

@@ -35,14 +35,13 @@ const { channel } = useEchoPresence(
 channel()
     .here((activeUsers: User[]) => {
         users.value = activeUsers;
-        console.log(users.value, ' is jere');
-        console.log();
+        console.log('here', users.value);
     })
     .joining((user: User) => {
-        console.log(user.name, ' joined');
+        console.log('join', user);
     })
     .leaving((user: User) => {
-        console.log(user.name, ' left');
+        console.log('leave', user);
     })
     .error((error: unknown) => {
         console.error('e', error);
@@ -57,11 +56,11 @@ function ready() {
         },
         {
             onSuccess: (response) => {
-                console.log('r', response);
+
                 isReady.value = true;
             },
             onError: (error) => {
-                console.log(error);
+
                 isReady.value = false;
             },
         },
@@ -76,10 +75,9 @@ function leaveLobby() {
 }
 
 onMounted(() => {
-    console.log(page.props);
+
 });
 onUnmounted(() => {
-    console.log('random unmount');
     // todo: think of a better way to detect leaving page
     // as this is being called after redirect to game, etc
     // leaveLobby();

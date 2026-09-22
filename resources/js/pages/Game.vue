@@ -22,39 +22,25 @@ interface PageProps {
 const page = usePage<PageProps>();
 const game = page.props.game;
 const activePlayers = ref<GameUser[]>([]);
-// this will need to eventually be bound to redis
-const playerReady = ref(false);
 
 // function playHand() {
 //     router.post('/play-hand', { game_id: game.id });
 // }
 
 useEchoNotification(`App.Models.Game.${game.id}`, (notification: any) => {
-    console.log('hit', notification);
+    console.log('g', notification);
     activePlayers.value.push(notification.gameUser.user.name);
-
     setTimeout(() => {
         router.get('/dashboard');
     }, 3000);
 });
 
-function ready() {
-    try {
-        router.post(`/game/${game.id}/ready`);
-    } catch (error) {
-        console.log(error);
-    } finally {
-        playerReady.value = true;
-    }
-}
-
-function leaveGame() {
-    console.log(game.id);
-    router.get(`/leave-game/${game.id}`);
-}
+// function leaveGame() {
+//     router.get(`/leave-game/${game.id}`);
+// }
 
 onMounted(() => {
-    console.log(page.props);
+
 });
 </script>
 <template>
