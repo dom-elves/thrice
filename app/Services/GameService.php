@@ -61,6 +61,7 @@ class GameService
             ]);
         });
 
+        // i can remove this if i change it in middleware
         Redis::sadd("game:{$gameUser->game->id}:game_user_ids", $gameUser->id);
 
         $gameUser->update([

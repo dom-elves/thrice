@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\GameController;
 use App\Http\Controllers\LobbyController;
-use App\Models\GameUser;
 use Illuminate\Support\Facades\Route;
 
 Route::inertia('/', 'Welcome')->name('home');
