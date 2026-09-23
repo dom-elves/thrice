@@ -31,5 +31,5 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/game/{code}', [GameController::class, 'show'])->name('game.show');
+    Route::get('/game/{game}', [GameController::class, 'show'])->name('game.show');
 });

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Events\GameCreated;
 use App\Services\GameService;
 use App\Services\LobbyService;
+use Illuminate\Http\Response;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
@@ -74,10 +75,6 @@ class LobbyController extends Controller
             $data['name'] = auth()->user()->name."'s Game";
         }
 
-        if (! isset($data['password'])) {
-            $data['password'] = '';
-        }
-
         $code = Str::lower(Str::random(12));
 
         $data['code'] = $code;
@@ -93,7 +90,7 @@ class LobbyController extends Controller
      * - check all players are ready
      * - otherwise, start game
      */
-    public function ready(Request $request): Response
+    public function ready(Request $request): RedirectResponse|Response
     {
         $code = $request->route('code');
 
@@ -121,20 +118,12 @@ class LobbyController extends Controller
             return redirect()->route('lobby.show', $code);
         }
 
-        // maybe scrap this
-        // return game creation signal to last person
-        // their client will request /game/create
-        // maybe that makes more sense?
-
         $gameService = app(GameService::class);
         $game = $gameService->create($code);
 
-        // lock requests
-
         broadcast(new GameCreated($game));
 
-        // return redirect()->route('game.show', $game);
-        return response()->noContent();
+        return redirect()->back();
     }
 
     /**

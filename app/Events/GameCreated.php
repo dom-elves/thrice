@@ -39,4 +39,16 @@ class GameCreated implements ShouldBroadcast
     {
         return 'game.created';
     }
+
+    /**
+     * Get the data that should be broadcast with the event.
+     *
+     * @return array<string, mixed>
+     */
+    public function broadcastWith(): array
+    {
+        return [
+            'game' => $this->game->toArray(),
+        ];
+    }
 }

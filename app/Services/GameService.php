@@ -28,6 +28,7 @@ class GameService
     {
         $game = app(CreateGameAction::class)->execute($code);
 
+        // this is finishing off what was already set in LobbyService
         Redis::pipeline(function ($pipe) use ($game) {
             $pipe->hmset("game:{$game->code}", [
                 'hands' => 0,

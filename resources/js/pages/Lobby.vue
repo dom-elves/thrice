@@ -18,6 +18,12 @@ interface User {
     name: string;
 }
 
+interface GameCreatedEvent {
+    game: {
+        id: number;
+    };
+}
+
 const page = usePage<PageProps>();
 const code = page.props.code;
 const users = ref(<User[]>[]);
@@ -28,12 +34,9 @@ const isReady = ref<boolean>(page.props.session.isReady ?? false);
 const { channel } = useEchoPresence(
     `lobby.${code}`,
     '.game.created',
-    (event) => {
-        console.log('event', event);
-        // router.visit(`/game/${code}`);
-
+    (event: GameCreatedEvent) => {
         setTimeout(() => {
-                router.visit(`/game/${code}`);
+                router.visit(`/game/${event.game.id}`);
             }, 2000);
     },
 );

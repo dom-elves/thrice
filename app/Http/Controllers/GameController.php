@@ -24,9 +24,9 @@ class GameController extends Controller
      * If game exists & user is not in game, join
      * Otherwise, just return the game
      */
-    public function show(string $code): InertiaResponse|RedirectResponse
+    public function show(Game $game): InertiaResponse|RedirectResponse
     {
-        $game = Game::where('code', $code)->first();
+        dd($game);
         $user = auth()->user();
         $gameUser = GameUser::where('game_id', $game->id)
             ->where('user_id', $user->id)
@@ -49,20 +49,20 @@ class GameController extends Controller
 
     public function create(Request $request, CreateGameAction $createGameAction): RedirectResponse
     {
-        $validated = $request->validate([
-            'name' => 'nullable|string|max:255',
-            'password' => 'nullable|string|max:255',
-        ]);
+        // $validated = $request->validate([
+        //     'name' => 'nullable|string|max:255',
+        //     'password' => 'nullable|string|max:255',
+        // ]);
 
-        if (! isset($validated['name'])) {
-            $validated['name'] = auth()->user()->name."'s Game";
-        }
+        // if (! isset($validated['name'])) {
+        //     $validated['name'] = auth()->user()->name."'s Game";
+        // }
 
-        $game = $createGameAction->execute($validated);
+        // $game = $createGameAction->execute($validated);
 
-        $request->session()->put('new_game', $game->id);
+        // $request->session()->put('new_game', $game->id);
 
-        return redirect()->route('game.show', $game);
+        // return redirect()->route('game.show', $game);
     }
 
     public function ready(Game $game): void
