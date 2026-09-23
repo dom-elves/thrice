@@ -66,11 +66,11 @@ function ready() {
         },
         {
             onSuccess: (response) => {
-
+                console.log(response);
                 isReady.value = true;
             },
             onError: (error) => {
-
+                console.log(error);
                 isReady.value = false;
             },
         },

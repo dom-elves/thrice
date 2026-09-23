@@ -10,7 +10,8 @@ const props = defineProps<{
 }>();
 
 onMounted(() => {
-
+    // this is to stop linting being angry
+    console.log(props);
 });
 </script>
 <template>
