@@ -46,7 +46,7 @@ class GameController extends Controller
         ]);
     }
 
-    public function create(Request $request, CreateGameAction $createGameAction): RedirectResponse {}
+    public function create(Request $request, CreateGameAction $createGameAction): void {}
 
     public function ready(Game $game): void
     {

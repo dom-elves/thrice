@@ -9,9 +9,7 @@ use Illuminate\Support\Facades\Redis;
 
 class CreateGameAction
 {
-    public function __construct(
-        private CreateGameUserAction $createGameUserAction,
-    ) {}
+    public function __construct() {}
 
     /**
      * Create a Game.
