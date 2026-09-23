@@ -93,7 +93,7 @@ class LobbyController extends Controller
      * - check all players are ready
      * - otherwise, start game
      */
-    public function ready(Request $request): RedirectResponse
+    public function ready(Request $request): Response
     {
         $code = $request->route('code');
 
@@ -133,7 +133,8 @@ class LobbyController extends Controller
 
         broadcast(new GameCreated($game));
 
-        return redirect()->route('game.show', $game);
+        // return redirect()->route('game.show', $game);
+        return response()->noContent();
     }
 
     /**

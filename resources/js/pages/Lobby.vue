@@ -30,6 +30,11 @@ const { channel } = useEchoPresence(
     '.game.created',
     (event) => {
         console.log('event', event);
+        // router.visit(`/game/${code}`);
+
+        setTimeout(() => {
+                router.visit(`/game/${code}`);
+            }, 2000);
     },
 );
 
@@ -77,7 +82,7 @@ function leaveLobby() {
 }
 
 onMounted(() => {
-
+    console.log(code);
 });
 onUnmounted(() => {
     // todo: think of a better way to detect leaving page

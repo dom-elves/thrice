@@ -19,7 +19,7 @@ class CheckGameAccess
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $game = Game::find((int) $request->route('id'));
+        $game = Game::where('code', $request->route('code'))->first();
 
         if (! $game) {
             Inertia::flash([
