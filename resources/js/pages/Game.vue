@@ -30,9 +30,6 @@ const activePlayers = ref<GameUser[]>([]);
 useEchoNotification(`App.Models.Game.${game.id}`, (notification: any) => {
     console.log('g', notification);
     activePlayers.value.push(notification.gameUser.user.name);
-    setTimeout(() => {
-        router.get('/dashboard');
-    }, 3000);
 });
 
 // function leaveGame() {
@@ -59,19 +56,7 @@ onMounted(() => {});
                 </div>
             </div>
             <div>
-                <button
-                    @click="ready"
-                    class="m-4 rounded border border-1 bg-green-100 p-4"
-                    :disabled="playerReady"
-                >
-                    start game
-                </button>
-                <button
-                    @click="leaveGame"
-                    class="m-4 rounded border border-1 bg-red-300 p-4"
-                >
-                    leave game
-                </button>
+
             </div>
         </div>
     </AuthenticatedLayout>

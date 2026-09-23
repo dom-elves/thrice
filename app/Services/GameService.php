@@ -68,7 +68,7 @@ class GameService
             'in_game' => true,
         ]);
 
-        // event(new GameUserJoined($gameUser));
+        event(new GameUserJoined($gameUser));
     }
 
     // /**
