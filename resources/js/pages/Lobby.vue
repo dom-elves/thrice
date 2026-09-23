@@ -36,8 +36,8 @@ const { channel } = useEchoPresence(
     '.game.created',
     (event: GameCreatedEvent) => {
         setTimeout(() => {
-                router.visit(`/game/${event.game.id}`);
-            }, 2000);
+            router.visit(`/game/${event.game.id}`);
+        }, 2000);
     },
 );
 

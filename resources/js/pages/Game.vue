@@ -39,9 +39,7 @@ useEchoNotification(`App.Models.Game.${game.id}`, (notification: any) => {
 //     router.get(`/leave-game/${game.id}`);
 // }
 
-onMounted(() => {
-
-});
+onMounted(() => {});
 </script>
 <template>
     <AuthenticatedLayout>
