@@ -24,14 +24,6 @@ class CreateGameAction
             return Game::create($data);
         });
 
-        // $userIds = Redis::smembers("lobby:{$code}:user_ids");
-
-        // foreach ($userIds as $userId) {
-        //     $this->createGameUserAction->execute($game->id, (int) $userId);
-        // }
-
-        // $game->update(['started' => true]);
-
         // destroy lobby, should use a event+listener but this is the only place that game creation will be
         CloseLobby::dispatch($code);
 

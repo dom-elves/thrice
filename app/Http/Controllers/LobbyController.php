@@ -123,6 +123,8 @@ class LobbyController extends Controller
 
         broadcast(new GameCreated($game));
 
+        DB::afterCommit(fn () => $game->update(['started' => true]));
+
         return redirect()->back();
     }
 
