@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\GameCreated;
+use App\Services\GameService;
 use App\Services\LobbyService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
@@ -72,9 +76,13 @@ class LobbyController extends Controller
             $data['name'] = auth()->user()->name."'s Game";
         }
 
+        if (! isset($data['password'])) {
+            $data['password'] = '';
+        }
+
         $code = Str::lower(Str::random(12));
 
-        $data['join_code'] = $code;
+        $data['code'] = $code;
 
         $this->lobbyService->create(auth()->user(), $data);
 
@@ -87,7 +95,7 @@ class LobbyController extends Controller
      * - check all players are ready
      * - otherwise, start game
      */
-    public function ready(Request $request): RedirectResponse
+    public function ready(Request $request): RedirectResponse|Response
     {
         $code = $request->route('code');
 
@@ -115,10 +123,14 @@ class LobbyController extends Controller
             return redirect()->route('lobby.show', $code);
         }
 
-        // lock requests
-        // start game
-        // placeholder redirect to make phpstan happy
-        return redirect('game');
+        $gameService = app(GameService::class);
+        $game = $gameService->create($code);
+
+        broadcast(new GameCreated($game));
+
+        DB::afterCommit(fn () => $game->update(['started' => true]));
+
+        return redirect()->back();
     }
 
     /**

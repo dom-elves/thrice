@@ -2,10 +2,7 @@
 
 use App\Http\Controllers\GameController;
 use App\Http\Controllers\LobbyController;
-use App\Models\GameUser;
 use Illuminate\Support\Facades\Route;
-
-// dd(GameUser::all());
 
 Route::inertia('/', 'Welcome')->name('home');
 
@@ -32,6 +29,6 @@ Route::middleware('auth')->group(function () {
     // Route::post('/play-hand', [GameController::class, 'play'])->name('play.hand');
 });
 
-Route::middleware(['auth', 'game.access'])->group(function () {
-    Route::get('/game/{id}', [GameController::class, 'show'])->name('game.show');
+Route::middleware(['auth'])->group(function () {
+    Route::get('/game/{game}', [GameController::class, 'show'])->name('game.show');
 });

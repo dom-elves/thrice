@@ -5,11 +5,12 @@ namespace App\Events;
 use App\Models\Game;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PrivateChannel;
+use Illuminate\Broadcasting\PresenceChannel;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class GameCreated
+class GameCreated implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -29,7 +30,24 @@ class GameCreated
     public function broadcastOn(): array
     {
         return [
-            // new PrivateChannel(`App.Models.Game.{$this->game->id}`),
+            new PresenceChannel("lobby.{$this->game->code}"),
+        ];
+    }
+
+    public function broadcastAs(): string
+    {
+        return 'game.created';
+    }
+
+    /**
+     * Get the data that should be broadcast with the event.
+     *
+     * @return array<string, mixed>
+     */
+    public function broadcastWith(): array
+    {
+        return [
+            'game' => $this->game->toArray(),
         ];
     }
 }

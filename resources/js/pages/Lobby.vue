@@ -18,6 +18,12 @@ interface User {
     name: string;
 }
 
+interface GameCreatedEvent {
+    game: {
+        id: number;
+    };
+}
+
 const page = usePage<PageProps>();
 const code = page.props.code;
 const users = ref(<User[]>[]);
@@ -27,22 +33,25 @@ const isReady = ref<boolean>(page.props.session.isReady ?? false);
 
 const { channel } = useEchoPresence(
     `lobby.${code}`,
-    '', // no custom event to listen for — presence hooks below handle membership
-    () => {},
+    '.game.created',
+    (event: GameCreatedEvent) => {
+        setTimeout(() => {
+            router.visit(`/game/${event.game.id}`);
+        }, 2000);
+    },
 );
 
 // echo
 channel()
     .here((activeUsers: User[]) => {
         users.value = activeUsers;
-        console.log(users.value, ' is jere');
-        console.log();
+        console.log('here', users.value);
     })
     .joining((user: User) => {
-        console.log(user.name, ' joined');
+        console.log('join', user);
     })
     .leaving((user: User) => {
-        console.log(user.name, ' left');
+        console.log('leave', user);
     })
     .error((error: unknown) => {
         console.error('e', error);
@@ -57,7 +66,7 @@ function ready() {
         },
         {
             onSuccess: (response) => {
-                console.log('r', response);
+                console.log(response);
                 isReady.value = true;
             },
             onError: (error) => {
@@ -76,11 +85,12 @@ function leaveLobby() {
 }
 
 onMounted(() => {
-    console.log(page.props);
+    console.log(code);
 });
 onUnmounted(() => {
-    console.log('random unmount');
-    leaveLobby();
+    // todo: think of a better way to detect leaving page
+    // as this is being called after redirect to game, etc
+    // leaveLobby();
 });
 </script>
 <template>

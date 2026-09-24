@@ -24,9 +24,8 @@ class GameController extends Controller
      * If game exists & user is not in game, join
      * Otherwise, just return the game
      */
-    public function show(string $gameId): InertiaResponse|RedirectResponse
+    public function show(Game $game): InertiaResponse|RedirectResponse
     {
-        $game = Game::findOrFail($gameId);
         $user = auth()->user();
         $gameUser = GameUser::where('game_id', $game->id)
             ->where('user_id', $user->id)
@@ -39,7 +38,7 @@ class GameController extends Controller
             $createGameUserAction = new CreateGameUserAction($gameService);
             $createGameUserAction->execute($game->id, $user->id);
         } elseif (! $gameUser->in_game) {
-            $gameService->joinGame($gameUser);
+            $gameService->join($gameUser);
         }
 
         return Inertia::render('Game', [
@@ -47,23 +46,7 @@ class GameController extends Controller
         ]);
     }
 
-    public function create(Request $request, CreateGameAction $createGameAction): RedirectResponse
-    {
-        $validated = $request->validate([
-            'name' => 'nullable|string|max:255',
-            'password' => 'nullable|string|max:255',
-        ]);
-
-        if (! isset($validated['name'])) {
-            $validated['name'] = auth()->user()->name."'s Game";
-        }
-
-        $game = $createGameAction->execute($validated);
-
-        $request->session()->put('new_game', $game->id);
-
-        return redirect()->route('game.show', $game);
-    }
+    public function create(Request $request, CreateGameAction $createGameAction): void {}
 
     public function ready(Game $game): void
     {
@@ -83,7 +66,7 @@ class GameController extends Controller
             ->firstOrFail();
 
         $gameService = new GameService;
-        $gameService->leaveGame($gameUser);
+        // $gameService->leaveGame($gameUser);
 
         return redirect('dashboard');
     }
