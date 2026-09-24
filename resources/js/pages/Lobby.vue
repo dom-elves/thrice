@@ -1,13 +1,17 @@
 <script setup lang="ts">
 import { usePage, router } from '@inertiajs/vue3';
 import { useEchoPresence } from '@laravel/echo-vue';
-import { ref, onUnmounted, onMounted } from 'vue';
+import { computed, ref, onUnmounted, onMounted } from 'vue';
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue';
 
 interface PageProps {
     [key: string]: unknown;
     code: string;
-    user: object;
+    props: {
+        auth: {
+            user: object;
+        };
+    };
     session: {
         isReady: boolean;
     };
@@ -16,6 +20,7 @@ interface PageProps {
 interface User {
     id: number;
     name: string;
+    ready: boolean;
 }
 
 interface GameCreatedEvent {
@@ -26,6 +31,10 @@ interface GameCreatedEvent {
 
 interface UserToggleReadyEvent {
     status: boolean;
+    user: {
+        id: number;
+        ready: boolean;
+    }
 }
 
 const page = usePage<PageProps>();
@@ -33,7 +42,8 @@ const code = page.props.code;
 const users = ref(<User[]>[]);
 // todo: if i end up with a channel for game start signal
 // change this to proper computed property and make it toggleable
-const isReady = ref<boolean>(page.props.session.isReady ?? false);
+// const isReady = ref<boolean>(false);
+const readying = ref<boolean>(false);
 
 const { channel } = useEchoPresence(
     `lobby.${code}`,
@@ -60,15 +70,25 @@ channel()
         console.error('e', error);
     });
 
+const isReady = computed(() => {
+    const user = users.value.find((user) => user.id === page.props.auth.user.id);
+    return user?.ready ?? false;
+});
+
 useEchoPresence(
     `lobby.${code}`,
-    '.user.toggle',
+    '.player.toggleReady',
     (event: UserToggleReadyEvent) => {
-        console.log(event);
+        console.log('ev', event);
+        const user = users.value.find((user) => user.id === event.user.id);
+        if (user) {
+            user.ready = event.status;
+        }
     },
 );
 
-function ready() {
+function toggleReady() {
+    readying.value = true;
     router.post(
         `/lobby/${code}/ready`,
         {
@@ -78,12 +98,11 @@ function ready() {
         },
         {
             onSuccess: (response) => {
-                console.log(response);
-                isReady.value = true;
+                console.log('r', response);
+                readying.value = false;
             },
             onError: (error) => {
                 console.log(error);
-                isReady.value = false;
             },
         },
     );
@@ -97,7 +116,8 @@ function leaveLobby() {
 }
 
 onMounted(() => {
-    console.log(code);
+    // console.log('prop', page.props);
+    console.log('aaaa', isReady.value);
 });
 onUnmounted(() => {
     // todo: think of a better way to detect leaving page
@@ -112,18 +132,18 @@ onUnmounted(() => {
             <p>here are the users:</p>
             <ul>
                 <li v-for="user in users" :key="user.id">
-                    {{ user.name }}
+                    {{ user.name }} {{ user.ready}}
                 </li>
             </ul>
             <button
-                @click="ready"
-                class="m-4 rounded border border-1 p-4"
+                @click="toggleReady"
+                class="m-4 rounded border border-1 p-4 cursor-pointer"
                 :class="
                     isReady
-                        ? 'cursor-not-allowed bg-green-300'
-                        : 'cursor-pointer bg-blue-300'
+                        ? 'bg-green-300'
+                        : 'bg-blue-300'
                 "
-                :disabled="isReady"
+                :disabled="readying"
             >
                 ready
             </button>

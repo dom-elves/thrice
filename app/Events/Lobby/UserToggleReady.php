@@ -2,6 +2,7 @@
 
 namespace App\Events\Lobby;
 
+use App\Models\User;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -17,7 +18,7 @@ class UserToggleReady implements ShouldBroadcast
     /**
      * Create a new event instance.
      */
-    public function __construct(public string $code, public bool $status)
+    public function __construct(public string $code, public User $user, public bool $status)
     {
         //
     }
@@ -47,6 +48,7 @@ class UserToggleReady implements ShouldBroadcast
     public function broadcastWith(): array
     {
         return [
+            'user' => $this->user,
             'status' => $this->status,
         ];
     }

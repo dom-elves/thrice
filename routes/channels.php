@@ -17,6 +17,6 @@ Broadcast::channel('lobby.{code}', function ($user, $code) {
     return [
         'id' => $user->id, 
         'name' => $user->name,
-        'ready' => Redis::sismember("lobby:{$code}:read_user_ids", $user->id)
+        'ready' => Redis::sismember("lobby:{$code}:ready_user_ids", $user->id)
     ];
 });

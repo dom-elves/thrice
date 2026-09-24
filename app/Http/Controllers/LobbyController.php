@@ -104,9 +104,11 @@ class LobbyController extends Controller
 
         $code = $request->route('code');
 
+        $user = auth()->user();
+
         $status = $this->lobbyService->toggleReady($code, $data['status']);
 
-        broadcast(new UserToggleReady($code, $status));
+        broadcast(new UserToggleReady($code, $user, $status));
 
         // $allReady = $this->lobbyService->ready(auth()->user(), $code);
 
