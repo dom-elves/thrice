@@ -40,7 +40,7 @@ class LobbyService
      * All users being ready will trigger game start
      *
      * @param  string  $code;
-     * @param  bool    $status;
+     * @param  bool  $status;
      */
     public function toggleReady($code, $status): bool
     {
