@@ -36,22 +36,28 @@ class LobbyService
     }
 
     /**
-     * Set your status to 'ready'
+     * Toggle the 'ready' status of a user
      * All users being ready will trigger game start
      *
-     * @param  User  $user;
      * @param  string  $code;
+     * @param  bool    $status;
      */
-    public function ready($user, $code): bool
+    public function toggleReady($code, $status): bool
     {
-        // put a 1s lock or something on this to prevent race conditions
-        Redis::sadd("lobby:{$code}:ready_user_ids", $user->id);
+        $user = auth()->user();
 
-        // sdiff returns an array of values that do not match
-        // e.g. if [1,2,3] are user_ids but only [2,3] are ready, it will return [1]
-        $allReady = empty(Redis::sdiff("lobby:{$code}:user_ids", "lobby:{$code}:ready_user_ids"));
+        if ($status) {
+            Redis::sadd("lobby:{$code}:ready_user_ids", $user->id);
+        } else {
+            Redis::srem("lobby:{$code}:ready_user_ids", $user->id);
+        }
 
-        return $allReady;
+        // // sdiff returns an array of values that do not match
+        // // e.g. if [1,2,3] are user_ids but only [2,3] are ready, it will return [1]
+        // $allReady = empty(Redis::sdiff("lobby:{$code}:user_ids", "lobby:{$code}:ready_user_ids"));
+
+        // return $allReady;
+        return $status;
     }
 
     /**

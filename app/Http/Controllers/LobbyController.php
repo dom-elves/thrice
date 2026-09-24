@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Events\GameCreated;
+use App\Events\Lobby\UserToggleReady;
 use App\Services\GameService;
 use App\Services\LobbyService;
 use Illuminate\Http\RedirectResponse;
@@ -95,11 +96,17 @@ class LobbyController extends Controller
      * - check all players are ready
      * - otherwise, start game
      */
-    public function ready(Request $request): Response
+    public function ready(Request $request): RedirectResponse
     {
-        dd($request->all());
-        broadcat(new UserToggleReady());
-        // $code = $request->route('code');
+        $data = $request->validate([
+            'status' => 'boolean',
+        ]);
+
+        $code = $request->route('code');
+
+        $status = $this->lobbyService->toggleReady($code, $data['status']);
+
+        broadcast(new UserToggleReady($code, $status));
 
         // $allReady = $this->lobbyService->ready(auth()->user(), $code);
 
@@ -132,7 +139,7 @@ class LobbyController extends Controller
 
         // DB::afterCommit(fn () => $game->update(['started' => true]));
 
-        return response()->noContent();
+        return back();
     }
 
     /**

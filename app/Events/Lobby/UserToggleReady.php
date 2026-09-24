@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Events;
+namespace App\Events\Lobby;
 
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
@@ -17,7 +17,7 @@ class UserToggleReady implements ShouldBroadcast
     /**
      * Create a new event instance.
      */
-    public function __construct(bool $status)
+    public function __construct(public string $code, public bool $status)
     {
         //
     }
@@ -30,7 +30,7 @@ class UserToggleReady implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new PresenceChannel("lobby.{$this->game->code}"),
+            new PresenceChannel("lobby.{$this->code}"),
         ];
     }
 
