@@ -34,7 +34,7 @@ interface UserToggleReadyEvent {
     user: {
         id: number;
         ready: boolean;
-    }
+    };
 }
 
 const page = usePage<PageProps>();
@@ -71,7 +71,10 @@ channel()
     });
 
 const isReady = computed(() => {
-    const user = users.value.find((user) => user.id === page.props.auth.user.id);
+    const user = users.value.find(
+        (user) => user.id === page.props.auth.user.id,
+    );
+
     return user?.ready ?? false;
 });
 
@@ -81,6 +84,7 @@ useEchoPresence(
     (event: UserToggleReadyEvent) => {
         console.log('ev', event);
         const user = users.value.find((user) => user.id === event.user.id);
+
         if (user) {
             user.ready = event.status;
         }
@@ -132,17 +136,13 @@ onUnmounted(() => {
             <p>here are the users:</p>
             <ul>
                 <li v-for="user in users" :key="user.id">
-                    {{ user.name }} {{ user.ready}}
+                    {{ user.name }} {{ user.ready }}
                 </li>
             </ul>
             <button
                 @click="toggleReady"
-                class="m-4 rounded border border-1 p-4 cursor-pointer"
-                :class="
-                    isReady
-                        ? 'bg-green-300'
-                        : 'bg-blue-300'
-                "
+                class="m-4 cursor-pointer rounded border border-1 p-4"
+                :class="isReady ? 'bg-green-300' : 'bg-blue-300'"
                 :disabled="readying"
             >
                 ready
