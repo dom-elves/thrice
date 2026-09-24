@@ -1,6 +1,7 @@
 <?php
 
 use App\Events\GameCreated;
+use App\Models\Game;
 use App\Models\User;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Redis;
@@ -126,8 +127,10 @@ test('game will start if over two users are all ready', function () {
     Event::assertDispatched(GameCreated::class);
 
     $this->assertDatabaseHas('games', [
-        'name' => $this->user . "'s game",
+        'name' => $this->user->name . "'s game",
         'code' => $joinCode,
     ]);
+
     // i think i can only test the redirect signal in dusk or something
+    // anything on the other side of the redirect will be tested in games test
 });
