@@ -24,6 +24,10 @@ interface GameCreatedEvent {
     };
 }
 
+interface UserToggleReadyEvent {
+    
+}
+
 const page = usePage<PageProps>();
 const code = page.props.code;
 const users = ref(<User[]>[]);
@@ -41,7 +45,6 @@ const { channel } = useEchoPresence(
     },
 );
 
-// echo
 channel()
     .here((activeUsers: User[]) => {
         users.value = activeUsers;
@@ -57,12 +60,21 @@ channel()
         console.error('e', error);
     });
 
+useEchoPresence(
+    `lobby.${code}`,
+    '.user.toggle',
+    (event: UserToggleReadyEvent) => {
+        console.log(event);
+    },
+);
+
 function ready() {
     router.post(
         `/lobby/${code}/ready`,
         {
             preserveState: true,
             preserveScroll: true,
+            status: !isReady.value,
         },
         {
             onSuccess: (response) => {

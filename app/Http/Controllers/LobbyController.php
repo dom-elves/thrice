@@ -95,42 +95,44 @@ class LobbyController extends Controller
      * - check all players are ready
      * - otherwise, start game
      */
-    public function ready(Request $request): RedirectResponse|Response
+    public function ready(Request $request): Response
     {
-        $code = $request->route('code');
+        dd($request->all());
+        broadcat(new UserToggleReady());
+        // $code = $request->route('code');
 
-        $allReady = $this->lobbyService->ready(auth()->user(), $code);
+        // $allReady = $this->lobbyService->ready(auth()->user(), $code);
 
-        // check Lobby page for notes re this
-        // as it will possibly be removed/changed
-        $request->session()->put('isReady', true);
+        // // check Lobby page for notes re this
+        // // as it will possibly be removed/changed
+        // $request->session()->put('isReady', true);
 
-        $playerCount = Redis::scard("lobby:{$code}:user_ids");
+        // $playerCount = Redis::scard("lobby:{$code}:user_ids");
 
-        if ($playerCount <= 1) {
-            Inertia::flash([
-                'message' => 'Not enough players ready',
-            ]);
+        // if ($playerCount <= 1) {
+        //     Inertia::flash([
+        //         'message' => 'Not enough players ready',
+        //     ]);
 
-            return redirect()->route('lobby.show', $code);
-        }
+        //     return redirect()->route('lobby.show', $code);
+        // }
 
-        if (! $allReady) {
-            Inertia::flash([
-                'message' => 'Not all players are ready',
-            ]);
+        // if (! $allReady) {
+        //     Inertia::flash([
+        //         'message' => 'Not all players are ready',
+        //     ]);
 
-            return redirect()->route('lobby.show', $code);
-        }
+        //     return redirect()->route('lobby.show', $code);
+        // }
 
-        $gameService = app(GameService::class);
-        $game = $gameService->create($code);
+        // $gameService = app(GameService::class);
+        // $game = $gameService->create($code);
 
-        broadcast(new GameCreated($game));
+        // broadcast(new GameCreated($game));
 
-        DB::afterCommit(fn () => $game->update(['started' => true]));
+        // DB::afterCommit(fn () => $game->update(['started' => true]));
 
-        return redirect()->back();
+        return response()->noContent();
     }
 
     /**
