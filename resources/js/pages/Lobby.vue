@@ -9,7 +9,10 @@ interface PageProps {
     code: string;
     props: {
         auth: {
-            user: object;
+            user: {
+                id: number;
+                name: string;
+            }
         };
     };
     session: {
@@ -17,6 +20,8 @@ interface PageProps {
     };
 }
 
+// this is for a user as in the one that is in the users array
+// which can be anyone in the lobby
 interface User {
     id: number;
     name: string;
@@ -37,60 +42,69 @@ interface UserToggleReadyEvent {
     };
 }
 
+// simple refs for page, lobby code and present users
 const page = usePage<PageProps>();
 const code = page.props.code;
 const users = ref(<User[]>[]);
-// todo: if i end up with a channel for game start signal
-// change this to proper computed property and make it toggleable
-// const isReady = ref<boolean>(false);
 const readying = ref<boolean>(false);
+
+// computed property that is solely for button colour
+const isReady = computed(() => {
+    const user = users.value.find(
+        (user: User) => user.id === page.props.auth.user.id,
+    );
+
+    return user?.ready ?? false;
+});
 
 const { channel } = useEchoPresence(
     `lobby.${code}`,
     '.game.created',
     (event: GameCreatedEvent) => {
         setTimeout(() => {
+            // todo: lock everything and set a loading thing
             router.visit(`/game/${event.game.id}`);
         }, 2000);
     },
 );
 
+/**
+ * .here() runs once when a user joins
+ * others are self explainatory
+ */
 channel()
     .here((activeUsers: User[]) => {
         users.value = activeUsers;
-        console.log('here', users.value);
     })
     .joining((user: User) => {
-        console.log('join', user);
+        users.value.push(user);
     })
     .leaving((user: User) => {
-        console.log('leave', user);
+        users.value = users.value.filter((u) => u.id !== user.id);
     })
     .error((error: unknown) => {
         console.error('e', error);
     });
 
-const isReady = computed(() => {
-    const user = users.value.find(
-        (user) => user.id === page.props.auth.user.id,
-    );
-
-    return user?.ready ?? false;
-});
-
+/**
+ * Channel for listening to toggleReady events
+ */
 useEchoPresence(
     `lobby.${code}`,
-    '.player.toggleReady',
+    '.user.toggleReady',
     (event: UserToggleReadyEvent) => {
-        console.log('ev', event);
         const user = users.value.find((user) => user.id === event.user.id);
 
         if (user) {
             user.ready = event.status;
+            readying.value = false;
         }
     },
 );
 
+/**
+ * toggles user ready status in redis
+ */
 function toggleReady() {
     readying.value = true;
     router.post(
@@ -103,10 +117,9 @@ function toggleReady() {
         {
             onSuccess: (response) => {
                 console.log('r', response);
-                readying.value = false;
             },
             onError: (error) => {
-                console.log(error);
+                console.log('e', error);
             },
         },
     );
@@ -120,8 +133,7 @@ function leaveLobby() {
 }
 
 onMounted(() => {
-    // console.log('prop', page.props);
-    console.log('aaaa', isReady.value);
+    // aaa
 });
 onUnmounted(() => {
     // todo: think of a better way to detect leaving page
@@ -136,7 +148,7 @@ onUnmounted(() => {
             <p>here are the users:</p>
             <ul>
                 <li v-for="user in users" :key="user.id">
-                    {{ user.name }} {{ user.ready }}
+                    {{ user.name }} {{ user.ready ? 'ready!' : 'not ready' }}
                 </li>
             </ul>
             <button
@@ -145,7 +157,7 @@ onUnmounted(() => {
                 :class="isReady ? 'bg-green-300' : 'bg-blue-300'"
                 :disabled="readying"
             >
-                ready
+                {{ readying ? '...waiting' : 'ready'}}
             </button>
             <button
                 @click="leaveLobby"

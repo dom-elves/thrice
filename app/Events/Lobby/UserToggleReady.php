@@ -36,7 +36,7 @@ class UserToggleReady implements ShouldBroadcast
 
     public function broadcastAs(): string
     {
-        return 'player.toggleReady';
+        return 'user.toggleReady';
     }
 
     /**
