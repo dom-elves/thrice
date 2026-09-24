@@ -127,7 +127,7 @@ test('game will start if over two users are all ready', function () {
     Event::assertDispatched(GameCreated::class);
 
     $this->assertDatabaseHas('games', [
-        'name' => $this->user->name . "'s game",
+        'name' => $this->user->name."'s game",
         'code' => $joinCode,
     ]);
 
