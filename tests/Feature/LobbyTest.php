@@ -1,5 +1,6 @@
 <?php
 
+use App\Events\GameCreated;
 use App\Models\User;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Redis;
@@ -108,4 +109,21 @@ test('a user setting themselves to ready will not start the game if not all play
     );
 });
 
-test('game will start if over two users are all ready', function () {});
+test('game will start if over two users are all ready', function () {
+    $response = $this->post(route('lobby.create'));
+    $joinCode = basename($response->getTargetUrl());
+
+    foreach ($this->users as $user) {
+        Redis::sadd("lobby:{$joinCode}:user_ids", $user->id);
+        Redis::sadd("lobby:{$joinCode}:ready_user_ids", $user->id);
+    }
+
+    $response = $this->followingRedirects()
+        ->post(route('lobby.ready', ['code' => $joinCode]));
+
+    $response->assertSessionHas('isReady', true);
+
+    Event::assertDispatched(GameCreated::class);
+
+    // i think i can only test the redirect signal in dusk or something
+});

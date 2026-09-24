@@ -76,6 +76,10 @@ class LobbyController extends Controller
             $data['name'] = auth()->user()->name."'s Game";
         }
 
+        if (! isset($data['password'])) {
+            $data['password'] = '';
+        }
+
         $code = Str::lower(Str::random(12));
 
         $data['code'] = $code;
