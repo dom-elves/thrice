@@ -12,7 +12,7 @@ interface PageProps {
             user: {
                 id: number;
                 name: string;
-            }
+            };
         };
     };
     session: {
@@ -157,7 +157,7 @@ onUnmounted(() => {
                 :class="isReady ? 'bg-green-300' : 'bg-blue-300'"
                 :disabled="readying"
             >
-                {{ readying ? '...waiting' : 'ready'}}
+                {{ readying ? '...waiting' : 'ready' }}
             </button>
             <button
                 @click="leaveLobby"
