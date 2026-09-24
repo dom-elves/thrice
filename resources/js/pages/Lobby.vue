@@ -25,7 +25,7 @@ interface GameCreatedEvent {
 }
 
 interface UserToggleReadyEvent {
-    
+    status: boolean;
 }
 
 const page = usePage<PageProps>();
