@@ -30,9 +30,6 @@ const activePlayers = ref<GameUser[]>([]);
 useEchoNotification(`App.Models.Game.${game.id}`, (notification: any) => {
     console.log('g', notification);
     activePlayers.value.push(notification.gameUser.user.name);
-    setTimeout(() => {
-        router.get('/dashboard');
-    }, 3000);
 });
 
 function leaveGame() {

@@ -19,7 +19,11 @@ class CreateGameAction
         $data = Redis::hgetall("game:{$code}");
 
         $game = DB::transaction(function () use ($data) {
-            return Game::create($data);
+            return Game::create([
+                'name' => $data['name'],
+                'code' => $data['code'],
+                'password' => $data['password'] === '' ? '' : bcrypt($data['password']),
+            ]);
         });
 
         // destroy lobby, should use a event+listener but this is the only place that game creation will be
