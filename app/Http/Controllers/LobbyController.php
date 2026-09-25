@@ -109,37 +109,6 @@ class LobbyController extends Controller
 
         broadcast(new UserToggleReady($code, $user, $status));
 
-        // $allReady = $this->lobbyService->ready(auth()->user(), $code);
-
-        // // check Lobby page for notes re this
-        // // as it will possibly be removed/changed
-        // $request->session()->put('isReady', true);
-
-        // $playerCount = Redis::scard("lobby:{$code}:user_ids");
-
-        // if ($playerCount <= 1) {
-        //     Inertia::flash([
-        //         'message' => 'Not enough players ready',
-        //     ]);
-
-        //     return redirect()->route('lobby.show', $code);
-        // }
-
-        // if (! $allReady) {
-        //     Inertia::flash([
-        //         'message' => 'Not all players are ready',
-        //     ]);
-
-        //     return redirect()->route('lobby.show', $code);
-        // }
-
-        // $gameService = app(GameService::class);
-        // $game = $gameService->create($code);
-
-        // broadcast(new GameCreated($game));
-
-        // DB::afterCommit(fn () => $game->update(['started' => true]));
-
         return back();
     }
 
