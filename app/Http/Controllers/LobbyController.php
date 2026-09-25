@@ -53,6 +53,8 @@ class LobbyController extends Controller
             $this->lobbyService->join($user, $code);
         }
 
+        $request->session()->put('lobby_code', $code);
+
         return Inertia::render('Lobby', [
             'code' => $code,
         ]);
@@ -85,6 +87,8 @@ class LobbyController extends Controller
         $data['code'] = $code;
 
         $this->lobbyService->create(auth()->user(), $data);
+
+        $request->session()->put('lobby_code', $code);
 
         return redirect()->route('lobby.show', $code);
     }
@@ -121,9 +125,7 @@ class LobbyController extends Controller
     {
         $this->lobbyService->leave(auth()->user(), $request->route('code'));
 
-        if ($request->session()->has('isReady')) {
-            $request->session()->pull('isReady');
-        }
+        $request->session()->pull('lobby_code', $code);
 
         return redirect()->route('dashboard');
     }

@@ -15,9 +15,6 @@ interface PageProps {
             };
         };
     };
-    session: {
-        isReady: boolean;
-    };
 }
 
 // this is for a user as in the one that is in the users array
