@@ -2,13 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\GameCreated;
-use App\Services\GameService;
+use App\Events\Lobby\UserToggleReady;
 use App\Services\LobbyService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
@@ -53,6 +50,8 @@ class LobbyController extends Controller
             $this->lobbyService->join($user, $code);
         }
 
+        $request->session()->put('lobby_code', $code);
+
         return Inertia::render('Lobby', [
             'code' => $code,
         ]);
@@ -86,6 +85,8 @@ class LobbyController extends Controller
 
         $this->lobbyService->create(auth()->user(), $data);
 
+        $request->session()->put('lobby_code', $code);
+
         return redirect()->route('lobby.show', $code);
     }
 
@@ -95,42 +96,21 @@ class LobbyController extends Controller
      * - check all players are ready
      * - otherwise, start game
      */
-    public function ready(Request $request): RedirectResponse|Response
+    public function ready(Request $request): RedirectResponse
     {
+        $data = $request->validate([
+            'status' => 'boolean',
+        ]);
+
         $code = $request->route('code');
 
-        $allReady = $this->lobbyService->ready(auth()->user(), $code);
+        $user = auth()->user();
 
-        // check Lobby page for notes re this
-        // as it will possibly be removed/changed
-        $request->session()->put('isReady', true);
+        $status = $this->lobbyService->toggleReady($code, $data['status']);
 
-        $playerCount = Redis::scard("lobby:{$code}:user_ids");
+        broadcast(new UserToggleReady($code, $user, $status));
 
-        if ($playerCount <= 1) {
-            Inertia::flash([
-                'message' => 'Not enough players ready',
-            ]);
-
-            return redirect()->route('lobby.show', $code);
-        }
-
-        if (! $allReady) {
-            Inertia::flash([
-                'message' => 'Not all players are ready',
-            ]);
-
-            return redirect()->route('lobby.show', $code);
-        }
-
-        $gameService = app(GameService::class);
-        $game = $gameService->create($code);
-
-        broadcast(new GameCreated($game));
-
-        DB::afterCommit(fn () => $game->update(['started' => true]));
-
-        return redirect()->back();
+        return back();
     }
 
     /**
@@ -142,9 +122,7 @@ class LobbyController extends Controller
     {
         $this->lobbyService->leave(auth()->user(), $request->route('code'));
 
-        if ($request->session()->has('isReady')) {
-            $request->session()->pull('isReady');
-        }
+        $request->session()->pull('lobby_code');
 
         return redirect()->route('dashboard');
     }

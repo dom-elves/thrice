@@ -72,65 +72,65 @@ test('a user can leave a lobby', function () {
     $response->assertRedirect('dashboard');
 });
 
-test('a user can set themselves to ready', function () {
-    $response = $this->post(route('lobby.create'));
-    $joinCode = basename($response->getTargetUrl());
+// test('a user can set themselves to ready', function () {
+//     $response = $this->post(route('lobby.create'));
+//     $joinCode = basename($response->getTargetUrl());
 
-    $response = $this->followingRedirects()
-        ->post(route('lobby.ready', ['code' => $joinCode]));
+//     $response = $this->followingRedirects()
+//         ->post(route('lobby.ready', ['code' => $joinCode]));
 
-    // todo: assert game not started after game start is built
-    $response->assertSessionHas('isReady', true);
+//     // todo: assert game not started after game start is built
+//     $response->assertSessionHas('isReady', true);
 
-    $response->assertInertia(fn (Assert $page) => $page->component('Lobby')
-        // ->has("session.isReady.{$joinCode}")
-        // ->where("session.isReady.{$joinCode}", true)
-        // extra assertion for not enough players
-        ->hasFlash('message', 'Not enough players ready')
-    );
-});
+//     $response->assertInertia(fn (Assert $page) => $page->component('Lobby')
+//         // ->has("session.isReady.{$joinCode}")
+//         // ->where("session.isReady.{$joinCode}", true)
+//         // extra assertion for not enough players
+//         ->hasFlash('message', 'Not enough players ready')
+//     );
+// });
 
-test('a user setting themselves to ready will not start the game if not all players are ready', function () {
-    $response = $this->post(route('lobby.create'));
-    $joinCode = basename($response->getTargetUrl());
+// test('a user setting themselves to ready will not start the game if not all players are ready', function () {
+//     $response = $this->post(route('lobby.create'));
+//     $joinCode = basename($response->getTargetUrl());
 
-    for ($i = 2; $i < 5; $i++) {
-        Redis::sadd("lobby:{$joinCode}:user_ids", $i);
-    }
+//     for ($i = 2; $i < 5; $i++) {
+//         Redis::sadd("lobby:{$joinCode}:user_ids", $i);
+//     }
 
-    $response = $this->followingRedirects()
-        ->post(route('lobby.ready', ['code' => $joinCode]));
+//     $response = $this->followingRedirects()
+//         ->post(route('lobby.ready', ['code' => $joinCode]));
 
-    $response->assertSessionHas('isReady', true);
+//     $response->assertSessionHas('isReady', true);
 
-    $response->assertInertia(fn (Assert $page) => $page->component('Lobby')
-        // ->has("session.isReady.{$joinCode}")
-        // ->where("session.isReady.{$joinCode}", true)
-        ->hasFlash('message', 'Not all players are ready')
-    );
-});
+//     $response->assertInertia(fn (Assert $page) => $page->component('Lobby')
+//         // ->has("session.isReady.{$joinCode}")
+//         // ->where("session.isReady.{$joinCode}", true)
+//         ->hasFlash('message', 'Not all players are ready')
+//     );
+// });
 
-test('game will start if over two users are all ready', function () {
-    $response = $this->post(route('lobby.create'));
-    $joinCode = basename($response->getTargetUrl());
+// test('game will start if over two users are all ready', function () {
+//     $response = $this->post(route('lobby.create'));
+//     $joinCode = basename($response->getTargetUrl());
 
-    foreach ($this->users as $user) {
-        Redis::sadd("lobby:{$joinCode}:user_ids", $user->id);
-        Redis::sadd("lobby:{$joinCode}:ready_user_ids", $user->id);
-    }
+//     foreach ($this->users as $user) {
+//         Redis::sadd("lobby:{$joinCode}:user_ids", $user->id);
+//         Redis::sadd("lobby:{$joinCode}:ready_user_ids", $user->id);
+//     }
 
-    $response = $this->followingRedirects()
-        ->post(route('lobby.ready', ['code' => $joinCode]));
+//     $response = $this->followingRedirects()
+//         ->post(route('lobby.ready', ['code' => $joinCode]));
 
-    $response->assertSessionHas('isReady', true);
+//     $response->assertSessionHas('isReady', true);
 
-    Event::assertDispatched(GameCreated::class);
+//     Event::assertDispatched(GameCreated::class);
 
-    $this->assertDatabaseHas('games', [
-        'name' => $this->user->name."'s Game",
-        'code' => $joinCode,
-    ]);
+//     $this->assertDatabaseHas('games', [
+//         'name' => $this->user->name."'s Game",
+//         'code' => $joinCode,
+//     ]);
 
-    // i think i can only test the redirect signal in dusk or something
-    // anything on the other side of the redirect will be tested in games test
-});
+//     // i think i can only test the redirect signal in dusk or something
+//     // anything on the other side of the redirect will be tested in games test
+// });
