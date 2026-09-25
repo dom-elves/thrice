@@ -21,12 +21,11 @@ class UserToggleReadyListener
 
     /**
      * Handle the event.
-     * 
      */
     public function handle(UserToggleReady $event): void
     {
         $allReady = empty(Redis::sdiff(
-            "lobby:{$event->code}:user_ids", 
+            "lobby:{$event->code}:user_ids",
             "lobby:{$event->code}:ready_user_ids"
         ));
 
@@ -41,7 +40,7 @@ class UserToggleReadyListener
 
                 DB::afterCommit(function () use ($game) {
                     $game->update([
-                        'started' => true
+                        'started' => true,
                     ]);
 
                     broadcast(new GameCreated($game));

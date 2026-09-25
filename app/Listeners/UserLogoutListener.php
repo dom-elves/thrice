@@ -4,9 +4,6 @@ namespace App\Listeners;
 
 use App\Services\LobbyService;
 use Illuminate\Auth\Events\Logout;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Support\Facades\Redis;
 
 class UserLogoutListener
 {

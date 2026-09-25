@@ -142,7 +142,10 @@ onUnmounted(() => {
     <AuthenticatedLayout>
         <div class="flex flex-col">
             <p>welcome to the lobby</p>
-            <b>the game will automatically start two or more players are ready</b>
+            <b
+                >the game will automatically start two or more players are
+                ready</b
+            >
             <p>here are the users:</p>
             <ul>
                 <li v-for="user in users" :key="user.id">
