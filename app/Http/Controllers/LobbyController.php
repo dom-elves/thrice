@@ -122,7 +122,7 @@ class LobbyController extends Controller
     {
         $this->lobbyService->leave(auth()->user(), $request->route('code'));
 
-        $request->session()->pull('lobby_code', $code);
+        $request->session()->pull('lobby_code');
 
         return redirect()->route('dashboard');
     }
