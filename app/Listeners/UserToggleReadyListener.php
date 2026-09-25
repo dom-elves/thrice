@@ -5,6 +5,7 @@ namespace App\Listeners;
 use App\Events\GameCreated;
 use App\Events\Lobby\UserToggleReady;
 use App\Services\GameService;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
 
@@ -20,6 +21,7 @@ class UserToggleReadyListener
 
     /**
      * Handle the event.
+     * 
      */
     public function handle(UserToggleReady $event): void
     {
@@ -31,12 +33,22 @@ class UserToggleReadyListener
         $playerCount = Redis::scard("lobby:{$event->code}:ready_user_ids");
 
         if ($allReady && $playerCount >= 2) {
-            $gameService = app(GameService::class);
-            $game = $gameService->create($event->code);
+            $lock = Cache::lock("lobby:{$event->code}:game-creating", 10);
 
-            broadcast(new GameCreated($game));
+            if ($lock->get()) {
+                $gameService = app(GameService::class);
+                $game = $gameService->create($event->code);
 
-            DB::afterCommit(fn () => $game->update(['started' => true]));
+                DB::afterCommit(function () use ($game) {
+                    $game->update([
+                        'started' => true
+                    ]);
+
+                    broadcast(new GameCreated($game));
+                });
+
+                $lock->release();
+            }
         }
     }
 }
