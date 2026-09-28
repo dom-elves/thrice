@@ -44,6 +44,7 @@ const page = usePage<PageProps>();
 const code = page.props.code;
 const users = ref(<User[]>[]);
 const readying = ref<boolean>(false);
+const gameStarting = ref(false);
 
 // computed property that is solely for button colour
 const isReady = computed(() => {
@@ -58,8 +59,9 @@ const { channel } = useEchoPresence(
     `lobby.${code}`,
     '.game.created',
     (event: GameCreatedEvent) => {
+        gameStarting.value = true;
+        // by now, requests to /lobby/{code} are locked
         setTimeout(() => {
-            // todo: lock everything and set a loading thing
             router.visit(`/game/${event.game.id}`);
         }, 2000);
     },
@@ -149,24 +151,33 @@ onUnmounted(() => {
             <p>here are the users:</p>
             <ul>
                 <li v-for="user in users" :key="user.id">
-                    {{ user.name }} {{ user.ready ? 'ready!' : 'not ready' }}
+                    {{ user.name }} 
+                    <span
+                        :class="user.ready ? 'text-green-500' : 'text-red-500'"
+                    >
+                        {{ user.ready ? 'ready!' : 'not ready' }}
+                    </span>
                 </li>
             </ul>
-            <button
-                @click="toggleReady"
-                class="m-4 cursor-pointer rounded border border-1 p-4"
-                :class="isReady ? 'bg-green-300' : 'bg-blue-300'"
-                :disabled="readying"
-            >
-                {{ readying ? '...waiting' : 'ready' }}
-            </button>
-            <button
-                @click="leaveLobby"
-                class="m-4 rounded border border-1 bg-red-300 p-4"
-            >
-                leave lobby
-            </button>
-            <p>{{ page.flash.message }}</p>
+            <div v-if="!gameStarting">
+                <button
+                    @click="toggleReady"
+                    class="m-4 cursor-pointer rounded border border-1 p-4"
+                    :class="isReady ? 'bg-green-300' : 'bg-blue-300'"
+                    :disabled="readying"
+                >
+                    {{ readying ? '...waiting' : 'ready' }}
+                </button>
+                <button
+                    @click="leaveLobby"
+                    class="m-4 rounded border border-1 bg-red-300 p-4"
+                >
+                    leave lobby
+                </button>
+            </div>
+            <div v-else>
+                <p>Please wait, the game is about to start...</p>
+            </div>
         </div>
     </AuthenticatedLayout>
 </template>

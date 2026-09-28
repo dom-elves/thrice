@@ -60,8 +60,8 @@ class LobbyController extends Controller
     /**
      * - validate data
      * - set a name if one isn't given
-     * - generate lobby code
-     * - append code to $data
+     * - set empty string as password if one isn't given
+     * - generate lobby code & append to $data
      * - create lobby
      */
     public function create(Request $request): RedirectResponse
@@ -91,14 +91,13 @@ class LobbyController extends Controller
     }
 
     /**
-     * - set self to ready, return bool on $allReady, int on player count
-     * - check enough players exist
-     * - check all players are ready
-     * - otherwise, start game
+     * - toggle a user's ready status
+     * - broadcast over lobby channel
+     * - UserToggleReady has a listener, which triggers on all members ready when there are 2+
      */
     public function ready(Request $request): RedirectResponse
     {
-        $data = $request->validate([
+        $validated = $request->validate([
             'status' => 'boolean',
         ]);
 
@@ -106,7 +105,7 @@ class LobbyController extends Controller
 
         $user = auth()->user();
 
-        $status = $this->lobbyService->toggleReady($code, $data['status']);
+        $status = $this->lobbyService->toggleReady($code, $validated['status']);
 
         broadcast(new UserToggleReady($code, $user, $status));
 
