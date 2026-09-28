@@ -66,24 +66,24 @@ class LobbyController extends Controller
      */
     public function create(Request $request): RedirectResponse
     {
-        $data = $request->validate([
+        $validated = $request->validate([
             'name' => 'nullable|string|max:255',
             'password' => 'nullable|string|max:255',
         ]);
 
-        if (! isset($data['name'])) {
-            $data['name'] = auth()->user()->name."'s Game";
+        if (! isset($validated['name'])) {
+            $validated['name'] = auth()->user()->name."'s Game";
         }
 
-        if (! isset($data['password'])) {
-            $data['password'] = '';
+        if (! isset($validated['password'])) {
+            $validated['password'] = '';
         }
 
         $code = Str::lower(Str::random(12));
 
-        $data['code'] = $code;
+        $validated['code'] = $code;
 
-        $this->lobbyService->create(auth()->user(), $data);
+        $this->lobbyService->create(auth()->user(), $validated);
 
         $request->session()->put('lobby_code', $code);
 
@@ -115,7 +115,6 @@ class LobbyController extends Controller
     /**
      * - simple call service & leave
      * - lobby teardown is in service
-     * - remove readiness if exists
      */
     public function leave(Request $request): RedirectResponse
     {
