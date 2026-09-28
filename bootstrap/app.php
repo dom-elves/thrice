@@ -1,8 +1,8 @@
 <?php
 
 use App\Http\Middleware\CheckGameAccess;
-use App\Http\Middleware\Lobby;
 use App\Http\Middleware\HandleInertiaRequests;
+use App\Http\Middleware\Lobby;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;

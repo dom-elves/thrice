@@ -151,7 +151,7 @@ onUnmounted(() => {
             <p>here are the users:</p>
             <ul>
                 <li v-for="user in users" :key="user.id">
-                    {{ user.name }} 
+                    {{ user.name }}
                     <span
                         :class="user.ready ? 'text-green-500' : 'text-red-500'"
                     >
