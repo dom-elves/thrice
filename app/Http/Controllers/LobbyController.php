@@ -18,33 +18,15 @@ class LobbyController extends Controller
     ) {}
 
     /**
-     * - check existence of lobby
-     * - check lobby is full & user is not in
-     * - so if lobby is not full and user is not member, join
+     * If the user gets to here, the lobby is considered 'joinable' (check Lobby middleware)
+     * If they are not already a member of the lobby, put code in session & join
+     * checking member is to cover user accidentally closing tab but not properly leaving the session
      */
     public function show(Request $request): RedirectResponse|InertiaResponse
     {
         $code = $request->route('code');
-
-        if (! Redis::exists("lobby:{$code}:user_ids")) {
-            Inertia::flash([
-                'message' => 'Lobby does not exist',
-            ]);
-
-            return redirect('dashboard');
-        }
-
         $user = auth()->user();
         $member = Redis::sismember("lobby:{$code}:user_ids", $user->id);
-        $full = Redis::scard("lobby:{$code}:user_ids)") === 6;
-
-        if ($full && ! $member) {
-            Inertia::flash([
-                'message' => 'Lobby is full',
-            ]);
-
-            return redirect('dashboard');
-        }
 
         if (! $member) {
             $this->lobbyService->join($user, $code);

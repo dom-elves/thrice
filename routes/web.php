@@ -12,8 +12,8 @@ Route::middleware('auth')->group(function () {
 });
 
 // lobby
-Route::middleware('auth')->group(function () {
-    Route::post('/lobby/create', [LobbyController::class, 'create'])->name('lobby.create');
+Route::middleware('auth')->post('/lobby/create', [LobbyController::class, 'create'])->name('lobby.create');
+Route::middleware(['auth', 'lobby'])->group(function () {
     Route::get('/lobby/{code}', [LobbyController::class, 'show'])->name('lobby.show');
     Route::post('/lobby/{code}/ready', [LobbyController::class, 'ready'])->name('lobby.ready');
     Route::post('/lobby/{code}/leave', [LobbyController::class, 'leave'])->name('lobby.leave');
