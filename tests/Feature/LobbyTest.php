@@ -128,7 +128,11 @@ test('a user can set themselves to not ready from ready', function () {
     $response->assertRedirectBack(); 
 });
 
+// this is the same as not ready->ready test, but actually setting user_ids in redis
 test('a user setting themselves to ready will not start the game if not all players are ready', function () {
+    Queue::fake();
+    Event::fake([GameCreated::class]);
+
     $response = $this->post(route('lobby.create'));
     $joinCode = basename($response->getTargetUrl());
 
@@ -136,16 +140,27 @@ test('a user setting themselves to ready will not start the game if not all play
         Redis::sadd("lobby:{$joinCode}:user_ids", $i);
     }
 
-    $response = $this->followingRedirects()
-        ->post(route('lobby.ready', ['code' => $joinCode]));
+    $status = true;
 
+    $response = $this->post(route('lobby.ready', [
+            'code' => $joinCode,
+            'status' => $status,
+        ]));
 
-    $response->assertInertia(fn (Assert $page) => $page->component('Lobby')
-        ->hasFlash('message', 'Not all players are ready')
-    );
+    Event::assertNotDispatched(GameCreated::class);
+
+    Queue::assertPushed(BroadcastEvent::class, function ($job) use ($status) {
+        return $job->event instanceof UserToggleReady
+            && $job->event->status == $status;
+    });
+
+    $response->assertRedirectBack();
 });
 
 test('game will start if over two users are all ready', function () {
+    Queue::fake();
+    Event::fake([GameCreated::class]);
+
     $response = $this->post(route('lobby.create'));
     $joinCode = basename($response->getTargetUrl());
 
@@ -154,14 +169,24 @@ test('game will start if over two users are all ready', function () {
         Redis::sadd("lobby:{$joinCode}:ready_user_ids", $user->id);
     }
 
-    $response = $this->followingRedirects()
-        ->post(route('lobby.ready', ['code' => $joinCode]));
+    $status = true;
+
+    $response = $this->post(route('lobby.ready', [
+            'code' => $joinCode,
+            'status' => $status,
+        ]));
 
     Event::assertDispatched(GameCreated::class);
+
+    Queue::assertPushed(BroadcastEvent::class, function ($job) use ($status) {
+        return $job->event instanceof UserToggleReady
+            && $job->event->status == $status;
+    });
 
     $this->assertDatabaseHas('games', [
         'name' => $this->user->name."'s Game",
         'code' => $joinCode,
+        'started' => true,
     ]);
 
     // i think i can only test the redirect signal in dusk or something
