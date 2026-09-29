@@ -1,29 +1,5 @@
 <script setup lang="ts">
-import { useEchoPresence } from "@laravel/echo-vue"
-import { usePage, router } from '@inertiajs/vue3';
-
-// leaving this in for now despite it currently doing nothing
-// may well end up having another use in the future
-interface PageProps {
-    [key: string]: unknown;
-    props: {
-        auth: {
-            user: {
-                id: number;
-                name: string;
-            };
-        };
-    };
-}
-
-const page = usePage<PageProps>();
-const user = page.props.auth.user;
-
-const { leaveChannel, leave } = useEchoPresence(
-    `App.Models.User.${user.id}`,
-    [],
-    () => {},
-)
+import { router } from '@inertiajs/vue3';
 
 const logout = () => {
     router.post('/logout');
