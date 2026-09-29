@@ -23,8 +23,9 @@ class Lobby
     public function handle(Request $request, Closure $next): Response
     {
         $code = $request->route('code');
+        $key = "lobby:{$code}:user_ids";
 
-        if (! Redis::exists("lobby:{$code}:user_ids")) {
+        if (! Redis::exists($key)) {
             Inertia::flash([
                 'message' => 'Lobby does not exist',
             ]);
@@ -33,10 +34,11 @@ class Lobby
         }
 
         $user = auth()->user();
-        $member = Redis::sismember("lobby:{$code}:user_ids", $user->id);
-        $full = Redis::scard("lobby:{$code}:user_ids)") === 6;
+        $member = Redis::sismember($key, $user->id);
+        $full = Redis::scard($key) === 6;
 
-        if ($full && ! $member) {
+        if (! $member && $full) {
+
             Inertia::flash([
                 'message' => 'Lobby is full',
             ]);

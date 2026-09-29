@@ -18,6 +18,8 @@ beforeEach(function () {
 
     $this->users = User::factory()->count(5)->create();
     $this->actingAs($this->user);
+
+    Redis::flushDB();
 });
 
 test('a user can create a lobby', function () {
@@ -55,6 +57,48 @@ test('a user can not join a lobby that does not exist', function () {
 
     $response->assertRedirect('dashboard')
         ->assertInertiaFlash('message', 'Lobby does not exist');
+});
+
+test('a user can not join a lobby that is full', function () {
+    $response = $this->post(route('lobby.create'));
+    $joinCode = basename($response->getTargetUrl());
+    $key = "lobby:{$joinCode}:user_ids";
+
+    foreach ($this->users as $user) {
+        Redis::sadd($key, $user->id);
+    }
+
+    $user = User::factory()->create();
+
+    $response = $this->actingAs($user)
+        ->get(route('lobby.show', [
+            'code' => $joinCode,
+        ]));
+
+    $response->assertRedirect('dashboard')
+        ->assertInertiaFlash('message', 'Lobby is full');
+});
+
+// this test exists because of the way the middleware is currently structured
+// as at this time, a user closing the tab/window does not kick them from a lobby
+// in the future i may end up using ttl to prune users, or properly detect them leaving
+test('user can rejoin a lobby they were already in previously', function () {
+    $response = $this->post(route('lobby.create'));
+    $joinCode = basename($response->getTargetUrl());
+    $key = "lobby:{$joinCode}:user_ids";
+
+    foreach ($this->users as $user) {
+        Redis::sadd($key, $user->id);
+    }
+
+    $response = $this->get(route('lobby.show', [
+        'code' => $joinCode,
+    ]));
+
+    $response->assertInertia(fn (Assert $page) => $page->component('Lobby')
+        ->has('code')
+        ->where('code', $joinCode)
+    );
 });
 
 test('a user can leave a lobby', function () {
@@ -135,9 +179,10 @@ test('a user setting themselves to ready will not start the game if not all play
 
     $response = $this->post(route('lobby.create'));
     $joinCode = basename($response->getTargetUrl());
+    $users = $this->users->shift();
 
-    for ($i = 2; $i < 5; $i++) {
-        Redis::sadd("lobby:{$joinCode}:user_ids", $i);
+    foreach ($users->all() as $user) {
+        Redis::sadd("lobby:{$joinCode}:user_ids", $user->id);
     }
 
     $status = true;
