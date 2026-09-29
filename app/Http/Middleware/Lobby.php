@@ -2,8 +2,8 @@
 
 namespace App\Http\Middleware;
 
-use Closure;
 use App\Services\LobbyService;
+use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
 use Inertia\Inertia;

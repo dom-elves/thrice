@@ -6,7 +6,6 @@ use App\Events\Lobby\UserToggleReady;
 use App\Services\LobbyService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;

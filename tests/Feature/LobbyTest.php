@@ -2,12 +2,11 @@
 
 use App\Events\GameCreated;
 use App\Events\Lobby\UserToggleReady;
-use App\Models\Game;
 use App\Models\User;
 use Illuminate\Broadcasting\BroadcastEvent;
 use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Queue;
+use Illuminate\Support\Facades\Redis;
 use Inertia\Testing\AssertableInertia as Assert;
 
 beforeEach(function () {
@@ -130,9 +129,9 @@ test('a user can set themselves to ready from not ready', function () {
     $status = true;
 
     $response = $this->post(route('lobby.ready', [
-            'code' => $joinCode,
-            'status' => $status,
-        ]));
+        'code' => $joinCode,
+        'status' => $status,
+    ]));
 
     $response->assertSessionHasNoErrors();
 
@@ -143,7 +142,7 @@ test('a user can set themselves to ready from not ready', function () {
             && $job->event->status == $status;
     });
 
-    $response->assertRedirectBack(); 
+    $response->assertRedirectBack();
 });
 
 test('a user can set themselves to not ready from ready', function () {
@@ -156,9 +155,9 @@ test('a user can set themselves to not ready from ready', function () {
     $status = false;
 
     $response = $this->post(route('lobby.ready', [
-            'code' => $joinCode,
-            'status' => $status,
-        ]));
+        'code' => $joinCode,
+        'status' => $status,
+    ]));
 
     $response->assertSessionHasNoErrors();
 
@@ -169,7 +168,7 @@ test('a user can set themselves to not ready from ready', function () {
             && $job->event->status == $status;
     });
 
-    $response->assertRedirectBack(); 
+    $response->assertRedirectBack();
 });
 
 // this is the same as not ready->ready test, but actually setting user_ids in redis
@@ -188,9 +187,9 @@ test('a user setting themselves to ready will not start the game if not all play
     $status = true;
 
     $response = $this->post(route('lobby.ready', [
-            'code' => $joinCode,
-            'status' => $status,
-        ]));
+        'code' => $joinCode,
+        'status' => $status,
+    ]));
 
     Event::assertNotDispatched(GameCreated::class);
 
@@ -217,9 +216,9 @@ test('game will start if over two users are all ready', function () {
     $status = true;
 
     $response = $this->post(route('lobby.ready', [
-            'code' => $joinCode,
-            'status' => $status,
-        ]));
+        'code' => $joinCode,
+        'status' => $status,
+    ]));
 
     Event::assertDispatched(GameCreated::class);
 
