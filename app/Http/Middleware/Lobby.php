@@ -46,7 +46,7 @@ class Lobby
 
         if (! $member) {
             $lobbyService = app(LobbyService::class);
-            $obbyService->join($user, $code);
+            $lobbyService->join($user, $code);
         }
 
         $request->session()->put('lobby_code', $code);
