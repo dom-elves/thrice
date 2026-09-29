@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use App\Services\LobbyService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
 use Inertia\Inertia;
@@ -12,9 +13,10 @@ class Lobby
 {
     /**
      * Handle an incoming request.
-     * Check if the lobby exists,
-     * then check if it is full.
-     * If neither, lobby is considered 'joinable'.
+     * - check if the lobby exists
+     * - check if it's full
+     * - lobby is now 'joinable', so add user to redis lobby if not already there
+     * - then move onto 'show' method
      *
      * @param  Closure(Request): (Response)  $next
      */
@@ -41,6 +43,13 @@ class Lobby
 
             return redirect('dashboard');
         }
+
+        if (! $member) {
+            $lobbyService = app(LobbyService::class);
+            $obbyService->join($user, $code);
+        }
+
+        $request->session()->put('lobby_code', $code);
 
         return $next($request);
     }

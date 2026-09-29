@@ -18,21 +18,13 @@ class LobbyController extends Controller
     ) {}
 
     /**
-     * If the user gets to here, the lobby is considered 'joinable' (check Lobby middleware)
-     * If they are not already a member of the lobby, put code in session & join
-     * checking member is to cover user accidentally closing tab but not properly leaving the session
+     * Keeping controllers thin where possible,
+     * middleware now handles all sort of logic around lobby existence, capacity, and if the user is in it
+     * this way, we can progress to show() from create() without extra steps
      */
     public function show(Request $request): RedirectResponse|InertiaResponse
     {
         $code = $request->route('code');
-        $user = auth()->user();
-        $member = Redis::sismember("lobby:{$code}:user_ids", $user->id);
-
-        if (! $member) {
-            $this->lobbyService->join($user, $code);
-        }
-
-        $request->session()->put('lobby_code', $code);
 
         return Inertia::render('Lobby', [
             'code' => $code,
