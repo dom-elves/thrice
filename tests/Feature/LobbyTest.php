@@ -236,3 +236,23 @@ test('game will start if over two users are all ready', function () {
     // i think i can only test the redirect signal in dusk or something
     // anything on the other side of the redirect will be tested in games test
 });
+
+test('joining a lobby whilst in another removes the user from the first lobby', function () {
+    Redis::sadd("lobby:12345:user_ids", $this->user->id);
+
+    $response = $this->post(route('lobby.create'));
+    $joinCode = basename($response->getTargetUrl());
+
+    $response = $this->get(route('lobby.show', [
+            'code' => $joinCode,
+        ]));
+
+    $response->assertSessionHasNoErrors();
+
+    $response->assertInertia(fn (Assert $page) => $page->component('Lobby')
+        ->has('code')
+        ->where('code', $joinCode)
+    );
+
+    $this->assertNull(Redis::get("lobby:12345:user_ids"));
+});

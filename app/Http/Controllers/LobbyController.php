@@ -43,7 +43,7 @@ class LobbyController extends Controller
             'name' => 'nullable|string|max:255',
             'password' => 'nullable|string|max:255',
         ]);
-
+        
         if (! isset($validated['name'])) {
             $validated['name'] = auth()->user()->name."'s Game";
         }
@@ -59,7 +59,7 @@ class LobbyController extends Controller
         $this->lobbyService->create(auth()->user(), $validated);
 
         $request->session()->put('lobby_code', $code);
-
+        
         return redirect()->route('lobby.show', $code);
     }
 

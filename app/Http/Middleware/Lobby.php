@@ -13,10 +13,15 @@ class Lobby
 {
     /**
      * Handle an incoming request.
+     * This middleware only gets called on the show() method,
+     * and exists to keep the show() method slim.
+     * 
      * - check if the lobby exists
      * - check if it's full
-     * - lobby is now 'joinable', so add user to redis lobby if not already there
-     * - then move onto 'show' method
+     * 
+     * The lobby is now considered joinable
+     * - if the user is already in a different lobby, pull them out
+     * - then, join the lobby in question
      *
      * @param  Closure(Request): (Response)  $next
      */
@@ -46,8 +51,13 @@ class Lobby
             return redirect('dashboard');
         }
 
+        $lobbyService = app(LobbyService::class);
+
+        if ($request->session()->get('lobby_code') !== $code) {
+            $lobbyService->leave($user, $request->session()->get('lobby_code'));
+        }
+
         if (! $member) {
-            $lobbyService = app(LobbyService::class);
             $lobbyService->join($user, $code);
         }
 
