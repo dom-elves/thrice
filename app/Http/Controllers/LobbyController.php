@@ -21,7 +21,7 @@ class LobbyController extends Controller
      * middleware now handles all sort of logic around lobby existence, capacity, and if the user is in it
      * this way, we can progress to show() from create() without extra steps
      */
-    public function show(Request $request): RedirectResponse|InertiaResponse
+    public function show(Request $request): InertiaResponse
     {
         $code = $request->route('code');
 
