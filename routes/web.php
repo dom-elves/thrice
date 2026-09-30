@@ -24,15 +24,10 @@ Route::middleware('auth')->group(function () {
 });
 
 // game
+// follows the same pattern as lobby group
 Route::middleware('auth')->group(function () {
-    Route::post('/create-game', [GameController::class, 'create'])->name('game.create');
-    Route::get('/leave-game/{id}', [GameController::class, 'leave'])->name('game.leave');
-
-    Route::post('/game/{game}/ready', [GameController::class, 'ready'])->name('game.ready');
-    // this is just for testing
-    // Route::post('/play-hand', [GameController::class, 'play'])->name('play.hand');
+    Route::get('/game/{game}', [GameController::class, 'show'])->name('game.show')
+        ->middleware('game');
+    Route::get('/game/{game}/leave', [GameController::class, 'leave'])->name('game.leave');
 });
 
-Route::middleware(['auth'])->group(function () {
-    Route::get('/game/{game}', [GameController::class, 'show'])->name('game.show');
-});

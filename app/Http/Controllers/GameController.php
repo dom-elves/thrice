@@ -26,37 +26,11 @@ class GameController extends Controller
      */
     public function show(Game $game): InertiaResponse|RedirectResponse
     {
-        $user = auth()->user();
-        $gameUser = GameUser::where('game_id', $game->id)
-            ->where('user_id', $user->id)
-            ->first();
-
-        // todo: maybe move all this to be after a game password check
-        $gameService = app(GameService::class);
-
-        if (! $gameUser) {
-            $createGameUserAction = new CreateGameUserAction($gameService);
-            $createGameUserAction->execute($game->id, $user->id);
-        } elseif (! $gameUser->in_game) {
-            $gameService->join($gameUser);
-        }
-
+        $code = $request->route('code');
+        
         return Inertia::render('Game', [
             'game' => $game,
         ]);
-    }
-
-    public function create(Request $request, CreateGameAction $createGameAction): void {}
-
-    public function ready(Game $game): void
-    {
-        if ($game->users->pluck('id')->contains(auth()->user()->id)) {
-            // not sure if to check redis or like
-            // just have an enitrely separate lobby/room thing
-            // maybe the game just sits there an exists
-            // and then don't even make game users until lobby checks are done
-            // becausae people can always leave...?
-        }
     }
 
     public function leave(Request $request): RedirectResponse
