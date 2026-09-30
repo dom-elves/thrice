@@ -238,14 +238,14 @@ test('game will start if over two users are all ready', function () {
 });
 
 test('joining a lobby whilst in another removes the user from the first lobby', function () {
-    Redis::sadd("lobby:12345:user_ids", $this->user->id);
+    Redis::sadd('lobby:12345:user_ids', $this->user->id);
 
     $response = $this->post(route('lobby.create'));
     $joinCode = basename($response->getTargetUrl());
 
     $response = $this->get(route('lobby.show', [
-            'code' => $joinCode,
-        ]));
+        'code' => $joinCode,
+    ]));
 
     $response->assertSessionHasNoErrors();
 
@@ -254,5 +254,5 @@ test('joining a lobby whilst in another removes the user from the first lobby', 
         ->where('code', $joinCode)
     );
 
-    $this->assertNull(Redis::get("lobby:12345:user_ids"));
+    $this->assertNull(Redis::get('lobby:12345:user_ids'));
 });

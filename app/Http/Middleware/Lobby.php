@@ -15,10 +15,10 @@ class Lobby
      * Handle an incoming request.
      * This middleware only gets called on the show() method,
      * and exists to keep the show() method slim.
-     * 
+     *
      * - check if the lobby exists
      * - check if it's full
-     * 
+     *
      * The lobby is now considered joinable
      * - if the user is already in a different lobby, pull them out
      * - then, join the lobby in question
