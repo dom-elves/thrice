@@ -30,4 +30,3 @@ Route::middleware('auth')->group(function () {
         ->middleware('game');
     Route::get('/game/{game}/leave', [GameController::class, 'leave'])->name('game.leave');
 });
-

@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Actions\Game\CreateGameAction;
-use App\Actions\Game\CreateGameUserAction;
 use App\Models\Game;
 use App\Models\GameUser;
 use App\Services\GameService;
@@ -27,7 +25,7 @@ class GameController extends Controller
     public function show(Game $game): InertiaResponse|RedirectResponse
     {
         $code = $request->route('code');
-        
+
         return Inertia::render('Game', [
             'game' => $game,
         ]);
