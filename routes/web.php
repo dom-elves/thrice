@@ -12,9 +12,13 @@ Route::middleware('auth')->group(function () {
 });
 
 // lobby
+// extra middleware logic only really applies to joining lobbies
+// but is a bit too much for the show() method
+// since that is hit via a redirect from create()
 Route::middleware('auth')->group(function () {
+    Route::get('/lobby/{code}', [LobbyController::class, 'show'])->name('lobby.show')
+        ->middleware('lobby');
     Route::post('/lobby/create', [LobbyController::class, 'create'])->name('lobby.create');
-    Route::get('/lobby/{code}', [LobbyController::class, 'show'])->name('lobby.show');
     Route::post('/lobby/{code}/ready', [LobbyController::class, 'ready'])->name('lobby.ready');
     Route::post('/lobby/{code}/leave', [LobbyController::class, 'leave'])->name('lobby.leave');
 });

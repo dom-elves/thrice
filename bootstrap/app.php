@@ -2,6 +2,7 @@
 
 use App\Http\Middleware\CheckGameAccess;
 use App\Http\Middleware\HandleInertiaRequests;
+use App\Http\Middleware\Lobby;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -22,7 +23,8 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         $middleware->alias([
-            'game.access' => CheckGameAccess::class,
+            // 'game.access' => CheckGameAccess::class,
+            'lobby' => Lobby::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

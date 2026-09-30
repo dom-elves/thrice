@@ -2,14 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\GameCreated;
-use App\Services\GameService;
+use App\Events\Lobby\UserToggleReady;
 use App\Services\LobbyService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
@@ -21,37 +17,13 @@ class LobbyController extends Controller
     ) {}
 
     /**
-     * - check existence of lobby
-     * - check lobby is full & user is not in
-     * - so if lobby is not full and user is not member, join
+     * Keeping controllers thin where possible,
+     * middleware now handles all sort of logic around lobby existence, capacity, and if the user is in it
+     * this way, we can progress to show() from create() without extra steps
      */
     public function show(Request $request): RedirectResponse|InertiaResponse
     {
         $code = $request->route('code');
-
-        if (! Redis::exists("lobby:{$code}:user_ids")) {
-            Inertia::flash([
-                'message' => 'Lobby does not exist',
-            ]);
-
-            return redirect('dashboard');
-        }
-
-        $user = auth()->user();
-        $member = Redis::sismember("lobby:{$code}:user_ids", $user->id);
-        $full = Redis::scard("lobby:{$code}:user_ids)") === 6;
-
-        if ($full && ! $member) {
-            Inertia::flash([
-                'message' => 'Lobby is full',
-            ]);
-
-            return redirect('dashboard');
-        }
-
-        if (! $member) {
-            $this->lobbyService->join($user, $code);
-        }
 
         return Inertia::render('Lobby', [
             'code' => $code,
@@ -61,90 +33,67 @@ class LobbyController extends Controller
     /**
      * - validate data
      * - set a name if one isn't given
-     * - generate lobby code
-     * - append code to $data
+     * - set empty string as password if one isn't given
+     * - generate lobby code & append to $data
      * - create lobby
      */
     public function create(Request $request): RedirectResponse
     {
-        $data = $request->validate([
+        $validated = $request->validate([
             'name' => 'nullable|string|max:255',
             'password' => 'nullable|string|max:255',
         ]);
 
-        if (! isset($data['name'])) {
-            $data['name'] = auth()->user()->name."'s Game";
+        if (! isset($validated['name'])) {
+            $validated['name'] = auth()->user()->name."'s Game";
         }
 
-        if (! isset($data['password'])) {
-            $data['password'] = '';
+        if (! isset($validated['password'])) {
+            $validated['password'] = '';
         }
 
         $code = Str::lower(Str::random(12));
 
-        $data['code'] = $code;
+        $validated['code'] = $code;
 
-        $this->lobbyService->create(auth()->user(), $data);
+        $this->lobbyService->create(auth()->user(), $validated);
+
+        $request->session()->put('lobby_code', $code);
 
         return redirect()->route('lobby.show', $code);
     }
 
     /**
-     * - set self to ready, return bool on $allReady, int on player count
-     * - check enough players exist
-     * - check all players are ready
-     * - otherwise, start game
+     * - toggle a user's ready status
+     * - broadcast over lobby channel
+     * - UserToggleReady has a listener, which triggers on all members ready when there are 2+
      */
-    public function ready(Request $request): RedirectResponse|Response
+    public function ready(Request $request): RedirectResponse
     {
+        $validated = $request->validate([
+            'status' => 'boolean',
+        ]);
+
         $code = $request->route('code');
 
-        $allReady = $this->lobbyService->ready(auth()->user(), $code);
+        $user = auth()->user();
 
-        // check Lobby page for notes re this
-        // as it will possibly be removed/changed
-        $request->session()->put('isReady', true);
+        $status = $this->lobbyService->toggleReady($code, $validated['status']);
 
-        $playerCount = Redis::scard("lobby:{$code}:user_ids");
+        broadcast(new UserToggleReady($code, $user, $status));
 
-        if ($playerCount <= 1) {
-            Inertia::flash([
-                'message' => 'Not enough players ready',
-            ]);
-
-            return redirect()->route('lobby.show', $code);
-        }
-
-        if (! $allReady) {
-            Inertia::flash([
-                'message' => 'Not all players are ready',
-            ]);
-
-            return redirect()->route('lobby.show', $code);
-        }
-
-        $gameService = app(GameService::class);
-        $game = $gameService->create($code);
-
-        broadcast(new GameCreated($game));
-
-        DB::afterCommit(fn () => $game->update(['started' => true]));
-
-        return redirect()->back();
+        return back();
     }
 
     /**
      * - simple call service & leave
      * - lobby teardown is in service
-     * - remove readiness if exists
      */
     public function leave(Request $request): RedirectResponse
     {
         $this->lobbyService->leave(auth()->user(), $request->route('code'));
 
-        if ($request->session()->has('isReady')) {
-            $request->session()->pull('isReady');
-        }
+        $request->session()->pull('lobby_code');
 
         return redirect()->route('dashboard');
     }
