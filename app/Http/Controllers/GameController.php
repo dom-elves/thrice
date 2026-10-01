@@ -29,14 +29,16 @@ class GameController extends Controller
         ]);
     }
 
-    public function leave(Request $request): RedirectResponse
+    public function leave(Request $request, Game $game): RedirectResponse
     {
-        $gameUser = GameUser::where('game_id', $request->route('id'))
+        $gameUser = GameUser::where('game_id', $game->id)
             ->where('user_id', auth()->id())
             ->firstOrFail();
 
-        $gameService = new GameService;
-        // $gameService->leaveGame($gameUser);
+        $gameService = app(GameService::class);
+        $gameService->leaveGame($gameUser);
+
+        $request->session()->pull('game_code');
 
         return redirect('dashboard');
     }

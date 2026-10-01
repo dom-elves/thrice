@@ -40,5 +40,5 @@ Route::middleware('auth')->group(function () {
             return redirect('dashboard');
         });
 
-    Route::get('/game/{game}/leave', [GameController::class, 'leave'])->name('game.leave');
+    Route::get('/game/{game:code}/leave', [GameController::class, 'leave'])->name('game.leave');
 });

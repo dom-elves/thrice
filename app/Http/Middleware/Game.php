@@ -50,6 +50,8 @@ class Game
         //     $gameService->join($gameUser);
         // }
 
+        $request->session()->put('game_code', $game->code);
+
         return $next($request);
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Listeners;
 
 use App\Models\User;
+use App\Services\GameService;
 use App\Services\LobbyService;
 use Illuminate\Auth\Events\Logout;
 
@@ -30,7 +31,11 @@ class UserLogoutListener
             $lobbyService->leave($user, $lobby_code);
         }
 
-        // do the same for game eventually
-        // todo: use session('lobby_code') for middleware next
+        $game_code = session('game_code');
+
+        if ($game_code && $user instanceof User) {
+            $gameService = app(GameService::class);
+            $gameService->leave($user, $game_code);
+        }
     }
 }

@@ -34,7 +34,7 @@ useEchoNotification(`App.Models.Game.${game.id}`, (notification: any) => {
 });
 
 function leaveGame() {
-    router.get(`/leave-game/${game.id}`);
+    router.get(`/game/${game.code}/leave`);
 }
 
 onMounted(() => {
