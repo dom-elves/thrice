@@ -3,7 +3,10 @@
 namespace App\Actions\Game;
 
 use App\Jobs\CloseLobby;
+use App\Jobs\Game\CreateGameUser;
 use App\Models\Game;
+use Illuminate\Bus\Batch;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
 
@@ -26,8 +29,19 @@ class CreateGameAction
             ]);
         });
 
-        // destroy lobby, should use a event+listener but this is the only place that game creation will be
-        CloseLobby::dispatch($code);
+        $user_ids = Redis::smembers("lobby:{$code}:user_ids");
+
+        $jobs = collect($user_ids)->map(fn ($user_id) => 
+            new CreateGameUser($game->id, $user_id));
+
+        $batch = Bus::batch($jobs)
+                ->then(function (Batch $batch) {
+                    // maybe do somethng here in the future
+                })->catch(function (Batch $batch, Throwable $e) {
+                    // do something here eventually
+                })->finally(function () use ($code){
+                    CloseLobby::dispatch($code);
+                })->dispatch();
 
         return $game;
     }

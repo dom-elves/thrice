@@ -62,7 +62,6 @@ const { channel } = useEchoPresence(
     (event: GameCreatedEvent) => {
         gameStarting.value = true;
         // by now, requests to /lobby/{code} are locked
-        console.log(event.game);
         setTimeout(() => {
             router.visit(`/game/${event.game.code}`);
         }, 2000);
