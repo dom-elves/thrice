@@ -34,8 +34,11 @@ class UserLogoutListener
         $game_code = session('game_code');
 
         if ($game_code && $user instanceof User) {
+            // this is now feels really bad and will have to be improved later
+            $game = Game::where('code', $game_code)->first();
+            $gameUser = $game->users()->where('user_id', $user->id)->first();
             $gameService = app(GameService::class);
-            $gameService->leave($user, $game_code);
+            $gameService->leave($gameUser);
         }
     }
 }

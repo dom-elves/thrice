@@ -179,6 +179,7 @@ test('leaving the game via the button removes the user from the game', function 
     ]);
 });
 
+// also need one of these in lobby test
 // test('leaving the game via logging out removes the user from the game', function () {
 //     Event::fake();
 //     $game = Game::factory()->create();

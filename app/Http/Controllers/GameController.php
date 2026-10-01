@@ -36,7 +36,7 @@ class GameController extends Controller
             ->firstOrFail();
 
         $gameService = app(GameService::class);
-        $gameService->leaveGame($gameUser);
+        $gameService->leave($gameUser);
 
         $request->session()->pull('game_code');
 
