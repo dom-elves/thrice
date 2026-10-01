@@ -74,7 +74,7 @@ class GameService
      *
      * @param  GameUser  $gameUser
      */
-    public function leaveGame($gameUser): void
+    public function leave($gameUser): void
     {
         // this will eventually need to include a bunch of logic for game state
         // but for now, just as if the user is leaving the game without doing anything

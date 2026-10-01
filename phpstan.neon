@@ -10,6 +10,6 @@ parameters:
         - database/
         - routes/
     ignoreErrors:
-        - '#Static method Redis::pipeline\(\) invoked with 1 parameter, 0 required#'
+        -
         
     level: 7
