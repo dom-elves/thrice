@@ -2,6 +2,7 @@
 
 namespace App\Listeners;
 
+use App\Models\Game;
 use App\Models\User;
 use App\Services\GameService;
 use App\Services\LobbyService;
