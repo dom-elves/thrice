@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\GameUser;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
@@ -34,6 +35,30 @@ class Game
 
             return redirect('dashboard');
         }
+        // todo: do  not do game full logic until figured out turns, ttl etc
+        // especially not until figured out leaving on tab/window close
+        // though i think it makes sense that that can hold your spot
+        // and ttl just does everything else
+        // $user = auth()->user();
+        // $gameUser = GameUser::where('game_id', $game->id)
+        //     ->where('user_id', $user->id)
+        //     ->first();
+
+        // if ($full) {
+        //     Inertia::flash([
+        //         'message' => 'Game is full',
+        //     ]);
+
+        //     return redirect('dashboard');
+        // }
+
+        // if (! $gameUser) {
+        //     // join game
+        // }
+
+        // if (! $gameUser->in_game) {
+
+        // }
         // follow same pattern as lobby, check game full status & if user is member via redis
         // also need to return if game not started
         // $user = auth()->user();

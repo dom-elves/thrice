@@ -21,6 +21,7 @@ class GameService
 {
     /**
      * Create an instance of the game in Redis
+     * Adding to the hash appears incomplete, the basics are done in LobbyService
      *
      * @param  string  $code
      */
@@ -28,7 +29,6 @@ class GameService
     {
         $game = app(CreateGameAction::class)->execute($code);
 
-        // this is finishing off what was already set in LobbyService
         Redis::hmset("game:{$game->code}", [
             'hands' => 0,
             'started' => $game->started,
@@ -46,7 +46,9 @@ class GameService
      */
     public function join($gameUser): void
     {
-        Redis::hmset("game_user:{$gameUser->id}", [
+        $key = "game_user:{$gameUser->id}";
+
+        Redis::hmset($key, [
             'game_id' => $gameUser->game->id,
             'user_id' => $gameUser->user->id,
             'start_balance' => $gameUser->start_balance,
@@ -56,7 +58,6 @@ class GameService
             'in_game' => 1,
             'user_session_id' => session()->getId(),
         ]);
-
 
         // i can remove this if i change it in middleware
         Redis::sadd("game:{$gameUser->game->id}:game_user_ids", $gameUser->id);
@@ -79,9 +80,8 @@ class GameService
         // but for now, just as if the user is leaving the game without doing anything
 
         $key = "game_user:{$gameUser->id}";
-        $state = Redis::hgetall($key);
 
-        Redis::hgetdel("game_user:{$gameUser->id}", [
+        Redis::hgetdel($key, [
             'game_id',
             'user_id',
             'start_balance',

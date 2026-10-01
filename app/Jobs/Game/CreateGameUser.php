@@ -18,10 +18,9 @@ class CreateGameUser implements ShouldQueue
      * Create a new job instance.
      */
     public function __construct(
-        public int $gameId, 
+        public int $gameId,
         public int $userId,
-    )
-    {
+    ) {
         //
     }
 

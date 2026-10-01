@@ -19,7 +19,6 @@ beforeEach(function () {
     $this->actingAs($this->user);
 });
 
-
 // test('user can join a created game, and has a user created for them', function () {
 //     $game = Game::factory()->create();
 //     $user = User::factory()->create();
@@ -95,7 +94,7 @@ test('user can not join a game that has not started', function () {
 
 test('user can not join a game that has finished', function () {
     Event::fake();
-    
+
     $game = Game::factory()->create([
         'started' => 1,
         'finished' => 1,
