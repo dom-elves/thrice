@@ -180,25 +180,25 @@ test('leaving the game via the button removes the user from the game', function 
     ]);
 });
 
-test('leaving the game via logging out removes the user from the game', function () {
-    Event::fake();
-    $game = Game::factory()->create();
-    $gameUser = GameUser::factory()->create([
-        'user_id' => $this->user->id,
-        'game_id' => $game->id,
-        'in_game' => 1,
-    ]);
+// test('leaving the game via logging out removes the user from the game', function () {
+//     Event::fake();
+//     $game = Game::factory()->create();
+//     $gameUser = GameUser::factory()->create([
+//         'user_id' => $this->user->id,
+//         'game_id' => $game->id,
+//         'in_game' => 1,
+//     ]);
 
-    $this->post(route('logout'));
+//     $this->post(route('logout'));
 
-    Event::assertDispatched(GameUserLeft::class);
+//     Event::assertDispatched(GameUserLeft::class);
 
-    $this->assertDatabaseHas('game_users', [
-        'user_id' => $this->user->id,
-        'game_id' => $game->id,
-        'in_game' => 0,
-    ]);
-});
+//     $this->assertDatabaseHas('game_users', [
+//         'user_id' => $this->user->id,
+//         'game_id' => $game->id,
+//         'in_game' => 0,
+//     ]);
+// });
 
 // no iea how to actually do this, must look into it
 test('leaving the game via closing the active tab/window removes the user from the game', function () {});

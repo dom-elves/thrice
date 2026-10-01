@@ -29,14 +29,12 @@ class GameService
         $game = app(CreateGameAction::class)->execute($code);
 
         // this is finishing off what was already set in LobbyService
-        Redis::pipeline(function ($pipe) use ($game) {
-            $pipe->hmset("game:{$game->code}", [
-                'hands' => 0,
-                'started' => $game->started,
-                'finished' => 0,
-                'start_time' => $game->created_at->toDateTimeString(),
-            ]);
-        });
+        Redis::hmset("game:{$game->code}", [
+            'hands' => 0,
+            'started' => $game->started,
+            'finished' => 0,
+            'start_time' => $game->created_at->toDateTimeString(),
+        ]);
 
         return $game;
     }
@@ -48,18 +46,17 @@ class GameService
      */
     public function join($gameUser): void
     {
-        Redis::pipeline(function ($pipe) use ($gameUser) {
-            $pipe->hmset("game_user:{$gameUser->id}", [
-                'game_id' => $gameUser->game->id,
-                'user_id' => $gameUser->user->id,
-                'start_balance' => $gameUser->start_balance,
-                'end_balance' => $gameUser->end_balance,
-                'join_time' => Carbon::now()->toDateTimeString(),
-                'leave_time' => '',
-                'in_game' => 1,
-                'user_session_id' => session()->getId(),
-            ]);
-        });
+        Redis::hmset("game_user:{$gameUser->id}", [
+            'game_id' => $gameUser->game->id,
+            'user_id' => $gameUser->user->id,
+            'start_balance' => $gameUser->start_balance,
+            'end_balance' => $gameUser->end_balance,
+            'join_time' => Carbon::now()->toDateTimeString(),
+            'leave_time' => '',
+            'in_game' => 1,
+            'user_session_id' => session()->getId(),
+        ]);
+
 
         // i can remove this if i change it in middleware
         Redis::sadd("game:{$gameUser->game->id}:game_user_ids", $gameUser->id);
@@ -84,18 +81,16 @@ class GameService
         $key = "game_user:{$gameUser->id}";
         $state = Redis::hgetall($key);
 
-        Redis::pipeline(function ($pipe) use ($gameUser) {
-            $pipe->hgetdel("game_user:{$gameUser->id}", [
-                'game_id',
-                'user_id',
-                'start_balance',
-                'end_balance',
-                'join_time',
-                'leave_time',
-                'in_game',
-                'user_session_id',
-            ]);
-        });
+        Redis::hgetdel("game_user:{$gameUser->id}", [
+            'game_id',
+            'user_id',
+            'start_balance',
+            'end_balance',
+            'join_time',
+            'leave_time',
+            'in_game',
+            'user_session_id',
+        ]);
 
         Redis::srem("game:{$gameUser->game->id}:game_user_ids", $gameUser->id);
 
