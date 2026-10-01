@@ -22,12 +22,10 @@ class GameController extends Controller
      * If game exists & user is not in game, join
      * Otherwise, just return the game
      */
-    public function show(Request $request): InertiaResponse
+    public function show(Game $game): InertiaResponse
     {
-        $code = $request->route('code');
-
         return Inertia::render('Game', [
-            'code' => $code,
+            'game' => $game,
         ]);
     }
 
