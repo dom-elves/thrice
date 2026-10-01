@@ -4,6 +4,8 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redis;
+use Inertia\Inertia;
 use Symfony\Component\HttpFoundation\Response;
 
 class Game
@@ -15,24 +17,30 @@ class Game
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $code = $request->route('code');
+        $game = $request->game;
 
-        // this will be different as moving to json
-        $key = "game:{$code}:user_ids";
-
-        if (! Redis::exists($key)) {
+        if (! $game->started) {
             Inertia::flash([
-                'message' => 'Lobby does not exist',
+                'message' => 'Game has not started yet',
             ]);
 
             return redirect('dashboard');
         }
+
+        if ($game->finished) {
+            Inertia::flash([
+                'message' => 'Game has finished',
+            ]);
+
+            return redirect('dashboard');
+        }
+        // follow same pattern as lobby, check game full status & if user is member via redis
+        // also need to return if game not started
         // $user = auth()->user();
         // $gameUser = GameUser::where('game_id', $game->id)
         //     ->where('user_id', $user->id)
         //     ->first();
 
-        // // todo: maybe move all this to be after a game password check
         // $gameService = app(GameService::class);
 
         // if (! $gameUser) {
