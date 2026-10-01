@@ -9,7 +9,5 @@ parameters:
         - config/
         - database/
         - routes/
-    ignoreErrors:
-        -
         
     level: 7
