@@ -5,6 +5,7 @@ use App\Events\GameUserLeft;
 use App\Models\Game;
 use App\Models\GameUser;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Redis;
 use Inertia\Testing\AssertableInertia as Assert;
@@ -116,48 +117,42 @@ test('user can not join a game that has finished', function () {
 // commenting out this test for now as I may treat game capacity differently
 // depending on if I decide to had a db column for game like "max_players" or "is_full"
 
-// test('user can not join a game that is full' , function () {
-//     $game = Game::factory()->create();
-//     $users = User::all();
+test('user can not join a game that is full' , function () {
+    Event::fake();
+    $game = Game::factory()->create([
+        'started' => true,
+    ]);
 
-//     $extra_user = User::factory()->create([
-//         'name' => 'Do not let me join',
-//         'email' => 'donotletmejoin@example.com',
-//     ]);
+    $users = User::factory()
+        ->count(6)
+        ->state(new Sequence(
+            fn (Sequence $sequence) => [
+                    'name' => 'Name '.$sequence->index,
+                    'email' => 'email'.$sequence->index.'@example.com',
+                ]
+        ))
+        ->create();
 
-//     foreach ($users as $user) {
-//         $gameUser =  GameUser::factory()->create([
-//             'user_id' => $user->id,
-//             'game_id' => $game->id,
-//             'in_game' => 1,
-//         ]);
+    foreach ($users as $user) {
+        $gameUser =  GameUser::factory()->create([
+            'user_id' => $user->id,
+            'game_id' => $game->id,
+            'in_game' => 1,
+        ]);
+    }
 
-//         Redis::pipeline(function ($pipe) use ($gameUser) {
-//             $pipe->hgetdel("game_user:{$gameUser->id}", [
-//                 'game_id',
-//                 'user_id',
-//                 'start_balance',
-//                 'end_balance',
-//                 'join_time',
-//                 'leave_time',
-//                 'in_game',
-//                 'user_session_id',
-//             ]);
-//         });
-//     }
+    $response = $this->get(route('game.show', $game));
 
-//     $response = $this->actingAs($extra_user)->get(route('game.show', $game));
+    Event::assertNotDispatched(GameUserJoined::class);
 
-//     Event::assertNotDispatched(GameUserJoined::class);
+    $response->assertRedirect('dashboard')
+        ->assertInertiaFlash('message', 'Game is full');
 
-//     $response->assertRedirect('dashboard')
-//         ->assertInertiaFlash('message', 'Game is full');
-
-//     $this->assertDatabaseMissing('game_users', [
-//         'user_id' => $extra_user->id,
-//         'game_id' => $game->id,
-//     ]);
-// });
+    $this->assertDatabaseMissing('game_users', [
+        'user_id' => $this->user->id,
+        'game_id' => $game->id,
+    ]);
+});
 
 test('leaving the game via the button removes the user from the game', function () {
     Event::fake();

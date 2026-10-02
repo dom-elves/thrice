@@ -35,45 +35,19 @@ class Game
 
             return redirect('dashboard');
         }
-        // todo: do  not do game full logic until figured out turns, ttl etc
-        // especially not until figured out leaving on tab/window close
-        // though i think it makes sense that that can hold your spot
-        // and ttl just does everything else
-        // $user = auth()->user();
-        // $gameUser = GameUser::where('game_id', $game->id)
-        //     ->where('user_id', $user->id)
-        //     ->first();
+        
+        // with this, if a user closes the tab/window and tries to reopen it
+        // they will not be let back in, but i plan on putting a ttl on redis users
+        // so they will be automatically kicked if they do not set cards
+        $full = $game->gameUsers->where('in_game', true)->count() === 6;
 
-        // if ($full) {
-        //     Inertia::flash([
-        //         'message' => 'Game is full',
-        //     ]);
+        if ($full) {
+            Inertia::flash([
+                'message' => 'Game is full',
+            ]);
 
-        //     return redirect('dashboard');
-        // }
-
-        // if (! $gameUser) {
-        //     // join game
-        // }
-
-        // if (! $gameUser->in_game) {
-
-        // }
-        // follow same pattern as lobby, check game full status & if user is member via redis
-        // also need to return if game not started
-        // $user = auth()->user();
-        // $gameUser = GameUser::where('game_id', $game->id)
-        //     ->where('user_id', $user->id)
-        //     ->first();
-
-        // $gameService = app(GameService::class);
-
-        // if (! $gameUser) {
-        //     $createGameUserAction = new CreateGameUserAction($gameService);
-        //     $createGameUserAction->execute($game->id, $user->id);
-        // } elseif (! $gameUser->in_game) {
-        //     $gameService->join($gameUser);
-        // }
+            return redirect('dashboard');
+        }
 
         $request->session()->put('game_code', $game->code);
 
