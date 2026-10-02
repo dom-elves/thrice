@@ -2,7 +2,9 @@
 
 use App\Http\Controllers\GameController;
 use App\Http\Controllers\LobbyController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 
 Route::inertia('/', 'Welcome')->name('home');
 
@@ -24,15 +26,19 @@ Route::middleware('auth')->group(function () {
 });
 
 // game
+// follows the same pattern as lobby group
 Route::middleware('auth')->group(function () {
-    Route::post('/create-game', [GameController::class, 'create'])->name('game.create');
-    Route::get('/leave-game/{id}', [GameController::class, 'leave'])->name('game.leave');
+    // sets to game:code just so it appears that way in browser, rather than /game/1 etc
+    // ->missing() callback is necessary because binding comes before middleware
+    Route::get('/game/{game:code}', [GameController::class, 'show'])->name('game.show')
+        ->middleware('game')
+        ->missing(function (Request $request) {
+            Inertia::flash([
+                'message' => 'Game does not exist',
+            ]);
 
-    Route::post('/game/{game}/ready', [GameController::class, 'ready'])->name('game.ready');
-    // this is just for testing
-    // Route::post('/play-hand', [GameController::class, 'play'])->name('play.hand');
-});
+            return redirect('dashboard');
+        });
 
-Route::middleware(['auth'])->group(function () {
-    Route::get('/game/{game}', [GameController::class, 'show'])->name('game.show');
+    Route::get('/game/{game:code}/leave', [GameController::class, 'leave'])->name('game.leave');
 });

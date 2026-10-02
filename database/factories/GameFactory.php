@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Game;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 /**
  * @extends Factory<Game>
@@ -19,6 +20,7 @@ class GameFactory extends Factory
     {
         return [
             'name' => fake()->name()."'s Game",
+            'code' => Str::lower(Str::random(12)),
         ];
     }
 }
