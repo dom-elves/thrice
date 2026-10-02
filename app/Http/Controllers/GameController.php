@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\Game\CreateGameUser;
 use App\Models\Game;
 use App\Models\GameUser;
 use App\Services\GameService;
@@ -14,16 +15,22 @@ use Inertia\Response as InertiaResponse;
 class GameController extends Controller
 {
     /**
-     * show() method assumes the user has made it past the checks in CheckGameStatus middleware.
-     * It checks if the game exists, is finished, is full, then if the user is already in the game.
-     * These checks then assume the game is active and with an empty space.
-     *
-     * If game user does not exist, create & join
-     * If game exists & user is not in game, join
-     * Otherwise, just return the game
+     * 
      */
     public function show(Game $game): InertiaResponse
     {
+        $user = auth()->user();
+        $gameUser = GameUser::where('game_id', $game->id)
+            ->where('user_id', $user->id)
+            ->first();
+
+        if (! $gameUser) {
+            $gameUser = app(CreateGameUser::class)->execute($game->id, $user->id);
+        } 
+        
+        $gameService = app(GameService::class);
+        $gameService->join($gameUser);
+        
         return Inertia::render('Game', [
             'game' => $game,
         ]);

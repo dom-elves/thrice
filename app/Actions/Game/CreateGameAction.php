@@ -2,8 +2,7 @@
 
 namespace App\Actions\Game;
 
-use App\Jobs\CloseLobby;
-use App\Jobs\Game\CreateGameUser;
+use App\Jobs\Lobby\CloseLobby;
 use App\Models\Game;
 use Illuminate\Bus\Batch;
 use Illuminate\Support\Facades\Bus;
@@ -30,18 +29,20 @@ class CreateGameAction
             ]);
         });
 
-        $user_ids = Redis::smembers("lobby:{$code}:user_ids");
+        // $user_ids = Redis::smembers("lobby:{$code}:user_ids");
 
-        $jobs = collect($user_ids)->map(fn ($user_id) => new CreateGameUser($game->id, $user_id));
+        // $jobs = collect($user_ids)->map(fn ($user_id) => new CreateGameUser($game->id, $user_id));
 
-        $batch = Bus::batch($jobs)
-            ->then(function (Batch $batch) {
-                // maybe do somethng here in the future
-            })->catch(function (Batch $batch, Throwable $e) {
-                // do something here eventually
-            })->finally(function () use ($code) {
-                CloseLobby::dispatch($code);
-            })->dispatch();
+        // $batch = Bus::batch($jobs)
+        //     ->then(function (Batch $batch) {
+        //         // maybe do somethng here in the future
+        //     })->catch(function (Batch $batch, Throwable $e) {
+        //         // do something here eventually
+        //     })->finally(function () use ($code) {
+        //         CloseLobby::dispatch($code);
+        //     })->dispatch();
+
+        CloseLobby::dispatch($code);
 
         return $game;
     }

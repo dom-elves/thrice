@@ -49,6 +49,11 @@ class Game
             return redirect('dashboard');
         }
 
+        // as the game is now 'joinable', we can get the user in the game
+        // this lives here & not the controller method, as users are directed to show()
+        // after game creation, in which users are also created
+        //... or does it make more sense to have creation logic in show?
+
         $request->session()->put('game_code', $game->code);
 
         return $next($request);

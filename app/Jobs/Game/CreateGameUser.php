@@ -26,18 +26,16 @@ class CreateGameUser implements ShouldQueue
 
     /**
      * Execute the job.
-     * Create GameUser in mysql, then 'join game' in redis.
+     * Create GameUser in mysql.
      */
     public function handle(GameService $gameService): void
     {
         DB::transaction(function () use ($gameService) {
-            $gameUser = GameUser::create([
+            GameUser::create([
                 'game_id' => $this->gameId,
                 'user_id' => $this->userId,
                 'start_balance' => 1000,
             ]);
-
-            DB::afterCommit(fn () => $gameService->join($gameUser));
         });
     }
 }
