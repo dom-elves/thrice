@@ -14,9 +14,6 @@ use Inertia\Response as InertiaResponse;
 
 class GameController extends Controller
 {
-    /**
-     * 
-     */
     public function show(Game $game): InertiaResponse
     {
         $user = auth()->user();
@@ -26,11 +23,11 @@ class GameController extends Controller
 
         if (! $gameUser) {
             $gameUser = app(CreateGameUser::class)->execute($game->id, $user->id);
-        } 
-        
+        }
+
         $gameService = app(GameService::class);
         $gameService->join($gameUser);
-        
+
         return Inertia::render('Game', [
             'game' => $game,
         ]);

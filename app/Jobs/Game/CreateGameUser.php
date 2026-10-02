@@ -30,7 +30,7 @@ class CreateGameUser implements ShouldQueue
      */
     public function handle(GameService $gameService): void
     {
-        DB::transaction(function () use ($gameService) {
+        DB::transaction(function () {
             GameUser::create([
                 'game_id' => $this->gameId,
                 'user_id' => $this->userId,

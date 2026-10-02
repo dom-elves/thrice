@@ -7,7 +7,6 @@ use App\Models\GameUser;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\Redis;
 use Inertia\Testing\AssertableInertia as Assert;
 
 beforeEach(function () {
@@ -117,7 +116,7 @@ test('user can not join a game that has finished', function () {
 // commenting out this test for now as I may treat game capacity differently
 // depending on if I decide to had a db column for game like "max_players" or "is_full"
 
-test('user can not join a game that is full' , function () {
+test('user can not join a game that is full', function () {
     Event::fake();
     $game = Game::factory()->create([
         'started' => true,
@@ -127,14 +126,14 @@ test('user can not join a game that is full' , function () {
         ->count(6)
         ->state(new Sequence(
             fn (Sequence $sequence) => [
-                    'name' => 'Name '.$sequence->index,
-                    'email' => 'email'.$sequence->index.'@example.com',
-                ]
+                'name' => 'Name '.$sequence->index,
+                'email' => 'email'.$sequence->index.'@example.com',
+            ]
         ))
         ->create();
 
     foreach ($users as $user) {
-        $gameUser =  GameUser::factory()->create([
+        $gameUser = GameUser::factory()->create([
             'user_id' => $user->id,
             'game_id' => $game->id,
             'in_game' => 1,
