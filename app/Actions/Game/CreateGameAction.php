@@ -4,11 +4,8 @@ namespace App\Actions\Game;
 
 use App\Jobs\Lobby\CloseLobby;
 use App\Models\Game;
-use Illuminate\Bus\Batch;
-use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
-use Throwable;
 
 class CreateGameAction
 {
