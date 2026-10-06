@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Actions\Game\CreateGameUser;
+use App\Actions\Game\CreateGameUserAction;
 use App\Models\Game;
 use App\Models\GameUser;
 use App\Services\GameService;
@@ -22,7 +22,7 @@ class GameController extends Controller
             ->first();
 
         if (! $gameUser) {
-            $gameUser = app(CreateGameUser::class)->execute($game->id, $user->id);
+            $gameUser = app(CreateGameUserAction::class)->execute($game->id, $user->id);
         }
 
         $gameService = app(GameService::class);

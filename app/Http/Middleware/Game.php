@@ -38,6 +38,7 @@ class Game
         // with this, if a user closes the tab/window and tries to reopen it
         // they will not be let back in, but i plan on putting a ttl on redis users
         // so they will be automatically kicked if they do not set cards
+        // though... maybe just add a 'full' column?
         $full = $game->gameUsers->where('in_game', true)->count() === 6;
 
         if ($full) {
