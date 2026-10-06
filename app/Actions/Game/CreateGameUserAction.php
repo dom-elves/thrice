@@ -5,7 +5,7 @@ namespace App\Actions\Game;
 use App\Models\GameUser;
 use Illuminate\Support\Facades\DB;
 
-class CreateGameUser
+class CreateGameUserAction
 {
     public function __construct() {}
 
