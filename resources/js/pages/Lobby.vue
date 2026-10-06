@@ -28,6 +28,7 @@ interface User {
 interface GameCreatedEvent {
     game: {
         id: number;
+        code: string;
     };
 }
 
@@ -62,7 +63,7 @@ const { channel } = useEchoPresence(
         gameStarting.value = true;
         // by now, requests to /lobby/{code} are locked
         setTimeout(() => {
-            router.visit(`/game/${event.game.id}`);
+            router.visit(`/game/${event.game.code}`);
         }, 2000);
     },
 );

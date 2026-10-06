@@ -21,6 +21,7 @@ class GameService
 {
     /**
      * Create an instance of the game in Redis
+     * Adding to the hash appears incomplete, the basics are done in LobbyService
      *
      * @param  string  $code
      */
@@ -28,15 +29,12 @@ class GameService
     {
         $game = app(CreateGameAction::class)->execute($code);
 
-        // this is finishing off what was already set in LobbyService
-        Redis::pipeline(function ($pipe) use ($game) {
-            $pipe->hmset("game:{$game->code}", [
-                'hands' => 0,
-                'started' => $game->started,
-                'finished' => 0,
-                'start_time' => $game->created_at->toDateTimeString(),
-            ]);
-        });
+        Redis::hmset("game:{$game->code}", [
+            'hands' => 0,
+            'started' => $game->started,
+            'finished' => 0,
+            'start_time' => $game->created_at->toDateTimeString(),
+        ]);
 
         return $game;
     }
@@ -48,18 +46,18 @@ class GameService
      */
     public function join($gameUser): void
     {
-        Redis::pipeline(function ($pipe) use ($gameUser) {
-            $pipe->hmset("game_user:{$gameUser->id}", [
-                'game_id' => $gameUser->game->id,
-                'user_id' => $gameUser->user->id,
-                'start_balance' => $gameUser->start_balance,
-                'end_balance' => $gameUser->end_balance,
-                'join_time' => Carbon::now()->toDateTimeString(),
-                'leave_time' => '',
-                'in_game' => 1,
-                'user_session_id' => session()->getId(),
-            ]);
-        });
+        $key = "game_user:{$gameUser->id}";
+
+        Redis::hmset($key, [
+            'game_id' => $gameUser->game->id,
+            'user_id' => $gameUser->user->id,
+            'start_balance' => $gameUser->start_balance,
+            'end_balance' => $gameUser->end_balance,
+            'join_time' => Carbon::now()->toDateTimeString(),
+            'leave_time' => '',
+            'in_game' => 1,
+            'user_session_id' => session()->getId(),
+        ]);
 
         // i can remove this if i change it in middleware
         Redis::sadd("game:{$gameUser->game->id}:game_user_ids", $gameUser->id);
@@ -71,50 +69,36 @@ class GameService
         event(new GameUserJoined($gameUser));
     }
 
-    // /**
-    //  * Leave a game, set the game user in Redis and broadcast the leave event to the fe
-    //  *
-    //  * @param  GameUser  $gameUser
-    //  */
-    // public function leaveGame($gameUser): void
-    // {
-    //     // this will eventually need to include a bunch of logic for game state
-    //     // but for now, just as if the user is leaving the game without doing anything
+    /**
+     * Leave a game, set the game user in Redis and broadcast the leave event to the fe
+     *
+     * @param  GameUser  $gameUser
+     */
+    public function leave($gameUser): void
+    {
+        // this will eventually need to include a bunch of logic for game state
+        // but for now, just as if the user is leaving the game without doing anything
 
-    //     $key = "game_user:{$gameUser->id}";
-    //     $state = Redis::hgetall($key);
+        $key = "game_user:{$gameUser->id}";
 
-    //     Redis::pipeline(function ($pipe) use ($gameUser) {
-    //         $pipe->hgetdel("game_user:{$gameUser->id}", [
-    //             'game_id',
-    //             'user_id',
-    //             'start_balance',
-    //             'end_balance',
-    //             'join_time',
-    //             'leave_time',
-    //             'in_game',
-    //             'user_session_id',
-    //         ]);
-    //     });
+        Redis::hgetdel($key, [
+            'game_id',
+            'user_id',
+            'start_balance',
+            'end_balance',
+            'join_time',
+            'leave_time',
+            'in_game',
+            'user_session_id',
+        ]);
 
-    //     Redis::srem("game:{$gameUser->game->id}:game_user_ids", $gameUser->id);
+        Redis::srem("game:{$gameUser->game->id}:game_user_ids", $gameUser->id);
 
-    //     $gameUser->update([
-    //         // balance incr
-    //         'in_game' => false,
-    //     ]);
+        $gameUser->update([
+            // balance incr
+            'in_game' => false,
+        ]);
 
-    //     event(new GameUserLeft($gameUser));
-
-    //     if (! Redis::exists("game:{$gameUser->game->id}:game_user_ids")) {
-    //         // dd('games gone');
-    //     } else {
-    //         // dd('games back');
-    //     }
-
-    //     // todo: destroy game job
-    //     // - check mysql game->players or w/e
-    //     // - destroy game, containing logic to take down redis users too
-    //     // doesn't need to happen instantly, hence job
-    // }
+        event(new GameUserLeft($gameUser));
+    }
 }

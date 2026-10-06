@@ -2,7 +2,7 @@
 
 namespace App\Actions\Game;
 
-use App\Jobs\CloseLobby;
+use App\Jobs\Lobby\CloseLobby;
 use App\Models\Game;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
@@ -26,7 +26,6 @@ class CreateGameAction
             ]);
         });
 
-        // destroy lobby, should use a event+listener but this is the only place that game creation will be
         CloseLobby::dispatch($code);
 
         return $game;
