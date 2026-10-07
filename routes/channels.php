@@ -20,3 +20,10 @@ Broadcast::channel('lobby.{code}', function ($user, $code) {
         'ready' => Redis::sismember("lobby:{$code}:ready_user_ids", $user->id),
     ];
 });
+
+// a user will only be subscribed to this channel when they are in a game
+Broadcast::channel('App.Models.GameUser.{id}', function ($gameUser, $id) {
+
+    return true;
+});
+

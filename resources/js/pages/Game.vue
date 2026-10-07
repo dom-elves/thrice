@@ -1,12 +1,19 @@
 <script setup lang="ts">
 import { usePage, router } from '@inertiajs/vue3';
 import { useEchoNotification } from '@laravel/echo-vue';
+import { useEcho } from '@laravel/echo-vue';
 import { onMounted, ref } from 'vue';
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue';
+import Echo from 'laravel-echo';
 
 interface GameUser {
     id: number;
     name: string;
+    hand: unknown[];
+}
+
+interface HandDealt {
+    [key: string]: unknown;
 }
 
 interface PageProps {
@@ -18,10 +25,12 @@ interface PageProps {
         code: string;
     };
     user: object;
+    gameUser: GameUser;
 }
 
 const page = usePage<PageProps>();
 const game = page.props.game;
+const gameUser = page.props.gameUser;
 const activePlayers = ref<GameUser[]>([]);
 
 // function playHand() {
@@ -32,6 +41,14 @@ useEchoNotification(`App.Models.Game.${game.id}`, (notification: any) => {
     console.log('g', notification);
     activePlayers.value.push(notification.gameUser.user.name);
 });
+
+useEcho(
+    `App.Models.GameUser.${gameUser.id}`,
+    '.hand.dealt',
+    (event: HandDealt) => {
+        console.log('hand dealt', event);
+    },
+);
 
 function leaveGame() {
     router.get(`/game/${game.code}/leave`);
