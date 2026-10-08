@@ -5,12 +5,16 @@ namespace App\Services;
 use App\Enums\Rank;
 use App\Enums\Suit;
 use App\Events\Hand\HandDealt;
+use App\Models\GameUser;
 use App\Notifications\GameUserReadyNotification;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Redis;
 
 class HandService
 {
+    /**
+     * @param Collection<int, GameUser> $gameUsers
+     */
     public function deal(Collection $gameUsers): void
     {
         $deck = [];
