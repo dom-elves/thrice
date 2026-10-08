@@ -26,4 +26,3 @@ Broadcast::channel('App.Models.GameUser.{id}', function ($gameUser, $id) {
 
     return true;
 });
-

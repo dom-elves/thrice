@@ -2,7 +2,6 @@
 
 namespace App\Actions\Game;
 
-use App\Actions\Game\CreateGameUserAction;
 use App\Jobs\Lobby\CloseLobby;
 use App\Models\Game;
 use Illuminate\Support\Facades\DB;
@@ -37,7 +36,7 @@ class CreateGameAction
         }
 
         CloseLobby::dispatch($code);
-        
+
         return $game;
     }
 }

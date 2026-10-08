@@ -16,7 +16,7 @@ class HandService
 
         foreach (Suit::cases() as $suit) {
             foreach (Rank::cases() as $rank) {
-                $deck[] = $rank->value . $suit->value;
+                $deck[] = $rank->value.$suit->value;
             }
         }
 

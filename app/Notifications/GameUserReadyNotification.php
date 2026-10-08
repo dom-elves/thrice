@@ -48,7 +48,7 @@ class GameUserReadyNotification extends Notification implements ShouldBroadcast
     public function toBroadcast(object $notifiable): BroadcastMessage
     {
         return new BroadcastMessage([
-            'ready' => $this->gameUser->user->name.' is ready!'
+            'ready' => $this->gameUser->user->name.' is ready!',
         ]);
     }
 }

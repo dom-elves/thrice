@@ -4,8 +4,6 @@ namespace App\Listeners;
 
 use App\Events\GameCreated;
 use App\Services\HandService;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 
 class GameCreatedListener
 {

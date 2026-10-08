@@ -61,7 +61,7 @@ useEcho(
 
 function ready() {
     router.post(`/hand/${gameUser.id}/ready`);
-    isReady
+    isReady;
 }
 
 function leaveGame() {
@@ -71,7 +71,6 @@ function leaveGame() {
 onMounted(() => {
     console.log('gu', gameUser);
 });
-
 </script>
 <template>
     <AuthenticatedLayout>
