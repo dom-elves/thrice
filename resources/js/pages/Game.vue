@@ -4,7 +4,6 @@ import { useEchoNotification } from '@laravel/echo-vue';
 import { useEcho } from '@laravel/echo-vue';
 import { onMounted, ref } from 'vue';
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue';
-import Echo from 'laravel-echo';
 
 interface HandDealt {
     [key: string]: unknown;
@@ -61,7 +60,6 @@ useEcho(
 
 function ready() {
     router.post(`/hand/${gameUser.id}/ready`);
-    isReady;
 }
 
 function leaveGame() {
