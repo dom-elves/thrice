@@ -25,11 +25,18 @@ class GameController extends Controller
             $gameUser = app(CreateGameUserAction::class)->execute($game->id, $user->id);
         }
 
-        $gameService = app(GameService::class);
-        $gameService->join($gameUser);
+        if (! Redis::exists("game_user:{$gameUser->id}")) {
+            $gameService = app(GameService::class);
+            $gameService->join($gameUser);
+        }
 
         return Inertia::render('Game', [
             'game' => $game,
+            'gameUser' => $gameUser,
+            'players' => $game->gameUsers()
+                ->where('in_game', true)
+                ->with('user')
+                ->get(),
         ]);
     }
 

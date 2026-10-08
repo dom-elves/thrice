@@ -26,6 +26,15 @@ class CreateGameAction
             ]);
         });
 
+        $user_ids = Redis::smembers("lobby:{$code}:ready_user_ids");
+
+        // gonna have this as a temporary thing in place as it just works
+        // but i am aware it is not particularly efficient
+        // though since it's max 6 records it shouldn't really matter
+        foreach ($user_ids as $user_id) {
+            app(CreateGameUserAction::class)->execute($game->id, (int) $user_id);
+        }
+
         CloseLobby::dispatch($code);
 
         return $game;

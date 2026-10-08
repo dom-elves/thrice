@@ -56,6 +56,7 @@ class GameService
             'join_time' => Carbon::now()->toDateTimeString(),
             'leave_time' => '',
             'in_game' => 1,
+            'is_ready' => 0,
             'user_session_id' => session()->getId(),
         ]);
 
@@ -89,6 +90,7 @@ class GameService
             'join_time',
             'leave_time',
             'in_game',
+            'is_ready',
             'user_session_id',
         ]);
 
