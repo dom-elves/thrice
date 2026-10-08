@@ -11,7 +11,8 @@ class HandController extends Controller
 {
     public function ready(Request $request, GameUser $gameUser): RedirectResponse
     {
-        app(HandService::class)->ready($gameUser);
+        $handService = app(HandService::class);
+        $handService->ready($gameUser);
 
         return back();
     }
