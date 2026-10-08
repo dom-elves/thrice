@@ -32,8 +32,10 @@ class HandService
         // rather than deal card by card like in poker and nest a for loop
         // just take 6 cards off the top each time
         for ($i = 0; $i < $players; $i++) {
-            $hand = $deck->splice(0, $cardsPerPlayer);
-            $gameUsers[$i]->hand = $hand;
+            // todo: also fix this when introducing hand
+            // phpstan won't let me have it in atm
+            // $hand = $deck->splice(0, $cardsPerPlayer);
+            // $gameUsers[$i]->hand = $hand;
         }
 
         foreach ($gameUsers as $game_user) {
