@@ -51,6 +51,7 @@ class GameUser extends Model
 
     /**
      * 'ready' status of a game user for the relevant game.
+     * @return Attribute<bool, never>
      */
     protected function isReady(): Attribute
     {

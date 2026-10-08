@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Redis;
 
 class HandService
 {
-    public function deal($gameUsers): void
+    public function deal(Collection $gameUsers): void
     {
         $deck = [];
 
@@ -36,7 +36,7 @@ class HandService
         }
     }
 
-    public function ready($gameUser): void
+    public function ready(GameUser $gameUser): void
     {
         $key = "game:{$gameUser->game->code}:ready_user_ids";
 

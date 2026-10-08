@@ -47,7 +47,8 @@ class HandDealt implements ShouldBroadcast
     public function broadcastWith(): array
     {
         return [
-            'hand' => $this->gameUser->hand,
+            // todo: add this next PR or when i eventually make it there
+            // 'hand' => $this->gameUser->hand,
         ];
     }
 }

@@ -32,7 +32,7 @@ class CreateGameAction
         // but i am aware it is not particularly efficient
         // though since it's max 6 records it shouldn't really matter
         foreach ($user_ids as $user_id) {
-            app(CreateGameUserAction::class)->execute($game->id, $user_id);
+            app(CreateGameUserAction::class)->execute($game->id, (int) $user_id);
         }
 
         CloseLobby::dispatch($code);
