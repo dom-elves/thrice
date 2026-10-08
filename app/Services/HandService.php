@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Redis;
 class HandService
 {
     /**
-     * @param Collection<int, GameUser> $gameUsers
+     * @param  Collection<int, GameUser>  $gameUsers
      */
     public function deal(Collection $gameUsers): void
     {
