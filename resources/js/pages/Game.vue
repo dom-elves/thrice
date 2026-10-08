@@ -33,12 +33,8 @@ const game = page.props.game;
 const gameUser = page.props.gameUser;
 const activePlayers = ref<GameUser[]>([]);
 
-// function playHand() {
-//     router.post('/play-hand', { game_id: game.id });
-// }
-
 useEchoNotification(`App.Models.Game.${game.id}`, (notification: any) => {
-    console.log('g', notification);
+    console.log('notif', notification);
     activePlayers.value.push(notification.gameUser.user.name);
 });
 
@@ -50,13 +46,18 @@ useEcho(
     },
 );
 
+function ready() {
+    router.post(`/hand/${gameUser.id}/ready`);
+}
+
 function leaveGame() {
     router.get(`/game/${game.code}/leave`);
 }
 
-onMounted(() => {
-    console.log('g', game);
-});
+// onMounted(() => {
+//     console.log('g', game);
+// });
+
 </script>
 <template>
     <AuthenticatedLayout>
@@ -76,6 +77,12 @@ onMounted(() => {
                 </div>
             </div>
             <div>
+                <button
+                    @click="ready"
+                    class="m-4 rounded border border-1 bg-green-300 p-4"
+                >
+                    ready
+                </button>
                 <button
                     @click="leaveGame"
                     class="m-4 rounded border border-1 bg-red-300 p-4"
