@@ -5,6 +5,8 @@ namespace App\Services;
 use App\Enums\Rank;
 use App\Enums\Suit;
 use App\Events\Hand\HandDealt;
+use App\Notifications\GameUserReadyNotification;
+use Illuminate\Support\Facades\Redis;
 
 class HandService
 {
@@ -31,6 +33,23 @@ class HandService
 
         foreach ($gameUsers as $game_user) {
             broadcast(new HandDealt($game_user));
+        }
+    }
+
+    public function ready($gameUser): void
+    {
+        $key = "game:{$gameUser->game->code}:ready_user_ids";
+
+        Redis::sadd($key, $gameUser->user->id);
+
+        $gameUser->game->notify(new GameUserReadyNotification($gameUser));
+
+        Redis::hmset("game_user:{$gameUser->id}", [
+            'is_ready' => 1,
+        ]);
+
+        if (Redis::scard($key) === 6) {
+            // start new round
         }
     }
 }

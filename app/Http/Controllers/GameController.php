@@ -33,6 +33,10 @@ class GameController extends Controller
         return Inertia::render('Game', [
             'game' => $game,
             'gameUser' => $gameUser,
+            'players' => $game->gameUsers()
+                ->where('in_game', true)
+                ->with('user')
+                ->get(),
         ]);
     }
 

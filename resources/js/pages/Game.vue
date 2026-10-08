@@ -6,14 +6,15 @@ import { onMounted, ref } from 'vue';
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue';
 import Echo from 'laravel-echo';
 
+interface HandDealt {
+    [key: string]: unknown;
+}
+
 interface GameUser {
     id: number;
     name: string;
     hand: unknown[];
-}
-
-interface HandDealt {
-    [key: string]: unknown;
+    is_ready: boolean;
 }
 
 interface PageProps {
@@ -26,15 +27,27 @@ interface PageProps {
     };
     user: object;
     gameUser: GameUser;
+    players: GameUser[];
 }
 
 const page = usePage<PageProps>();
 const game = page.props.game;
 const gameUser = page.props.gameUser;
-const activePlayers = ref<GameUser[]>([]);
+const activePlayers = ref<GameUser[]>(page.props.players);
+const isReady = ref(gameUser.is_ready);
+
+// const isReady = computed(() => {
+//     const user = users.value.find(
+//         (user: User) => user.id === page.props.auth.user.id,
+//     );
+
+//     return user?.ready ?? false;
+// });
 
 useEchoNotification(`App.Models.Game.${game.id}`, (notification: any) => {
     console.log('notif', notification);
+
+    // can just do if blcoks or switch case to checck what to do
     activePlayers.value.push(notification.gameUser.user.name);
 });
 
@@ -48,15 +61,16 @@ useEcho(
 
 function ready() {
     router.post(`/hand/${gameUser.id}/ready`);
+    isReady
 }
 
 function leaveGame() {
     router.get(`/game/${game.code}/leave`);
 }
 
-// onMounted(() => {
-//     console.log('g', game);
-// });
+onMounted(() => {
+    console.log('gu', gameUser);
+});
 
 </script>
 <template>
@@ -72,7 +86,7 @@ function leaveGame() {
                         v-for="activePlayer in activePlayers"
                         :key="activePlayer.id"
                     >
-                        {{ activePlayer }}
+                        {{ activePlayer.user.name }} {{ activePlayer.is_ready }}
                     </p>
                 </div>
             </div>
