@@ -13,7 +13,9 @@ interface GameUser {
     id: number;
     name: string;
     hand: unknown[];
-    user: object;
+    user: {
+        name: string;
+    };
     is_ready: boolean;
 }
 
