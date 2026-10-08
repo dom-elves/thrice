@@ -33,8 +33,6 @@ const page = usePage<PageProps>();
 const game = page.props.game;
 const gameUser = page.props.gameUser;
 const activePlayers = ref<GameUser[]>(page.props.players);
-const isReady = ref(gameUser.is_ready);
-
 // const isReady = computed(() => {
 //     const user = users.value.find(
 //         (user: User) => user.id === page.props.auth.user.id,
