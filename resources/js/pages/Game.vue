@@ -4,6 +4,7 @@ import { useEchoNotification } from '@laravel/echo-vue';
 import { useEcho } from '@laravel/echo-vue';
 import { onMounted, ref } from 'vue';
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue';
+import { User } from '@/types';
 
 interface HandDealt {
     [key: string]: unknown;
@@ -13,6 +14,7 @@ interface GameUser {
     id: number;
     name: string;
     hand: unknown[];
+    user: User;
     is_ready: boolean;
 }
 
