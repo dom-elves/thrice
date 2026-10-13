@@ -13,7 +13,7 @@ Route::middleware('auth')->group(function () {
     Route::inertia('/dashboard', 'Dashboard')->name('dashboard');
 });
 
-// lobby
+// lobby - to be removed
 // extra middleware logic only really applies to joining lobbies
 // but is a bit too much for the show() method
 // since that is hit via a redirect from create()
