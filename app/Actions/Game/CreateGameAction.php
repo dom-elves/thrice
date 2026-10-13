@@ -7,8 +7,6 @@ use Illuminate\Support\Facades\DB;
 
 class CreateGameAction
 {
-    public function __construct() {}
-
     /**
      * Create a Game.
      *
