@@ -20,7 +20,7 @@ Route::middleware('auth')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::get('/lobby/{code}', [LobbyController::class, 'show'])->name('lobby.show')
         ->middleware('lobby');
-    Route::post('/lobby/create', [LobbyController::class, 'create'])->name('lobby.create');
+    // Route::post('/lobby/create', [LobbyController::class, 'create'])->name('lobby.create');
     Route::post('/lobby/{code}/ready', [LobbyController::class, 'ready'])->name('lobby.ready');
     Route::post('/lobby/{code}/leave', [LobbyController::class, 'leave'])->name('lobby.leave');
 });
@@ -28,6 +28,8 @@ Route::middleware('auth')->group(function () {
 // game
 // follows the same pattern as lobby group
 Route::middleware('auth')->group(function () {
+    Route::post('/game/create', [GameController::class, 'create'])->name('game.create');
+
     // sets to game:code just so it appears that way in browser, rather than /game/1 etc
     // ->missing() callback is necessary because binding comes before middleware
     Route::get('/game/{game:code}', [GameController::class, 'show'])->name('game.show')

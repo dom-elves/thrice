@@ -37,31 +37,31 @@ class LobbyController extends Controller
      * - generate lobby code & append to $data
      * - create lobby
      */
-    public function create(Request $request): RedirectResponse
-    {
-        $validated = $request->validate([
-            'name' => 'nullable|string|max:255',
-            'password' => 'nullable|string|max:255',
-        ]);
+    // public function create(Request $request): RedirectResponse
+    // {
+    //     $validated = $request->validate([
+    //         'name' => 'nullable|string|max:255',
+    //         'password' => 'nullable|string|max:255',
+    //     ]);
 
-        if (! isset($validated['name'])) {
-            $validated['name'] = auth()->user()->name."'s Game";
-        }
+    //     if (! isset($validated['name'])) {
+    //         $validated['name'] = auth()->user()->name."'s Game";
+    //     }
 
-        if (! isset($validated['password'])) {
-            $validated['password'] = '';
-        }
+    //     if (! isset($validated['password'])) {
+    //         $validated['password'] = '';
+    //     }
 
-        $code = Str::lower(Str::random(12));
+    //     $code = Str::lower(Str::random(12));
 
-        $validated['code'] = $code;
+    //     $validated['code'] = $code;
 
-        $this->lobbyService->create(auth()->user(), $validated);
+    //     $this->lobbyService->create(auth()->user(), $validated);
 
-        $request->session()->put('lobby_code', $code);
+    //     $request->session()->put('lobby_code', $code);
 
-        return redirect()->route('lobby.show', $code);
-    }
+    //     return redirect()->route('lobby.show', $code);
+    // }
 
     /**
      * - toggle a user's ready status

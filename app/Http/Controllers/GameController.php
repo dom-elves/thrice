@@ -33,6 +33,33 @@ class GameController extends Controller
         ]);
     }
 
+    public function create(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'name' => 'nullable|string|max:255',
+            'password' => 'nullable|string|max:255',
+            'private_game' => 'sometimes|boolean',
+        ]);
+
+        if (! isset($validated['name'])) {
+            $validated['name'] = auth()->user()->name."'s Game";
+        }
+
+        if (! isset($validated['password'])) {
+            $validated['password'] = '';
+        }
+
+        $code = Str::lower(Str::random(12));
+
+        $validated['code'] = $code;
+
+        $this->lobbyService->create(auth()->user(), $validated);
+
+        $request->session()->put('lobby_code', $code);
+
+        return redirect()->route('lobby.show', $code);
+    }
+
     public function leave(Request $request, Game $game): RedirectResponse
     {
         $gameUser = GameUser::where('game_id', $game->id)
