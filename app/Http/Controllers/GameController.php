@@ -9,11 +9,16 @@ use App\Services\GameService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
 
 class GameController extends Controller
 {
+    public function __construct(
+        private GameService $gameService
+    ) {}
+
     public function show(Game $game): InertiaResponse
     {
         $user = auth()->user();
@@ -25,8 +30,7 @@ class GameController extends Controller
             $gameUser = app(CreateGameUserAction::class)->execute($game->id, $user->id);
         }
 
-        $gameService = app(GameService::class);
-        $gameService->join($gameUser);
+        $this->gameService->join($gameUser);
 
         return Inertia::render('Game', [
             'game' => $game,
@@ -53,11 +57,11 @@ class GameController extends Controller
 
         $validated['code'] = $code;
 
-        $this->lobbyService->create(auth()->user(), $validated);
+        $this->gameService->create($validated);
 
-        $request->session()->put('lobby_code', $code);
+        // $request->session()->put('lobby_code', $code);
 
-        return redirect()->route('lobby.show', $code);
+        return redirect()->route('game.show', $code);
     }
 
     public function leave(Request $request, Game $game): RedirectResponse

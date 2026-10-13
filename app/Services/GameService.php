@@ -25,15 +25,17 @@ class GameService
      *
      * @param  string  $code
      */
-    public function create($code): Game
+    public function create($data): Game
     {
-        $game = app(CreateGameAction::class)->execute($code);
+        $game = app(CreateGameAction::class)->execute($data);
 
         Redis::hmset("game:{$game->code}", [
+            'name' => $game->name,
+            // don't think i need pw here
             'hands' => 0,
             'started' => $game->started,
-            'finished' => 0,
-            'start_time' => $game->created_at->toDateTimeString(),
+            'finished' => $game->finished,
+            // start time to be done later
         ]);
 
         return $game;
