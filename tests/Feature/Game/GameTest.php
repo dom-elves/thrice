@@ -108,120 +108,101 @@ test('user can join a game with no password', function () {
     );
 });
 
-// test('user can join a game with a password', function () {});
+test('user can join a game with a password', function () {});
 
-// test('user can not join a game that does not exist', function () {
-//     Event::fake();
-//     $response = $this->get(route('game.show', ['game' => 'blalblabl']));
+test('user can not join a game that does not exist', function () {
+    Event::fake();
+    $response = $this->get(route('game.show', ['game' => 'blalblabl']));
 
-//     Event::assertNotDispatched(GameUserJoined::class);
+    Event::assertNotDispatched(GameUserJoined::class);
 
-//     $response->assertRedirect('dashboard')
-//         ->assertInertiaFlash('message', 'Game does not exist');
+    $response->assertRedirect('dashboard')
+        ->assertInertiaFlash('message', 'Game does not exist');
 
-//     $this->assertDatabaseMissing('game_users', [
-//         'user_id' => $this->user->id,
-//     ]);
-// });
+    $this->assertDatabaseMissing('game_users', [
+        'user_id' => $this->user->id,
+    ]);
+});
 
-// test('user can not join a game that has not started', function () {
-//     Event::fake();
-//     $game = Game::factory()->create([
-//         'started' => 0,
-//     ]);
+test('user can not join a game that has finished', function () {
+    Event::fake();
 
-//     $response = $this->get(route('game.show', $game));
+    $game = Game::factory()->create([
+        'started' => 1,
+        'finished' => 1,
+    ]);
 
-//     Event::assertNotDispatched(GameUserJoined::class);
+    $response = $this->get(route('game.show', $game));
 
-//     $response->assertRedirect('dashboard')
-//         ->assertInertiaFlash('message', 'Game has not started yet');
+    Event::assertNotDispatched(GameUserJoined::class);
 
-//     $this->assertDatabaseMissing('game_users', [
-//         'user_id' => $this->user->id,
-//         'game_id' => $game->id,
-//     ]);
-// });
+    $response->assertRedirect('dashboard')
+        ->assertInertiaFlash('message', 'Game has finished');
 
-// test('user can not join a game that has finished', function () {
-//     Event::fake();
+    $this->assertDatabaseMissing('game_users', [
+        'user_id' => $this->user->id,
+        'game_id' => $game->id,
+    ]);
+});
 
-//     $game = Game::factory()->create([
-//         'started' => 1,
-//         'finished' => 1,
-//     ]);
+test('user can not join a game that is full', function () {
+    Event::fake();
+    $game = Game::factory()->create([
+        'started' => true,
+    ]);
 
-//     $response = $this->get(route('game.show', $game));
+    $users = User::factory()
+        ->count(6)
+        ->state(new Sequence(
+            fn (Sequence $sequence) => [
+                'name' => 'Name '.$sequence->index,
+                'email' => 'email'.$sequence->index.'@example.com',
+            ]
+        ))
+        ->create();
 
-//     Event::assertNotDispatched(GameUserJoined::class);
+    foreach ($users as $user) {
+        $gameUser = GameUser::factory()->create([
+            'user_id' => $user->id,
+            'game_id' => $game->id,
+            'in_game' => 1,
+        ]);
+    }
 
-//     $response->assertRedirect('dashboard')
-//         ->assertInertiaFlash('message', 'Game has finished');
+    $response = $this->get(route('game.show', $game));
 
-//     $this->assertDatabaseMissing('game_users', [
-//         'user_id' => $this->user->id,
-//         'game_id' => $game->id,
-//     ]);
-// });
+    Event::assertNotDispatched(GameUserJoined::class);
 
-// test('user can not join a game that is full', function () {
-//     Event::fake();
-//     $game = Game::factory()->create([
-//         'started' => true,
-//     ]);
+    $response->assertRedirect('dashboard')
+        ->assertInertiaFlash('message', 'Game is full');
 
-//     $users = User::factory()
-//         ->count(6)
-//         ->state(new Sequence(
-//             fn (Sequence $sequence) => [
-//                 'name' => 'Name '.$sequence->index,
-//                 'email' => 'email'.$sequence->index.'@example.com',
-//             ]
-//         ))
-//         ->create();
+    $this->assertDatabaseMissing('game_users', [
+        'user_id' => $this->user->id,
+        'game_id' => $game->id,
+    ]);
+});
 
-//     foreach ($users as $user) {
-//         $gameUser = GameUser::factory()->create([
-//             'user_id' => $user->id,
-//             'game_id' => $game->id,
-//             'in_game' => 1,
-//         ]);
-//     }
+test('leaving the game via the button removes the user from the game', function () {
+    Event::fake();
+    $game = Game::factory()->create();
+    $gameUser = GameUser::factory()->create([
+        'user_id' => $this->user->id,
+        'game_id' => $game->id,
+        'in_game' => 1,
+    ]);
 
-//     $response = $this->get(route('game.show', $game));
+    $this->get(route('game.leave', $game->code));
 
-//     Event::assertNotDispatched(GameUserJoined::class);
+    Event::assertDispatched(GameUserLeft::class);
 
-//     $response->assertRedirect('dashboard')
-//         ->assertInertiaFlash('message', 'Game is full');
+    $this->assertDatabaseHas('game_users', [
+        'user_id' => $this->user->id,
+        'game_id' => $game->id,
+        'in_game' => 0,
+    ]);
+});
 
-//     $this->assertDatabaseMissing('game_users', [
-//         'user_id' => $this->user->id,
-//         'game_id' => $game->id,
-//     ]);
-// });
-
-// test('leaving the game via the button removes the user from the game', function () {
-//     Event::fake();
-//     $game = Game::factory()->create();
-//     $gameUser = GameUser::factory()->create([
-//         'user_id' => $this->user->id,
-//         'game_id' => $game->id,
-//         'in_game' => 1,
-//     ]);
-
-//     $this->get(route('game.leave', $game->code));
-
-//     Event::assertDispatched(GameUserLeft::class);
-
-//     $this->assertDatabaseHas('game_users', [
-//         'user_id' => $this->user->id,
-//         'game_id' => $game->id,
-//         'in_game' => 0,
-//     ]);
-// });
-
-// also need one of these in lobby test
+// todo: fix this
 // test('leaving the game via logging out removes the user from the game', function () {
 //     Event::fake();
 //     $game = Game::factory()->create();
@@ -245,4 +226,3 @@ test('user can join a game with no password', function () {
 // no iea how to actually do this, must look into it
 test('leaving the game via closing the active tab/window removes the user from the game', function () {});
 
-// todo: tests for invites etc, when that is built
