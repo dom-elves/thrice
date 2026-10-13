@@ -94,7 +94,7 @@ test('user can join a created game, and has a user created for them', function (
 });
 
 test('user can join a game with no password', function () {
-    Event::fake();    
+    Event::fake();
 
     $game = Game::factory()->create();
 

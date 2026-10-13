@@ -1,8 +1,4 @@
-<script setup lang="test">
-
-</script>
+<script setup lang="test"></script>
 <template>
-    <div>
-        
-    </div>
+    <div></div>
 </template>

@@ -22,7 +22,7 @@ watch(
     () => creatingGame.value,
     () => {
         if (creatingGame.value) {
-        //    showModal.value = false;
+            //    showModal.value = false;
         }
     },
 );
@@ -31,7 +31,7 @@ watch(
     () => joiningGame.value,
     () => {
         if (joiningGame.value) {
-        //    showModal.value = false;
+            //    showModal.value = false;
         }
     },
 );
@@ -64,14 +64,10 @@ onMounted(() => {});
         </div>
         <p>{{ page.flash.message }}</p>
         <Modal :show="showModal" @close="closeModal">
-                <div class="flex justify-center">
-                    <CreateGameForm
-                        v-if="creatingGame"
-                    />
-                    <GameListTable
-                        v-if="joiningGame"
-                    />
-                </div>
+            <div class="flex justify-center">
+                <CreateGameForm v-if="creatingGame" />
+                <GameListTable v-if="joiningGame" />
+            </div>
         </Modal>
     </AuthenticatedLayout>
 </template>
