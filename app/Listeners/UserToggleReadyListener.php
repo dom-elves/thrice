@@ -36,7 +36,7 @@ class UserToggleReadyListener
 
             if ($lock->get()) {
                 $gameService = app(GameService::class);
-                $game = $gameService->create($event->code);
+                // $game = $gameService->create($event->code);
 
                 DB::afterCommit(function () use ($game) {
                     $game->update([
