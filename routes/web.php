@@ -10,6 +10,7 @@ Route::inertia('/', 'Welcome')->name('home');
 
 // auth
 Route::middleware('auth')->group(function () {
+    // move to controller to make optional games prop
     Route::inertia('/dashboard', 'Dashboard')->name('dashboard');
 });
 

@@ -73,45 +73,40 @@ test('user can create a game with default settings', function () {
     ]);
 });
 
-test('user can create a game, and has a game user created for them', function () {});
+test('user can join a created game, and has a user created for them', function () {
+    Event::fake();
 
-// test('user can join a created game, and has a user created for them', function () {
-//     $game = Game::factory()->create();
-//     $user = User::factory()->create();
+    $game = Game::factory()->create();
 
-//     $response = $this->actingAs($user)->get(route('game.show', $game));
+    $response = $this->get(route('game.show', $game));
 
-//     Event::assertDispatched(GameUserJoined::class);
+    Event::assertDispatched(GameUserJoined::class);
 
-//     $response->assertInertia(fn (Assert $page) => $page->component('Game')
-//         ->has('game')
-//         ->where('game.id', $game->id)
-//     );
+    $response->assertInertia(fn (Assert $page) => $page->component('Game')
+        ->has('game')
+        ->where('game.id', $game->id)
+    );
 
-//     $this->assertDatabaseHas('games', [
-//         'name' => $game->name,
-//         'password' => $game->password,
-//     ]);
+    $this->assertDatabaseHas('game_users', [
+        'user_id' => $this->user->id,
+        'game_id' => $game->id,
+    ]);
+});
 
-//     $this->assertDatabaseHas('game_users', [
-//         'user_id' => $user->id,
-//         'game_id' => $game->id,
-//     ]);
-// });
+test('user can join a game with no password', function () {
+    Event::fake();    
 
-// test('user can join a game with no password', function () {
-//     $game = Game::factory()->create();
-//     $user = User::factory()->create();
+    $game = Game::factory()->create();
 
-//     $response = $this->actingAs($user)->get(route('game.show', $game));
+    $response = $this->get(route('game.show', $game));
 
-//     Event::assertDispatched(GameUserJoined::class);
+    Event::assertDispatched(GameUserJoined::class);
 
-//     $response->assertInertia(fn (Assert $page) => $page->component('Game')
-//         ->has('game')
-//         ->where('game.id', $game->id)
-//     );
-// });
+    $response->assertInertia(fn (Assert $page) => $page->component('Game')
+        ->has('game')
+        ->where('game.id', $game->id)
+    );
+});
 
 // test('user can join a game with a password', function () {});
 

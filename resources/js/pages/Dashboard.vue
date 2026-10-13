@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { usePage } from '@inertiajs/vue3';
 import { onMounted, ref, watch } from 'vue';
+import GameListTable from '@/components/GameListTable.vue';
 import Modal from '@/components/Modal.vue';
 import CreateGameForm from '@/components/forms/CreateGameForm.vue';
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue';
@@ -66,6 +67,9 @@ onMounted(() => {});
                 <div class="flex justify-center">
                     <CreateGameForm
                         v-if="creatingGame"
+                    />
+                    <GameListTable
+                        v-if="joiningGame"
                     />
                 </div>
         </Modal>
