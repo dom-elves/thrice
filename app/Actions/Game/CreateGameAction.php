@@ -19,6 +19,7 @@ class CreateGameAction
                 'name' => $data['name'],
                 'code' => $data['code'],
                 'password' => $data['password'] === '' ? '' : bcrypt($data['password']),
+                'private' => $data['private'],
             ]);
         });
 

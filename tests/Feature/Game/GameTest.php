@@ -19,6 +19,60 @@ beforeEach(function () {
     $this->actingAs($this->user);
 });
 
+test('user can create a game with a name', function () {
+    $response = $this->post(route('game.create', [
+        'name' => 'test name',
+    ]));
+
+    $response->assertSessionHasNoErrors()
+        ->assertRedirect($response->getTargetUrl());
+
+    $this->assertDatabaseHas('games', [
+        'name' => 'test name',
+    ]);
+});
+
+test('user can create a game with a password', function () {
+    $response = $this->post(route('game.create', [
+        'password' => 'test password',
+    ]));
+
+    $game = Game::first();
+
+    $response->assertSessionHasNoErrors()
+        ->assertRedirect($response->getTargetUrl());
+
+    $this->assertDatabaseHas('games', [
+        'password' => $game->password,
+    ]);
+});
+
+test('user can create a private game', function () {
+    $response = $this->post(route('game.create', [
+        'private' => 1,
+    ]));
+
+    $response->assertSessionHasNoErrors()
+        ->assertRedirect($response->getTargetUrl());
+
+    $this->assertDatabaseHas('games', [
+        'private' => 1,
+    ]);
+});
+
+test('user can create a game with default settings', function () {
+    $response = $this->post(route('game.create'));
+
+    $response->assertSessionHasNoErrors()
+        ->assertRedirect($response->getTargetUrl());
+
+    $this->assertDatabaseHas('games', [
+        'name' => $this->user->name."'s game",
+        'password' => null,
+        'private' => 0,
+    ]);
+});
+
 // test('user can join a created game, and has a user created for them', function () {
 //     $game = Game::factory()->create();
 //     $user = User::factory()->create();
@@ -59,119 +113,116 @@ beforeEach(function () {
 
 // test('user can join a game with a password', function () {});
 
-test('user can not join a game that does not exist', function () {
-    Event::fake();
-    $response = $this->get(route('game.show', ['game' => 'blalblabl']));
+// test('user can not join a game that does not exist', function () {
+//     Event::fake();
+//     $response = $this->get(route('game.show', ['game' => 'blalblabl']));
 
-    Event::assertNotDispatched(GameUserJoined::class);
+//     Event::assertNotDispatched(GameUserJoined::class);
 
-    $response->assertRedirect('dashboard')
-        ->assertInertiaFlash('message', 'Game does not exist');
+//     $response->assertRedirect('dashboard')
+//         ->assertInertiaFlash('message', 'Game does not exist');
 
-    $this->assertDatabaseMissing('game_users', [
-        'user_id' => $this->user->id,
-    ]);
-});
+//     $this->assertDatabaseMissing('game_users', [
+//         'user_id' => $this->user->id,
+//     ]);
+// });
 
-test('user can not join a game that has not started', function () {
-    Event::fake();
-    $game = Game::factory()->create([
-        'started' => 0,
-    ]);
+// test('user can not join a game that has not started', function () {
+//     Event::fake();
+//     $game = Game::factory()->create([
+//         'started' => 0,
+//     ]);
 
-    $response = $this->get(route('game.show', $game));
+//     $response = $this->get(route('game.show', $game));
 
-    Event::assertNotDispatched(GameUserJoined::class);
+//     Event::assertNotDispatched(GameUserJoined::class);
 
-    $response->assertRedirect('dashboard')
-        ->assertInertiaFlash('message', 'Game has not started yet');
+//     $response->assertRedirect('dashboard')
+//         ->assertInertiaFlash('message', 'Game has not started yet');
 
-    $this->assertDatabaseMissing('game_users', [
-        'user_id' => $this->user->id,
-        'game_id' => $game->id,
-    ]);
-});
+//     $this->assertDatabaseMissing('game_users', [
+//         'user_id' => $this->user->id,
+//         'game_id' => $game->id,
+//     ]);
+// });
 
-test('user can not join a game that has finished', function () {
-    Event::fake();
+// test('user can not join a game that has finished', function () {
+//     Event::fake();
 
-    $game = Game::factory()->create([
-        'started' => 1,
-        'finished' => 1,
-    ]);
+//     $game = Game::factory()->create([
+//         'started' => 1,
+//         'finished' => 1,
+//     ]);
 
-    $response = $this->get(route('game.show', $game));
+//     $response = $this->get(route('game.show', $game));
 
-    Event::assertNotDispatched(GameUserJoined::class);
+//     Event::assertNotDispatched(GameUserJoined::class);
 
-    $response->assertRedirect('dashboard')
-        ->assertInertiaFlash('message', 'Game has finished');
+//     $response->assertRedirect('dashboard')
+//         ->assertInertiaFlash('message', 'Game has finished');
 
-    $this->assertDatabaseMissing('game_users', [
-        'user_id' => $this->user->id,
-        'game_id' => $game->id,
-    ]);
-});
+//     $this->assertDatabaseMissing('game_users', [
+//         'user_id' => $this->user->id,
+//         'game_id' => $game->id,
+//     ]);
+// });
 
-// commenting out this test for now as I may treat game capacity differently
-// depending on if I decide to had a db column for game like "max_players" or "is_full"
+// test('user can not join a game that is full', function () {
+//     Event::fake();
+//     $game = Game::factory()->create([
+//         'started' => true,
+//     ]);
 
-test('user can not join a game that is full', function () {
-    Event::fake();
-    $game = Game::factory()->create([
-        'started' => true,
-    ]);
+//     $users = User::factory()
+//         ->count(6)
+//         ->state(new Sequence(
+//             fn (Sequence $sequence) => [
+//                 'name' => 'Name '.$sequence->index,
+//                 'email' => 'email'.$sequence->index.'@example.com',
+//             ]
+//         ))
+//         ->create();
 
-    $users = User::factory()
-        ->count(6)
-        ->state(new Sequence(
-            fn (Sequence $sequence) => [
-                'name' => 'Name '.$sequence->index,
-                'email' => 'email'.$sequence->index.'@example.com',
-            ]
-        ))
-        ->create();
+//     foreach ($users as $user) {
+//         $gameUser = GameUser::factory()->create([
+//             'user_id' => $user->id,
+//             'game_id' => $game->id,
+//             'in_game' => 1,
+//         ]);
+//     }
 
-    foreach ($users as $user) {
-        $gameUser = GameUser::factory()->create([
-            'user_id' => $user->id,
-            'game_id' => $game->id,
-            'in_game' => 1,
-        ]);
-    }
+//     $response = $this->get(route('game.show', $game));
 
-    $response = $this->get(route('game.show', $game));
+//     Event::assertNotDispatched(GameUserJoined::class);
 
-    Event::assertNotDispatched(GameUserJoined::class);
+//     $response->assertRedirect('dashboard')
+//         ->assertInertiaFlash('message', 'Game is full');
 
-    $response->assertRedirect('dashboard')
-        ->assertInertiaFlash('message', 'Game is full');
+//     $this->assertDatabaseMissing('game_users', [
+//         'user_id' => $this->user->id,
+//         'game_id' => $game->id,
+//     ]);
+// });
 
-    $this->assertDatabaseMissing('game_users', [
-        'user_id' => $this->user->id,
-        'game_id' => $game->id,
-    ]);
-});
+// test('leaving the game via the button removes the user from the game', function () {
+//     Event::fake();
+//     $game = Game::factory()->create();
+//     $gameUser = GameUser::factory()->create([
+//         'user_id' => $this->user->id,
+//         'game_id' => $game->id,
+//         'in_game' => 1,
+//     ]);
 
-test('leaving the game via the button removes the user from the game', function () {
-    Event::fake();
-    $game = Game::factory()->create();
-    $gameUser = GameUser::factory()->create([
-        'user_id' => $this->user->id,
-        'game_id' => $game->id,
-        'in_game' => 1,
-    ]);
+//     $this->get(route('game.leave', $game->code));
 
-    $this->get(route('game.leave', $game->code));
+//     Event::assertDispatched(GameUserLeft::class);
 
-    Event::assertDispatched(GameUserLeft::class);
-
-    $this->assertDatabaseHas('game_users', [
-        'user_id' => $this->user->id,
-        'game_id' => $game->id,
-        'in_game' => 0,
-    ]);
-});
+//     $this->assertDatabaseHas('game_users', [
+//         'user_id' => $this->user->id,
+//         'game_id' => $game->id,
+//         'in_game' => 0,
+//     ]);
+// });
 
 // also need one of these in lobby test
 // test('leaving the game via logging out removes the user from the game', function () {

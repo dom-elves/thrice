@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('password')->nullable();
             $table->boolean('started')->default(false);
             $table->boolean('finished')->default(false);
-            $table->integer('hands')->nullable();
+            $table->integer('hands')->default(0);
             $table->timestamps();
         });
     }

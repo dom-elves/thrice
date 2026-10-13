@@ -42,7 +42,7 @@ class GameController extends Controller
         $validated = $request->validate([
             'name' => 'nullable|string|max:255',
             'password' => 'nullable|string|max:255',
-            'private_game' => 'sometimes|boolean',
+            'private' => 'sometimes|boolean',
         ]);
 
         if (! isset($validated['name'])) {
@@ -53,13 +53,17 @@ class GameController extends Controller
             $validated['password'] = '';
         }
 
+        if (! isset($validated['private'])) {
+            $validated['private'] = 0;
+        }
+
         $code = Str::lower(Str::random(12));
 
         $validated['code'] = $code;
 
-        $this->gameService->create($validated);
+        $game = $this->gameService->create($validated);
 
-        // $request->session()->put('lobby_code', $code);
+        $request->session()->put('game_code', $code);
 
         return redirect()->route('game.show', $code);
     }

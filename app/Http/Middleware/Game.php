@@ -19,14 +19,6 @@ class Game
     {
         $game = $request->game;
 
-        if (! $game->started) {
-            Inertia::flash([
-                'message' => 'Game has not started yet',
-            ]);
-
-            return redirect('dashboard');
-        }
-
         if ($game->finished) {
             Inertia::flash([
                 'message' => 'Game has finished',

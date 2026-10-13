@@ -22,7 +22,7 @@ watch(
     () => creatingGame.value,
     () => {
         if (creatingGame.value) {
-            // perform request
+        //    showModal.value = false;
         }
     },
 );
@@ -83,12 +83,12 @@ onMounted(() => {});
                         <div class="flex flex-row w-full justify-between">
                             <div class="flex flex-row-reverse items-center">
                                 <InputLabel
-                                    :for="'private_game'"
+                                    :for="'private'"
                                     :text="'Private Game?'"
                                 />
                                 <input
                                     type="checkbox"
-                                    name="private_game"
+                                    name="private"
                                     value="1"
                                 />
                             </div>
