@@ -55,31 +55,47 @@ onMounted(() => {});
         </div>
         <p>{{ page.flash.message }}</p>
         <Modal :show="showModal" @close="closeModal">
-            <div v-if="creatingGame">
-                <Form
-                    class="flex flex-col items-center justify-center gap-2 p-4"
-                    action="/lobby/create"
-                    method="post"
-                    #default="{ errors }"
-                >
-                    <InputLabel
-                        :for="'name'"
-                        :text="'Game Name'"
-                        class="text-center"
-                    />
-                    <TextInput :type="'name'" :name="'name'" />
-                    <p v-if="errors.name">{{ errors.name }}</p>
-                    <InputLabel
-                        :for="'password'"
-                        :text="'Password'"
-                        class="text-center"
-                    />
-                    <TextInput :type="'password'" :name="'password'" />
-                    <p v-if="errors.password">{{ errors.password }}</p>
-                    <button type="submit">Create Game</button>
-                </Form>
-                <!-- todo: join game that indexes active games-->
-            </div>
+                <div v-if="creatingGame" class="flex justify-center">
+                    <Form
+                        class="flex flex-col items-center gap-2 p-4 w-1/2"
+                        action="/game/create"
+                        method="post"
+                        #default="{ errors }"
+                    >
+                        <div class="w-full">
+                            <InputLabel
+                                :for="'name'"
+                                :text="'Game Name'"
+                                class="text-center"
+                            />
+                            <TextInput :type="'name'" :name="'name'" />
+                            <p v-if="errors.name">{{ errors.name }}</p>
+                        </div>
+                        <div class="w-full">
+                            <InputLabel
+                                :for="'password'"
+                                :text="'Password'"
+                                class="text-center"
+                            />
+                            <TextInput :type="'password'" :name="'password'" />
+                            <p v-if="errors.password">{{ errors.password }}</p>
+                        </div>
+                        <div class="flex flex-row w-full justify-between">
+                            <div class="flex flex-row-reverse items-center">
+                                <InputLabel
+                                    :for="'private_game'"
+                                    :text="'Private Game?'"
+                                />
+                                <input
+                                    type="checkbox"
+                                    name="private_game"
+                                    value="1"
+                                />
+                            </div>
+                            <button type="submit">Create Game</button>
+                        </div>
+                    </Form>
+                </div>
         </Modal>
     </AuthenticatedLayout>
 </template>
