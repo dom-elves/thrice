@@ -19,6 +19,7 @@ class CreateGameUserAction
                 'game_id' => $gameId,
                 'user_id' => $userId,
                 'start_balance' => 1000,
+                'in_game' => true,
             ]);
         });
     }

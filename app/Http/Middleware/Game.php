@@ -27,6 +27,8 @@ class Game
             return redirect('dashboard');
         }
 
+        // todo: query for game->gameUsers that are in game againt auth()user
+
         // with this, if a user closes the tab/window and tries to reopen it
         // they will not be let back in, but i plan on putting a ttl on redis users
         // so they will be automatically kicked if they do not set cards

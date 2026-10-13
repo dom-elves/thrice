@@ -73,6 +73,8 @@ test('user can create a game with default settings', function () {
     ]);
 });
 
+test('user can create a game, and has a game user created for them', function () {});
+
 // test('user can join a created game, and has a user created for them', function () {
 //     $game = Game::factory()->create();
 //     $user = User::factory()->create();
