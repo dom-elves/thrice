@@ -20,6 +20,7 @@ return new class extends Migration
             $table->boolean('started')->default(false);
             $table->boolean('finished')->default(false);
             $table->integer('hands')->default(0);
+            $table->softDeletes();
             $table->timestamps();
         });
     }

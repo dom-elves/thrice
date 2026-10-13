@@ -3,8 +3,10 @@
 namespace App\Listeners;
 
 use App\Events\GameUserLeft;
+use App\Jobs\CloseGame;
 use App\Notifications\GameUserLeftNotification;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\Facades\Redis;
 
 class GameUserLeftListener implements ShouldQueue
 {
@@ -21,6 +23,12 @@ class GameUserLeftListener implements ShouldQueue
      */
     public function handle(GameUserLeft $event): void
     {
-        $event->gameUser->game->notify(new GameUserLeftNotification($event->gameUser));
+        $game = $event->gameUser->game;
+
+        if (! Redis::exists("lobby:{$game->code}:game_user_ids")) {
+            CloseGame::dispatch($game->id);
+        } else {
+            $game->notify(new GameUserLeftNotification($event->gameUser));
+        }
     }
 }
