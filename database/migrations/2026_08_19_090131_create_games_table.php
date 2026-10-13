@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('code');
+            $table->boolean('private')->default(false);
             $table->string('password')->nullable();
             $table->boolean('started')->default(false);
             $table->boolean('finished')->default(false);

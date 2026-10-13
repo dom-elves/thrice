@@ -19,6 +19,7 @@ class GameSeeder extends Seeder
 
         $game = Game::factory()->create([
             'name' => $user->name."'s Game",
+            'private' => 0,
             'started' => 0,
             'finished' => 0,
         ]);
