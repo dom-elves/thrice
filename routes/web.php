@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\GameController;
+use App\Http\Controllers\HandController;
 use App\Http\Controllers\LobbyController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -41,4 +42,9 @@ Route::middleware('auth')->group(function () {
         });
 
     Route::get('/game/{game:code}/leave', [GameController::class, 'leave'])->name('game.leave');
+});
+
+// hand
+Route::middleware('auth')->group(function () {
+    Route::post('/hand/{gameUser}/ready', [HandController::class, 'ready'])->name('hand.ready');
 });
