@@ -23,9 +23,9 @@ class GameService
      * Create an instance of the game in Redis
      * Adding to the hash appears incomplete, the basics are done in LobbyService
      *
-     * @param  string  $code
+     * @param  array<string, string>  $data
      */
-    public function create($data): Game
+    public function create(array $data): Game
     {
         $game = app(CreateGameAction::class)->execute($data);
 

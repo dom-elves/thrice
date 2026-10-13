@@ -11,6 +11,8 @@ class CreateGameAction
 
     /**
      * Create a Game.
+     * 
+     * @param  array<string, string>  $data
      */
     public function execute(array $data): Game
     {
