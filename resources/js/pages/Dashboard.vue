@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { usePage, Form } from '@inertiajs/vue3';
+import { usePage } from '@inertiajs/vue3';
 import { onMounted, ref, watch } from 'vue';
-import InputLabel from '@/components/forms/InputLabel.vue';
-import TextInput from '@/components/forms/TextInput.vue';
 import Modal from '@/components/Modal.vue';
+import CreateGameForm from '@/components/forms/CreateGameForm.vue';
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue';
 
 const page = usePage();
@@ -22,6 +21,15 @@ watch(
     () => creatingGame.value,
     () => {
         if (creatingGame.value) {
+        //    showModal.value = false;
+        }
+    },
+);
+
+watch(
+    () => joiningGame.value,
+    () => {
+        if (joiningGame.value) {
         //    showModal.value = false;
         }
     },
@@ -55,46 +63,10 @@ onMounted(() => {});
         </div>
         <p>{{ page.flash.message }}</p>
         <Modal :show="showModal" @close="closeModal">
-                <div v-if="creatingGame" class="flex justify-center">
-                    <Form
-                        class="flex flex-col items-center gap-2 p-4 w-1/2"
-                        action="/game/create"
-                        method="post"
-                        #default="{ errors }"
-                    >
-                        <div class="w-full">
-                            <InputLabel
-                                :for="'name'"
-                                :text="'Game Name'"
-                                class="text-center"
-                            />
-                            <TextInput :type="'name'" :name="'name'" />
-                            <p v-if="errors.name">{{ errors.name }}</p>
-                        </div>
-                        <div class="w-full">
-                            <InputLabel
-                                :for="'password'"
-                                :text="'Password'"
-                                class="text-center"
-                            />
-                            <TextInput :type="'password'" :name="'password'" />
-                            <p v-if="errors.password">{{ errors.password }}</p>
-                        </div>
-                        <div class="flex flex-row w-full justify-between">
-                            <div class="flex flex-row-reverse items-center">
-                                <InputLabel
-                                    :for="'private'"
-                                    :text="'Private Game?'"
-                                />
-                                <input
-                                    type="checkbox"
-                                    name="private"
-                                    value="1"
-                                />
-                            </div>
-                            <button type="submit">Create Game</button>
-                        </div>
-                    </Form>
+                <div class="flex justify-center">
+                    <CreateGameForm
+                        v-if="creatingGame"
+                    />
                 </div>
         </Modal>
     </AuthenticatedLayout>
