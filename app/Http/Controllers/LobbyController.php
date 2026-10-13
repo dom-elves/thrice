@@ -31,39 +31,6 @@ class LobbyController extends Controller
     }
 
     /**
-     * - validate data
-     * - set a name if one isn't given
-     * - set empty string as password if one isn't given
-     * - generate lobby code & append to $data
-     * - create lobby
-     */
-    // public function create(Request $request): RedirectResponse
-    // {
-    //     $validated = $request->validate([
-    //         'name' => 'nullable|string|max:255',
-    //         'password' => 'nullable|string|max:255',
-    //     ]);
-
-    //     if (! isset($validated['name'])) {
-    //         $validated['name'] = auth()->user()->name."'s Game";
-    //     }
-
-    //     if (! isset($validated['password'])) {
-    //         $validated['password'] = '';
-    //     }
-
-    //     $code = Str::lower(Str::random(12));
-
-    //     $validated['code'] = $code;
-
-    //     $this->lobbyService->create(auth()->user(), $validated);
-
-    //     $request->session()->put('lobby_code', $code);
-
-    //     return redirect()->route('lobby.show', $code);
-    // }
-
-    /**
      * - toggle a user's ready status
      * - broadcast over lobby channel
      * - UserToggleReady has a listener, which triggers on all members ready when there are 2+
