@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Game;
 use App\Http\Controllers\GameController;
 use App\Http\Controllers\LobbyController;
 use Illuminate\Http\Request;
@@ -11,7 +12,11 @@ Route::inertia('/', 'Welcome')->name('home');
 // auth
 Route::middleware('auth')->group(function () {
     // move to controller to make optional games prop
-    Route::inertia('/dashboard', 'Dashboard')->name('dashboard');
+    Route::get('/dashboard', function () {
+        return Inertia::render('Dashboard', [
+            'games' => Inertia::optional( fn () => Game::all()),
+        ]);
+    })->name('dashboard');
 });
 
 // lobby - to be removed

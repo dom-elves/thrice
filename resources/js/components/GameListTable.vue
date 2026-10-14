@@ -1,4 +1,25 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { usePage, router } from '@inertiajs/vue3'
+import { onMounted, computed } from 'vue';
+
+interface Game {
+    name: string,
+}
+
+const games = computed<Game[]>(() => (usePage().props.games as Game[] | undefined) ?? [])
+
+function load() {
+  router.reload({ only: ['games']});
+}
+
+onMounted(() => {
+    console.log(games);
+    console.log(load());
+})
+</script>
+
 <template>
-    <div></div>
+    <div>
+        <p v-for="game in games">{{ game.name }}</p>
+    </div>
 </template>
