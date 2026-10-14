@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('user_id')->references('id')->on('users');
             $table->integer('start_balance')->default(0);
             $table->integer('end_balance')->default(0);
-            $table->boolean('in_game')->default(false);
+            $table->boolean('in_game');
             $table->timestamps();
         });
     }

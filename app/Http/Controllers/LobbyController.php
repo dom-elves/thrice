@@ -6,7 +6,6 @@ use App\Events\Lobby\UserToggleReady;
 use App\Services\LobbyService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
 
@@ -28,39 +27,6 @@ class LobbyController extends Controller
         return Inertia::render('Lobby', [
             'code' => $code,
         ]);
-    }
-
-    /**
-     * - validate data
-     * - set a name if one isn't given
-     * - set empty string as password if one isn't given
-     * - generate lobby code & append to $data
-     * - create lobby
-     */
-    public function create(Request $request): RedirectResponse
-    {
-        $validated = $request->validate([
-            'name' => 'nullable|string|max:255',
-            'password' => 'nullable|string|max:255',
-        ]);
-
-        if (! isset($validated['name'])) {
-            $validated['name'] = auth()->user()->name."'s Game";
-        }
-
-        if (! isset($validated['password'])) {
-            $validated['password'] = '';
-        }
-
-        $code = Str::lower(Str::random(12));
-
-        $validated['code'] = $code;
-
-        $this->lobbyService->create(auth()->user(), $validated);
-
-        $request->session()->put('lobby_code', $code);
-
-        return redirect()->route('lobby.show', $code);
     }
 
     /**

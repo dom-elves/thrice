@@ -23,17 +23,19 @@ class GameService
      * Create an instance of the game in Redis
      * Adding to the hash appears incomplete, the basics are done in LobbyService
      *
-     * @param  string  $code
+     * @param  array<string, string>  $data
      */
-    public function create($code): Game
+    public function create(array $data): Game
     {
-        $game = app(CreateGameAction::class)->execute($code);
+        $game = app(CreateGameAction::class)->execute($data);
 
         Redis::hmset("game:{$game->code}", [
+            'name' => $game->name,
+            // don't think i need pw here
             'hands' => 0,
             'started' => $game->started,
-            'finished' => 0,
-            'start_time' => $game->created_at->toDateTimeString(),
+            'finished' => $game->finished,
+            // start time to be done later
         ]);
 
         return $game;

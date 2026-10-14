@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { usePage, Form } from '@inertiajs/vue3';
+import { usePage } from '@inertiajs/vue3';
 import { onMounted, ref, watch } from 'vue';
-import InputLabel from '@/components/forms/InputLabel.vue';
-import TextInput from '@/components/forms/TextInput.vue';
+import CreateGameForm from '@/components/forms/CreateGameForm.vue';
+import GameListTable from '@/components/GameListTable.vue';
 import Modal from '@/components/Modal.vue';
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue';
 
@@ -22,7 +22,16 @@ watch(
     () => creatingGame.value,
     () => {
         if (creatingGame.value) {
-            // perform request
+            //    showModal.value = false;
+        }
+    },
+);
+
+watch(
+    () => joiningGame.value,
+    () => {
+        if (joiningGame.value) {
+            //    showModal.value = false;
         }
     },
 );
@@ -55,30 +64,9 @@ onMounted(() => {});
         </div>
         <p>{{ page.flash.message }}</p>
         <Modal :show="showModal" @close="closeModal">
-            <div v-if="creatingGame">
-                <Form
-                    class="flex flex-col items-center justify-center gap-2 p-4"
-                    action="/lobby/create"
-                    method="post"
-                    #default="{ errors }"
-                >
-                    <InputLabel
-                        :for="'name'"
-                        :text="'Game Name'"
-                        class="text-center"
-                    />
-                    <TextInput :type="'name'" :name="'name'" />
-                    <p v-if="errors.name">{{ errors.name }}</p>
-                    <InputLabel
-                        :for="'password'"
-                        :text="'Password'"
-                        class="text-center"
-                    />
-                    <TextInput :type="'password'" :name="'password'" />
-                    <p v-if="errors.password">{{ errors.password }}</p>
-                    <button type="submit">Create Game</button>
-                </Form>
-                <!-- todo: join game that indexes active games-->
+            <div class="flex justify-center">
+                <CreateGameForm v-if="creatingGame" />
+                <GameListTable v-if="joiningGame" />
             </div>
         </Modal>
     </AuthenticatedLayout>

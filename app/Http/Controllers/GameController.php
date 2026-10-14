@@ -9,11 +9,16 @@ use App\Services\GameService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
 
 class GameController extends Controller
 {
+    public function __construct(
+        private GameService $gameService
+    ) {}
+
     public function show(Game $game): InertiaResponse
     {
         $user = auth()->user();
@@ -25,12 +30,42 @@ class GameController extends Controller
             $gameUser = app(CreateGameUserAction::class)->execute($game->id, $user->id);
         }
 
-        $gameService = app(GameService::class);
-        $gameService->join($gameUser);
+        $this->gameService->join($gameUser);
 
         return Inertia::render('Game', [
             'game' => $game,
         ]);
+    }
+
+    public function create(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'name' => 'nullable|string|max:255',
+            'password' => 'nullable|string|max:255',
+            'private' => 'sometimes|boolean',
+        ]);
+
+        if (! isset($validated['name'])) {
+            $validated['name'] = auth()->user()->name."'s Game";
+        }
+
+        if (! isset($validated['password'])) {
+            $validated['password'] = '';
+        }
+
+        if (! isset($validated['private'])) {
+            $validated['private'] = 0;
+        }
+
+        $code = Str::lower(Str::random(12));
+
+        $validated['code'] = $code;
+
+        $game = $this->gameService->create($validated);
+
+        $request->session()->put('game_code', $code);
+
+        return redirect()->route('game.show', $code);
     }
 
     public function leave(Request $request, Game $game): RedirectResponse
