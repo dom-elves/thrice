@@ -3,7 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\GameUserLeft;
-use App\Jobs\CloseGame;
+use App\Jobs\Game\CloseGame;
 use App\Notifications\GameUserLeftNotification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Redis;

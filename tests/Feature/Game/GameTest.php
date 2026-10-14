@@ -2,7 +2,7 @@
 
 use App\Events\GameUserJoined;
 use App\Events\GameUserLeft;
-use App\Jobs\CloseGame;
+use App\Jobs\Game\CloseGame;
 use App\Listeners\GameUserLeftListener;
 use App\Models\Game;
 use App\Models\GameUser;
