@@ -31,10 +31,7 @@ class CloseGame implements ShouldQueue
         $game = Game::findOrFail($this->gameId);
         $key = "game:{$game->code}";
 
-        [$gameState] = Redis::pipeline(function ($pipe) use ($key) {
-            $pipe->hgetall($key);
-            $pipe->del($key);
-        });
+        $gameState = Redis::hgetall($key);
 
         if (! $game->started) {
             $game->delete();
@@ -44,5 +41,7 @@ class CloseGame implements ShouldQueue
                 'finished' => 1,
             ]);
         }
+
+        Redis::del($key);
     }
 }
