@@ -2,11 +2,15 @@
 
 use App\Events\GameUserJoined;
 use App\Events\GameUserLeft;
+use App\Jobs\CloseGame;
+use App\Listeners\GameUserLeftListener;
 use App\Models\Game;
 use App\Models\GameUser;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Queue;
+use Illuminate\Support\Facades\Redis;
 use Inertia\Testing\AssertableInertia as Assert;
 
 beforeEach(function () {
@@ -185,7 +189,7 @@ test('user can not join a game that is full', function () {
 test('leaving the game via the button removes the user from the game', function () {
     Event::fake();
     $game = Game::factory()->create();
-    $gameUser = GameUser::factory()->create([
+    GameUser::factory()->create([
         'user_id' => $this->user->id,
         'game_id' => $game->id,
         'in_game' => 1,
@@ -199,6 +203,64 @@ test('leaving the game via the button removes the user from the game', function 
         'user_id' => $this->user->id,
         'game_id' => $game->id,
         'in_game' => 0,
+    ]);
+});
+
+test('leaving a game as the last person fires the close game job', function () {
+    Queue::fake();
+
+    $game = Game::factory()->create([
+        'started' => 1,
+    ]);
+
+    $gameUser = GameUser::factory()->create([
+        'user_id' => $this->user->id,
+        'game_id' => $game->id,
+        'in_game' => 1,
+    ]);
+
+    // because listeners are also queued, it gets in the way of the job assertion
+    // so it must be faked to handle the event
+    (new GameUserLeftListener)->handle(new GameUserLeft($gameUser));
+
+    Queue::assertPushed(CloseGame::class, fn ($job) => $job->gameId == $game->id);
+});
+
+test('leaving a game that never started soft deletes the game', function () {
+    $game = Game::factory()->create([
+        'started' => 0,
+    ]);
+
+    Redis::hmset("game:{$game->code}", [
+        'name' => $game->name,
+        'hands' => 0,
+        'started' => $game->started,
+        'finished' => $game->finished,
+    ]);
+
+    (new CloseGame($game->id))->handle();
+
+    $this->assertSoftDeleted('games', [
+        'id' => $game->id,
+    ]);
+});
+
+test('leaving a game that started does not soft delete the game', function () {
+    $game = Game::factory()->create([
+        'started' => 1,
+    ]);
+
+    Redis::hmset("game:{$game->code}", [
+        'name' => $game->name,
+        'hands' => 0,
+        'started' => $game->started,
+        'finished' => $game->finished,
+    ]);
+
+    (new CloseGame($game->id))->handle();
+
+    $this->assertDatabaseHas('games', [
+        'finished' => 1,
     ]);
 });
 
