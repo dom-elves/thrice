@@ -3,6 +3,7 @@ import { usePage, router } from '@inertiajs/vue3'
 import { onMounted, computed } from 'vue';
 
 interface Game {
+    id: number,
     name: string,
 }
 
@@ -20,6 +21,6 @@ onMounted(() => {
 
 <template>
     <div>
-        <p v-for="game in games">{{ game.name }}</p>
+        <p v-for="game in games" :key="game.id">{{ game.name }}</p>
     </div>
 </template>
