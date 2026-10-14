@@ -5,6 +5,8 @@ import { onMounted, computed } from 'vue';
 interface Game {
     id: number;
     name: string;
+    started: boolean;
+    hands: number;
 }
 
 const games = computed<Game[]>(
@@ -24,5 +26,24 @@ onMounted(() => {
 <template>
     <div>
         <p v-for="game in games" :key="game.id">{{ game.name }}</p>
+        <table>
+            <tr>
+                <th>Name</th>
+                <th>Players</th>
+                <th>Started</th>
+                <th>Hands</th>
+            </tr>
+            <tr v-for="game in games" :key="game.id">
+                <td>{{ game.name }}</td>
+                <td>0, for now</td>
+                <td>{{ game.started }}</td>
+                <td>{{ game.hands }}</td>
+            </tr>
+        </table>
     </div>
 </template>
+<style>
+table, th, td {
+  border:1px solid black;
+}
+</style>
