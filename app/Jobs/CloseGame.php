@@ -15,7 +15,7 @@ class CloseGame implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct(public string $gameId)
+    public function __construct(public int $gameId)
     {
         //
     }
