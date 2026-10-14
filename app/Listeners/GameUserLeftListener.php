@@ -25,7 +25,7 @@ class GameUserLeftListener implements ShouldQueue
     {
         $game = $event->gameUser->game;
 
-        if (! Redis::exists("lobby:{$game->code}:game_user_ids")) {
+        if (! Redis::exists("game:{$game->id}:game_user_ids")) {
             CloseGame::dispatch($game->id);
         } else {
             $game->notify(new GameUserLeftNotification($event->gameUser));

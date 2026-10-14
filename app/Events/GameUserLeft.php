@@ -18,7 +18,7 @@ class GameUserLeft
      */
     public function __construct(public GameUser $gameUser)
     {
-        //
+
     }
 
     /**

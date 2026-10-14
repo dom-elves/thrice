@@ -22,11 +22,24 @@ class CloseGame implements ShouldQueue
 
     /**
      * Execute the job.
+     *
+     * If the game never event started, delete it.
+     * Otherwise, record hand total & finish.
      */
     public function handle(): void
     {
         $game = Game::findOrFail($this->gameId);
-        // todo: remove game redis hash and record data in mysql db
-        $game->delete();
+
+        // delete from redis
+        $gameState = Redis::hgetall("game:{$game->code}");
+
+        if (! $game->started) {
+            $game->delete();
+        } else {
+            $game->update([
+                'hands' => $gameState['hands'],
+                'finished' => 1,
+            ]);
+        }
     }
 }
