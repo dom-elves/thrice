@@ -4,8 +4,8 @@ namespace App\Jobs;
 
 use App\Models\Game;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Redis;
 
 class CloseGame implements ShouldQueue

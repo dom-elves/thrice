@@ -287,4 +287,3 @@ test('leaving a game that started does not soft delete the game', function () {
 
 // no iea how to actually do this, must look into it
 test('leaving the game via closing the active tab/window removes the user from the game', function () {});
-
