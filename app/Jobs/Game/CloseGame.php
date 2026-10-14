@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Jobs;
+namespace App\Jobs\Game;
 
 use App\Models\Game;
 use Illuminate\Contracts\Queue\ShouldQueue;
