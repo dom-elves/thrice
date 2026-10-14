@@ -1,8 +1,8 @@
 <?php
 
-use App\Models\Game;
 use App\Http\Controllers\GameController;
 use App\Http\Controllers\LobbyController;
+use App\Models\Game;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -14,7 +14,7 @@ Route::middleware('auth')->group(function () {
     // move to controller to make optional games prop
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard', [
-            'games' => Inertia::optional( fn () => Game::all()),
+            'games' => Inertia::optional(fn () => Game::all()),
         ]);
     })->name('dashboard');
 });
