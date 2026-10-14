@@ -71,7 +71,7 @@ test('user can create a game with default settings', function () {
         ->assertRedirect($response->getTargetUrl());
 
     $this->assertDatabaseHas('games', [
-        'name' => $this->user->name."'s game",
+        'name' => $this->user->name."'s Game",
         'password' => null,
         'private' => 0,
     ]);
