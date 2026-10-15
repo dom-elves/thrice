@@ -35,16 +35,16 @@ class UserToggleReadyListener
             $lock = Cache::lock("lobby:{$event->code}:game-creating", 10);
 
             if ($lock->get()) {
-                $gameService = app(GameService::class);
-                $game = $gameService->create($event->code);
+                // $gameService = app(GameService::class);
+                // // $game = $gameService->create($event->code);
 
-                DB::afterCommit(function () use ($game) {
-                    $game->update([
-                        'started' => true,
-                    ]);
+                // DB::afterCommit(function () use ($game) {
+                //     $game->update([
+                //         'started' => true,
+                //     ]);
 
-                    broadcast(new GameCreated($game));
-                });
+                //     broadcast(new GameCreated($game));
+                // });
 
                 $lock->release();
             }

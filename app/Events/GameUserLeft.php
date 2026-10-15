@@ -16,10 +16,7 @@ class GameUserLeft
     /**
      * Create a new event instance.
      */
-    public function __construct(public GameUser $gameUser)
-    {
-        //
-    }
+    public function __construct(public GameUser $gameUser) {}
 
     /**
      * Get the channels the event should broadcast on.

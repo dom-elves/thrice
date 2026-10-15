@@ -2,31 +2,26 @@
 
 namespace App\Actions\Game;
 
-use App\Jobs\Lobby\CloseLobby;
 use App\Models\Game;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Redis;
 
 class CreateGameAction
 {
-    public function __construct() {}
-
     /**
      * Create a Game.
+     *
+     * @param  array<string, string>  $data
      */
-    public function execute(string $code): Game
+    public function execute(array $data): Game
     {
-        $data = Redis::hgetall("game:{$code}");
-
         $game = DB::transaction(function () use ($data) {
             return Game::create([
                 'name' => $data['name'],
                 'code' => $data['code'],
                 'password' => $data['password'] === '' ? '' : bcrypt($data['password']),
+                'private' => $data['private'],
             ]);
         });
-
-        CloseLobby::dispatch($code);
 
         return $game;
     }
