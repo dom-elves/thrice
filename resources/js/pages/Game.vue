@@ -2,19 +2,8 @@
 import { usePage, router } from '@inertiajs/vue3';
 import { useEchoNotification } from '@laravel/echo-vue';
 import { onMounted, ref } from 'vue';
-import type { GameUser } from '@/interfaces';
+import type { GameUser, PageProps } from '@/interfaces';
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue';
-
-interface PageProps {
-    [key: string]: unknown;
-    game: {
-        id: number;
-        name: string;
-        hands: number;
-        code: string;
-    };
-    user: object;
-}
 
 const page = usePage<PageProps>();
 const game = page.props.game;

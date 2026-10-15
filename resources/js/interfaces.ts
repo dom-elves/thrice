@@ -1,3 +1,8 @@
+export interface User {
+    id: number;
+    name: string;
+}
+
 export interface Game {
     id: number;
     name: string;
@@ -11,4 +16,10 @@ export interface Game {
 export interface GameUser {
     id: number;
     name: string;
+}
+
+export interface PageProps {
+    [key: string]: unknown;
+    game: Game;
+    user: User;
 }
