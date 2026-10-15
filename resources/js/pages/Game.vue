@@ -2,8 +2,8 @@
 import { usePage, router } from '@inertiajs/vue3';
 import { useEchoNotification } from '@laravel/echo-vue';
 import { onMounted, ref } from 'vue';
+import type { GameUser } from '@/interfaces';
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue';
-import { GameUser } from '@/interfaces';
 
 interface PageProps {
     [key: string]: unknown;
