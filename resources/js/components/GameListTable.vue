@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import game from '@/routes/game';
 import { usePage, router } from '@inertiajs/vue3';
 import { onMounted, computed } from 'vue';
 
