@@ -1,17 +1,7 @@
 <script setup lang="ts">
 import { usePage, router } from '@inertiajs/vue3';
 import { onMounted, computed } from 'vue';
-import type { GameUser } from '@/interfaces';
-
-interface Game {
-    id: number;
-    name: string;
-    private: boolean;
-    code: string;
-    started: boolean;
-    hands: number;
-    game_users: Array<GameUser>;
-}
+import type { Game } from '@/interfaces';
 
 // as games is an optional prop, it only loads on component mount
 const games = computed<Game[]>(
