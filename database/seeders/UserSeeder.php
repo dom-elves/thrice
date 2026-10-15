@@ -13,7 +13,7 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         // create 6 users
-        $names = ['dom', 'harry', 'ty', 'bag', 'lewis', 'remi'];
+        $names = ['Dom', 'Harry', 'Ty', 'Bag', 'Lewis', 'Remi'];
 
         foreach ($names as $name) {
             User::factory()->create([
