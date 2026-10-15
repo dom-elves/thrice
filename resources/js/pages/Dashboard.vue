@@ -64,10 +64,8 @@ onMounted(() => {});
         </div>
         <p>{{ page.flash.message }}</p>
         <Modal :show="showModal" @close="closeModal">
-            <div class="flex justify-center">
-                <CreateGameForm v-if="creatingGame" />
-                <GameListTable v-if="joiningGame" />
-            </div>
+            <CreateGameForm v-if="creatingGame" />
+            <GameListTable v-else-if="joiningGame" />
         </Modal>
     </AuthenticatedLayout>
 </template>

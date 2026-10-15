@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\GameController;
 use App\Http\Controllers\LobbyController;
+use App\Models\Game;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -11,7 +12,19 @@ Route::inertia('/', 'Welcome')->name('home');
 // auth
 Route::middleware('auth')->group(function () {
     // move to controller to make optional games prop
-    Route::inertia('/dashboard', 'Dashboard')->name('dashboard');
+    Route::get('/dashboard', function () {
+        // todo, when testing at scale:
+        // - index 'finished'
+        // - paginate, do that when researching interfaces
+        return Inertia::render('Dashboard', [
+            'games' => Inertia::optional(fn () => Game::where('finished', 0)
+                ->with([
+                    'gameUsers' => fn ($query) => $query->where('in_game', 1),
+                ])
+                ->get()
+            ),
+        ]);
+    })->name('dashboard');
 });
 
 // lobby - to be removed
