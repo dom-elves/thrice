@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { usePage, router } from '@inertiajs/vue3';
 import { onMounted, computed } from 'vue';
+import type { GameUser } from '@/interfaces';
 
 interface Game {
     id: number;
@@ -10,10 +11,6 @@ interface Game {
     started: boolean;
     hands: number;
     game_users: Array<GameUser>;
-}
-
-interface GameUser {
-    id: number;
 }
 
 // as games is an optional prop, it only loads on component mount
