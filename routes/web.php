@@ -13,8 +13,17 @@ Route::inertia('/', 'Welcome')->name('home');
 Route::middleware('auth')->group(function () {
     // move to controller to make optional games prop
     Route::get('/dashboard', function () {
+        // todo, when testing at scale:
+        // - index 'finished'
+        // - paginate
         return Inertia::render('Dashboard', [
-            'games' => Inertia::optional(fn () => Game::all()),
+            'games' => Inertia::optional(fn () => 
+                Game::where('finished', 0)
+                    ->with([
+                        'gameUsers' => fn ($query) => $query->where('in_game', 1)
+                    ])
+                    ->get()
+            ),
         ]);
     })->name('dashboard');
 });
