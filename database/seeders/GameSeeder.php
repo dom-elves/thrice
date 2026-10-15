@@ -23,8 +23,6 @@ class GameSeeder extends Seeder
             'finished' => 0,
         ]);
 
-    
-
         Game::factory()->create([
             'name' => $user->name."'s Game but private",
             'private' => 1,
@@ -69,6 +67,8 @@ class GameSeeder extends Seeder
                 }
             }
         }
+
+        Game::factory()->count(20)->create();
 
         // add redis data after confirming how it'll work
     }

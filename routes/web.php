@@ -15,7 +15,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', function () {
         // todo, when testing at scale:
         // - index 'finished'
-        // - paginate
+        // - paginate, do that when researching interfaces
         return Inertia::render('Dashboard', [
             'games' => Inertia::optional(fn () => 
                 Game::where('finished', 0)
