@@ -37,6 +37,7 @@ class GameSeeder extends Seeder
             'private' => 0,
             'started' => 1,
             'finished' => 0,
+            'hands' => rand(1, 100),
         ]);
 
         Game::factory()->create([
@@ -44,6 +45,7 @@ class GameSeeder extends Seeder
             'private' => 0,
             'started' => 0,
             'finished' => 1,
+            'hands' => rand(1, 100),
         ]);
 
         foreach (Game::all() as $game) {
@@ -53,6 +55,19 @@ class GameSeeder extends Seeder
                     'game_id' => $game->id,
                     'in_game' => $game->finished ? 0 : 1,
                 ]);
+
+            if ($game->started) {
+                $users = User::where('id', '!=', $user->id)->get();
+
+                foreach ($users as $user) {
+                    GameUser::factory()
+                        ->for($user)
+                        ->create([
+                            'game_id' => $game->id,
+                            'in_game' => 1,
+                        ]);
+                }
+            }
         }
 
         // add redis data after confirming how it'll work
