@@ -5,7 +5,7 @@ import TextInput from '@/components/forms/TextInput.vue';
 </script>
 
 <template>
-    <div class="flex justify-center ">
+    <div class="flex justify-center">
         <Form
             class="w-1/2 flex-col items-center gap-2 p-4"
             action="/game/create"
@@ -13,7 +13,11 @@ import TextInput from '@/components/forms/TextInput.vue';
             #default="{ errors }"
         >
             <div class="w-full">
-                <InputLabel :for="'name'" :text="'Game Name'" class="text-center" />
+                <InputLabel
+                    :for="'name'"
+                    :text="'Game Name'"
+                    class="text-center"
+                />
                 <TextInput :type="'name'" :name="'name'" />
                 <p v-if="errors.name">{{ errors.name }}</p>
             </div>

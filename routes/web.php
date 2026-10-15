@@ -17,12 +17,11 @@ Route::middleware('auth')->group(function () {
         // - index 'finished'
         // - paginate, do that when researching interfaces
         return Inertia::render('Dashboard', [
-            'games' => Inertia::optional(fn () => 
-                Game::where('finished', 0)
-                    ->with([
-                        'gameUsers' => fn ($query) => $query->where('in_game', 1)
-                    ])
-                    ->get()
+            'games' => Inertia::optional(fn () => Game::where('finished', 0)
+                ->with([
+                    'gameUsers' => fn ($query) => $query->where('in_game', 1),
+                ])
+                ->get()
             ),
         ]);
     })->name('dashboard');
