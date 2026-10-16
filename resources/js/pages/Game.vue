@@ -4,6 +4,7 @@ import { useEchoNotification } from '@laravel/echo-vue';
 import { onMounted, ref } from 'vue';
 import type { GameUser, PageProps } from '@/interfaces';
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue';
+import PlayerSeat from '@/components/game/PlayerSeat.vue';
 
 const page = usePage<PageProps>();
 const game = page.props.game;
@@ -14,9 +15,9 @@ useEchoNotification(`App.Models.Game.${game.id}`, (notification: any) => {
     activePlayers.value.push(notification.gameUser.user.name);
 });
 
-// function ready() {
-//     router.post(`/hand/${gameUser.id}/ready`);
-// }
+function ready() {
+    router.post(`/hand/${gameUser.id}/ready`);
+}
 
 function leaveGame() {
     router.get(`/game/${game.code}/leave`);
@@ -44,12 +45,9 @@ onMounted(() => {
                 </div>
             </div>
             <div>
-                <!-- <button
-                    @click="ready"
-                    class="m-4 rounded border border-1 bg-green-300 p-4"
-                >
-                    ready
-                </button> -->
+                <PlayerSeat>
+
+                </PlayerSeat>
                 <button
                     @click="leaveGame"
                     class="m-4 rounded border border-1 bg-red-300 p-4"

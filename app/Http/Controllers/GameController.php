@@ -34,6 +34,7 @@ class GameController extends Controller
 
         return Inertia::render('Game', [
             'game' => $game,
+            'gameUser' => $gameUser,
         ]);
     }
 
