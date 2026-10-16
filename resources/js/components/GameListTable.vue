@@ -28,10 +28,11 @@ onMounted(() => {
 <template>
     <div>
         <div v-if="games.length >= 1">
+            <h1 class="text-2xl">Games</h1>
             <table class="w-full">
                 <tbody>
                     <tr>
-                        <th>Name</th>
+                        <th>Namdfdfe</th>
                         <th></th>
                         <th>Players</th>
                         <th>Started</th>

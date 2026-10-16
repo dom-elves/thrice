@@ -15,16 +15,12 @@ useEchoNotification(`App.Models.Game.${game.id}`, (notification: any) => {
     activePlayers.value.push(notification.gameUser.user.name);
 });
 
-// function ready() {
-//     router.post(`/hand/${gameUser.id}/ready`);
-// }
-
 function leaveGame() {
-    router.get(`/game/${game.code}/leave`);
+    router.post(`/game/${game.code}/leave`);
 }
 
 onMounted(() => {
-    console.log('g', game);
+    // console.log('g', game);
 });
 </script>
 <template>
