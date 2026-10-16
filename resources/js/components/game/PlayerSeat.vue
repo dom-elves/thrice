@@ -5,10 +5,7 @@ import { onMounted } from 'vue';
 onMounted(() => {
     console.log('here', usePage().props.gameUser);
 });
-
 </script>
 <template>
-    <div>
-
-    </div>
+    <div></div>
 </template>
