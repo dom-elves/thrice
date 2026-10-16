@@ -21,20 +21,8 @@ class GameController extends Controller
 
     public function show(Game $game): InertiaResponse
     {
-        $user = auth()->user();
-        $gameUser = GameUser::where('game_id', $game->id)
-            ->where('user_id', $user->id)
-            ->first();
-
-        if (! $gameUser) {
-            $gameUser = app(CreateGameUserAction::class)->execute($game->id, $user->id);
-        }
-
-        $this->gameService->join($gameUser);
-
         return Inertia::render('Game', [
             'game' => $game,
-            'gameUser' => $gameUser,
         ]);
     }
 
@@ -71,20 +59,32 @@ class GameController extends Controller
 
     public function leave(Request $request, Game $game): RedirectResponse
     {
+        return redirect('dashboard');
+    }
+
+    public function sit(Request $request, Game $game)
+    {
         $gameUser = GameUser::where('game_id', $game->id)
             ->where('user_id', auth()->id())
             ->firstOrFail();
 
-        $gameService = app(GameService::class);
-        $gameService->leave($gameUser);
+        if (! $gameUser) {
+            $gameUser = app(CreateGameUserAction::class)->execute($game->id, $user->id);
+        }
 
-        $request->session()->pull('game_code');
+        $this->gameService->join($gameUser);
+
+        return redirect()->route('game.show', $game->code);
+    }
+
+    public function stand(Request $request, Game $game)
+    {
+        $gameUser = GameUser::where('game_id', $game->id)
+            ->where('user_id', auth()->id())
+            ->firstOrFail();
+
+        $this->gameService->leave($gameUser);
 
         return redirect('dashboard');
     }
-
-    // public function play(Request $request)
-    // {
-    //     Redis::hincrby("game:{$request->game_id}", 'hands', 1);
-    // }
 }
