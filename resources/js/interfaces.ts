@@ -10,17 +10,18 @@ export interface Game {
     code: string;
     started: boolean;
     hands: number;
-    game_users: Array<GameUser>;
+    gameUsers: Array<GameUser>;
 }
 
 export interface GameUser {
     id: number;
     name: string;
-    in_game: boolean;
+    inGame: boolean;
 }
 
 export interface PageProps {
     [key: string]: unknown;
     game: Game;
     user: User;
+    gameUser?: GameUser;
 }
