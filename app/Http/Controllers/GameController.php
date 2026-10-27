@@ -23,6 +23,7 @@ class GameController extends Controller
     {
         return Inertia::render('Game', [
             'game' => $game,
+            'gameUser' =>  $game->gameUsers->where('user_id', auth()->id())->first() ?? null,
         ]);
     }
 
@@ -57,34 +58,55 @@ class GameController extends Controller
         return redirect()->route('game.show', $code);
     }
 
-    public function leave(Request $request, Game $game): RedirectResponse
+    /**
+     * Sit at the table.
+     * - query user from id, only id is passed as param to avoid editing any other attrbiutes
+     * - check if user exists already, create if not
+     * - sit
+     */
+    public function sit(Request $request, Game $game): RedirectResponse
     {
-        return redirect('dashboard');
-    }
+        $validated = $request->validate([
+            'gameUserId' => 'sometimes|nullable|exists:game_users,id'
+        ]);
 
-    public function sit(Request $request, Game $game)
-    {
-        $gameUser = GameUser::where('game_id', $game->id)
-            ->where('user_id', auth()->id())
-            ->firstOrFail();
+        $gameUser = GameUser::where('id', $validated['gameUserId'])->first();
 
         if (! $gameUser) {
-            $gameUser = app(CreateGameUserAction::class)->execute($game->id, $user->id);
+            $gameUser = app(CreateGameUserAction::class)->execute($game->id, auth()->id());
         }
 
-        $this->gameService->join($gameUser);
+        $this->gameService->sit($gameUser);
+
+        // todo: check for 2+ players being ready
 
         return redirect()->route('game.show', $game->code);
     }
 
-    public function stand(Request $request, Game $game)
+    /**
+     * Stand at the table (stop playing, just spectate)
+     * - basically the same as sit()
+     * - though instead of logic for creating a game user, there'll be bits for settling balances
+     */
+    public function stand(Request $request, Game $game): RedirectResponse
     {
-        $gameUser = GameUser::where('game_id', $game->id)
-            ->where('user_id', auth()->id())
-            ->firstOrFail();
+        $validated = $request->validate([
+            'gameUserId' => 'sometimes|nullable|exists:game_users,id'
+        ]);
 
-        $this->gameService->leave($gameUser);
+        $gameUser = GameUser::where('id', $validated['gameUserId'])->first();
 
+        $this->gameService->stand($gameUser);
+
+        return redirect()->route('game.show', $game->code);
+    }
+
+    /**
+     * Returns to dash.
+     * - leaves game if user is in
+     */
+    public function leave(Request $request, Game $game): RedirectResponse
+    {
         return redirect('dashboard');
     }
 }

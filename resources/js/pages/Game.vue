@@ -3,7 +3,7 @@ import { usePage, router } from '@inertiajs/vue3';
 import { useEchoNotification } from '@laravel/echo-vue';
 import { onMounted, ref } from 'vue';
 import PlayerSeat from '@/components/game/PlayerSeat.vue';
-import type { GameUser, PageProps } from '@/interfaces';
+import type { Game, GameUser, PageProps } from '@/interfaces';
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue';
 
 const page = usePage<PageProps>();
@@ -41,7 +41,7 @@ onMounted(() => {
                 </div>
             </div>
             <div>
-                <PlayerSeat> </PlayerSeat>
+                <PlayerSeat />
                 <button
                     @click="leaveGame"
                     class="m-4 rounded border border-1 bg-red-300 p-4"
