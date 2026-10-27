@@ -74,7 +74,7 @@ onMounted(() => {
                                 <path d="M50 65 V75" stroke="white" />
                             </svg>
                         </td>
-                        <td>{{ game.game_users.length }}</td>
+                        <td>{{ game.gameUsers?.length }}</td>
                         <td>{{ game.started }}</td>
                         <td>{{ game.hands }}</td>
                     </tr>
