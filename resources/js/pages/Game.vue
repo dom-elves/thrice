@@ -3,7 +3,7 @@ import { usePage, router } from '@inertiajs/vue3';
 import { useEchoNotification } from '@laravel/echo-vue';
 import { onMounted, ref } from 'vue';
 import PlayerSeat from '@/components/game/PlayerSeat.vue';
-import type { Game, GameUser, PageProps } from '@/interfaces';
+import type { GameUser, PageProps } from '@/interfaces';
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue';
 
 const page = usePage<PageProps>();

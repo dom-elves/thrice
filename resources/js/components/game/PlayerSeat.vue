@@ -29,18 +29,18 @@ function stand() {
 <template>
     <div>
         <button
-            v-if="!gameUser"
-            @click="sit"
-            class="m-4 rounded border border-1 bg-green-300 p-4"
-        >
-            sit down
-        </button>
-        <button
-            v-else="gameUser?.inGame"
+            v-if="gameUser?.in_game"
             @click="stand"
             class="m-4 rounded border border-1 bg-blue-300 p-4"
         >
             stand up
+        </button>
+        <button
+            v-else
+            @click="sit"
+            class="m-4 rounded border border-1 bg-green-300 p-4"
+        >
+            sit down
         </button>
     </div>
 </template>

@@ -16,7 +16,7 @@ export interface Game {
 export interface GameUser {
     id: number;
     name: string;
-    inGame: boolean;
+    in_game: boolean;
 }
 
 export interface PageProps {
