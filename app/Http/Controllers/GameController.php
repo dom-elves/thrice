@@ -72,7 +72,7 @@ class GameController extends Controller
         $gameUser = GameUser::where('id', $validated['gameUserId'])->first();
 
         if (! $gameUser) {
-            $gameUser = app(CreateGameUserAction::class)->execute($game->id, auth()->id());
+            $gameUser = app(CreateGameUserAction::class)->execute($game->id, (int) auth()->id());
         }
 
         $this->gameService->sit($gameUser);
