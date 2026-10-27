@@ -82,7 +82,7 @@ class GameService
      * - remove user from redis
      * - update in game status to false
      * - broadcast to table
-     * 
+     *
      * @param  GameUser  $gameUser
      */
     public function stand($gameUser): void

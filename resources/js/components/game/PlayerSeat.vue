@@ -5,7 +5,7 @@ import type { PageProps } from '@/interfaces';
 
 const page = usePage<PageProps>();
 const game = page.props.game;
-const gameUser = computed(() => page.props.gameUser)
+const gameUser = computed(() => page.props.gameUser);
 
 onMounted(() => {
     console.log('here', page.props.gameUser);
@@ -25,7 +25,6 @@ function stand() {
         only: ['gameUser'],
     });
 }
-
 </script>
 <template>
     <div>

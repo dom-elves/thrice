@@ -8,7 +8,6 @@ use App\Models\GameUser;
 use App\Services\GameService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
@@ -23,7 +22,7 @@ class GameController extends Controller
     {
         return Inertia::render('Game', [
             'game' => $game,
-            'gameUser' =>  $game->gameUsers->where('user_id', auth()->id())->first() ?? null,
+            'gameUser' => $game->gameUsers->where('user_id', auth()->id())->first() ?? null,
         ]);
     }
 
@@ -67,7 +66,7 @@ class GameController extends Controller
     public function sit(Request $request, Game $game): RedirectResponse
     {
         $validated = $request->validate([
-            'gameUserId' => 'sometimes|nullable|exists:game_users,id'
+            'gameUserId' => 'sometimes|nullable|exists:game_users,id',
         ]);
 
         $gameUser = GameUser::where('id', $validated['gameUserId'])->first();
@@ -91,7 +90,7 @@ class GameController extends Controller
     public function stand(Request $request, Game $game): RedirectResponse
     {
         $validated = $request->validate([
-            'gameUserId' => 'sometimes|nullable|exists:game_users,id'
+            'gameUserId' => 'sometimes|nullable|exists:game_users,id',
         ]);
 
         $gameUser = GameUser::where('id', $validated['gameUserId'])->first();
