@@ -1,3 +1,4 @@
+//models
 export interface User {
     id: number;
     name: string;
@@ -24,4 +25,14 @@ export interface PageProps {
     game: Game;
     user: User;
     gameUser?: GameUser;
+}
+
+
+// events
+export interface Sit {
+    message: string;
+}
+
+export interface Stand {
+    message: string;
 }
