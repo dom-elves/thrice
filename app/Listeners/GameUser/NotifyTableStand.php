@@ -23,12 +23,6 @@ class NotifyTableStand implements ShouldQueue
      */
     public function handle(Stand $event): void
     {
-        $game = $event->gameUser->game;
-
-        if (! Redis::exists("game:{$game->id}:game_user_ids")) {
-            CloseGame::dispatch($game->id);
-        } else {
-            $game->notify(new StandNotification($event->gameUser));
-        }
+        $event->gameUser->game->notify(new StandNotification($event->gameUser));
     }
 }

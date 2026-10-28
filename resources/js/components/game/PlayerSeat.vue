@@ -13,6 +13,7 @@ onMounted(() => {
 
 // somehow use once props for these maybe
 function sit() {
+    console.log('sit', gameUser.value);
     router.post(`/game/${game.code}/sit`, {
         gameUserId: gameUser.value?.id ?? null,
         only: ['gameUser'],
@@ -20,6 +21,7 @@ function sit() {
 }
 
 function stand() {
+    console.log('stand', gameUser.value);
     router.post(`/game/${game.code}/stand`, {
         gameUserId: gameUser.value?.id ?? null,
         only: ['gameUser'],
