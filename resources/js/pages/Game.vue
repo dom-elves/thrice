@@ -1,19 +1,36 @@
 <script setup lang="ts">
 import { usePage, router } from '@inertiajs/vue3';
-import { useEchoNotification } from '@laravel/echo-vue';
+import { useEchoPresence } from '@laravel/echo-vue';
 import { onMounted, ref } from 'vue';
 import PlayerSeat from '@/components/game/PlayerSeat.vue';
-import type { GameUser, PageProps } from '@/interfaces';
+import type { GameUser, PageProps, Sit, Stand, User } from '@/interfaces';
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue';
 
 const page = usePage<PageProps>();
 const game = page.props.game;
 const activePlayers = ref<GameUser[]>([]);
 
-useEchoNotification(`App.Models.Game.${game.id}`, (notification: any) => {
-    console.log('g', notification);
-    activePlayers.value.push(notification.gameUser.user.name);
-});
+const { channel } = useEchoPresence(
+    `App.Models.Game.${game.id}`,
+    ['.player.sit', '.player.stand'],
+    (event: Sit | Stand) => {
+        console.log('e', event);
+    },
+);
+
+channel()
+    .here(() => {
+        console.log('anyone here?');
+    })
+    .joining((user: User) => {
+        console.log('join', user);
+    })
+    .leaving((user: User) => {
+        console.log('leave', user);
+    })
+    .error((error: unknown) => {
+        console.error('e', error);
+    });
 
 function leaveGame() {
     router.post(`/game/${game.code}/leave`);
