@@ -27,7 +27,6 @@ export interface PageProps {
     gameUser?: GameUser;
 }
 
-
 // events
 export interface Sit {
     message: string;

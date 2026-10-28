@@ -44,7 +44,7 @@ class Stand implements ShouldBroadcast
     public function broadcastWith(): array
     {
         return [
-            'message' => $this->gameUser->user->name." has left",
+            'message' => $this->gameUser->user->name.' has left',
         ];
     }
 }

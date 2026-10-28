@@ -47,7 +47,7 @@ class Sit implements ShouldBroadcast
     public function broadcastWith(): array
     {
         return [
-            'message' => $this->gameUser->user->name." has joined",
+            'message' => $this->gameUser->user->name.' has joined',
         ];
     }
 }
