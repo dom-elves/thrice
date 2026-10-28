@@ -5,11 +5,12 @@ namespace App\Events\GameUser;
 use App\Models\GameUser;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PrivateChannel;
+use Illuminate\Broadcasting\PresenceChannel;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class Sit
+class Sit implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -29,7 +30,24 @@ class Sit
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel("App.Models.Game.{$this->gameUser->game->id}"),
+            new PresenceChannel("App.Models.Game.{$this->gameUser->game->id}"),
+        ];
+    }
+
+    public function broadcastAs(): string
+    {
+        return 'player.sit';
+    }
+
+    /**
+     * Get the data that should be broadcast with the event.
+     *
+     * @return array<string, mixed>
+     */
+    public function broadcastWith(): array
+    {
+        return [
+            'message' => $this->gameUser->user->name." has joined",
         ];
     }
 }
