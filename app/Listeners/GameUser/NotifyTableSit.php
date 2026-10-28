@@ -3,7 +3,7 @@
 namespace App\Listeners\GameUser;
 
 use App\Events\GameUser\Sit;
-use App\Notifications\SitNotification;
+use App\Notifications\GameUser\SitNotification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
 class NotifyTableSit implements ShouldQueue

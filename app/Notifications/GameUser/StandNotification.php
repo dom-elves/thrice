@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Notifications;
+namespace App\Notifications\GameUser;
 
 use App\Models\GameUser;
 use Illuminate\Bus\Queueable;

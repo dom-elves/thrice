@@ -4,7 +4,7 @@ namespace App\Listeners\GameUser;
 
 use App\Events\GameUser\Stand;
 use App\Jobs\Game\CloseGame;
-use App\Notifications\StandNotification;
+use App\Notifications\GameUser\StandNotification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Redis;
 
