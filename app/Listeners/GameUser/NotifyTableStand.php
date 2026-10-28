@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Listeners;
+namespace App\Listeners\GameUser;
 
-use App\Events\GameUserLeft;
+use App\Events\GameUser\Stand;
 use App\Jobs\Game\CloseGame;
-use App\Notifications\GameUserLeftNotification;
+use App\Notifications\StandNotification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Redis;
 
-class GameUserLeftListener implements ShouldQueue
+class NotifyTableStand implements ShouldQueue
 {
     /**
      * Create the event listener.
@@ -21,14 +21,14 @@ class GameUserLeftListener implements ShouldQueue
     /**
      * Handle the event.
      */
-    public function handle(GameUserLeft $event): void
+    public function handle(Stand $event): void
     {
         $game = $event->gameUser->game;
 
         if (! Redis::exists("game:{$game->id}:game_user_ids")) {
             CloseGame::dispatch($game->id);
         } else {
-            $game->notify(new GameUserLeftNotification($event->gameUser));
+            $game->notify(new StandNotification($event->gameUser));
         }
     }
 }

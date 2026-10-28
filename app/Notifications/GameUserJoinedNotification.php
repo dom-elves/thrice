@@ -9,7 +9,7 @@ use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class GameUserJoinedNotification extends Notification implements ShouldBroadcast
+class SitNotification extends Notification implements ShouldBroadcast
 {
     use Queueable;
 

@@ -1,9 +1,9 @@
 <?php
 
-use App\Events\GameUserJoined;
-use App\Events\GameUserLeft;
+use App\Events\GameUser\Sit;
+use App\Events\GameUser\Stand;
 use App\Jobs\Game\CloseGame;
-use App\Listeners\GameUserLeftListener;
+use App\Listeners\GameUser\NotifyTableUserStand;
 use App\Models\Game;
 use App\Models\GameUser;
 use App\Models\User;
@@ -84,7 +84,7 @@ test('user can join a created game, and has a user created for them', function (
 
     $response = $this->get(route('game.show', $game));
 
-    Event::assertDispatched(GameUserJoined::class);
+    Event::assertDispatched(Sit::class);
 
     $response->assertInertia(fn (Assert $page) => $page->component('Game')
         ->has('game')
@@ -104,7 +104,7 @@ test('user can join a game with no password', function () {
 
     $response = $this->get(route('game.show', $game));
 
-    Event::assertDispatched(GameUserJoined::class);
+    Event::assertDispatched(Sit::class);
 
     $response->assertInertia(fn (Assert $page) => $page->component('Game')
         ->has('game')
@@ -118,7 +118,7 @@ test('user can not join a game that does not exist', function () {
     Event::fake();
     $response = $this->get(route('game.show', ['game' => 'blalblabl']));
 
-    Event::assertNotDispatched(GameUserJoined::class);
+    Event::assertNotDispatched(Sit::class);
 
     $response->assertRedirect('dashboard')
         ->assertInertiaFlash('message', 'Game does not exist');
@@ -138,7 +138,7 @@ test('user can not join a game that has finished', function () {
 
     $response = $this->get(route('game.show', $game));
 
-    Event::assertNotDispatched(GameUserJoined::class);
+    Event::assertNotDispatched(Sit::class);
 
     $response->assertRedirect('dashboard')
         ->assertInertiaFlash('message', 'Game has finished');
@@ -175,7 +175,7 @@ test('user can not join a game that is full', function () {
 
     $response = $this->get(route('game.show', $game));
 
-    Event::assertNotDispatched(GameUserJoined::class);
+    Event::assertNotDispatched(Sit::class);
 
     $response->assertRedirect('dashboard')
         ->assertInertiaFlash('message', 'Game is full');
@@ -197,7 +197,7 @@ test('leaving the game via the button removes the user from the game', function 
 
     $this->get(route('game.leave', $game->code));
 
-    Event::assertDispatched(GameUserLeft::class);
+    Event::assertDispatched(Stand::class);
 
     $this->assertDatabaseHas('game_users', [
         'user_id' => $this->user->id,
@@ -221,7 +221,7 @@ test('leaving a game as the last person fires the close game job', function () {
 
     // because listeners are also queued, it gets in the way of the job assertion
     // so it must be faked to handle the event
-    (new GameUserLeftListener)->handle(new GameUserLeft($gameUser));
+    (new NotifyTableUserStand)->handle(new Stand($gameUser));
 
     Queue::assertPushed(CloseGame::class, fn ($job) => $job->gameId == $game->id);
 });
@@ -276,7 +276,7 @@ test('leaving a game that started does not soft delete the game', function () {
 
 //     $this->post(route('logout'));
 
-//     Event::assertDispatched(GameUserLeft::class);
+//     Event::assertDispatched(Stand::class);
 
 //     $this->assertDatabaseHas('game_users', [
 //         'user_id' => $this->user->id,

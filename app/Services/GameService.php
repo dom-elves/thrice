@@ -3,8 +3,8 @@
 namespace App\Services;
 
 use App\Actions\Game\CreateGameAction;
-use App\Events\GameUserJoined;
-use App\Events\GameUserLeft;
+use App\Events\GameUser\Sit;
+use App\Events\GameUser\Stand;
 use App\Models\Game;
 use App\Models\GameUser;
 use Carbon\Carbon;
@@ -74,7 +74,7 @@ class GameService
             'in_game' => true,
         ]);
 
-        event(new GameUserJoined($gameUser));
+        event(new Sit($gameUser));
     }
 
     /**
@@ -110,6 +110,6 @@ class GameService
             'in_game' => false,
         ]);
 
-        event(new GameUserLeft($gameUser));
+        event(new Stand($gameUser));
     }
 }

@@ -9,14 +9,17 @@ use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class GameUserLeft
+class Sit
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     /**
      * Create a new event instance.
      */
-    public function __construct(public GameUser $gameUser) {}
+    public function __construct(public GameUser $gameUser)
+    {
+        //
+    }
 
     /**
      * Get the channels the event should broadcast on.
