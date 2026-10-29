@@ -66,11 +66,14 @@ class GameController extends Controller
     public function sit(Request $request, Game $game): RedirectResponse
     {
         $validated = $request->validate([
-            'gameUserId' => 'sometimes|nullable|number|exists:game_users,id',
+            'gameUserId' => 'nullable|exists:game_users,id',
         ]);
 
-        $gameUser = GameUser::find($validated['gameUserId'] ?? null)
-            ?? app(CreateGameUserAction::class)->execute($game->id, (int) auth()->id());
+        if (! isset($validated['gameUserId'])) {
+            $gameUser = app(CreateGameUserAction::class)->execute($game->id, (int) auth()->id());
+        } else {
+            $gameUser = GameUser::where('id', $validated['gameUserId'])->first();
+        }
 
         $this->gameService->sit($gameUser);
 
@@ -87,7 +90,7 @@ class GameController extends Controller
     public function stand(Request $request, Game $game): RedirectResponse
     {
         $validated = $request->validate([
-            'gameUserId' => 'sometimes|nullable|exists:game_users,id',
+            'gameUserId' => 'exists:game_users,id',
         ]);
 
         $gameUser = GameUser::where('id', $validated['gameUserId'])->first();
