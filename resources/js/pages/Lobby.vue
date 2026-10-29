@@ -68,10 +68,6 @@ const { channel } = useEchoPresence(
     },
 );
 
-/**
- * .here() runs once when a user joins
- * others are self explainatory
- */
 channel()
     .here((activeUsers: User[]) => {
         users.value = activeUsers;

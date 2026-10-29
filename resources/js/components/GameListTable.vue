@@ -1,20 +1,7 @@
 <script setup lang="ts">
 import { usePage, router } from '@inertiajs/vue3';
 import { onMounted, computed } from 'vue';
-
-interface Game {
-    id: number;
-    name: string;
-    private: boolean;
-    code: string;
-    started: boolean;
-    hands: number;
-    game_users: Array<GameUser>;
-}
-
-interface GameUser {
-    id: number;
-}
+import type { Game } from '@/interfaces';
 
 // as games is an optional prop, it only loads on component mount
 const games = computed<Game[]>(
@@ -41,10 +28,11 @@ onMounted(() => {
 <template>
     <div>
         <div v-if="games.length >= 1">
+            <h1 class="text-2xl">Games</h1>
             <table class="w-full">
                 <tbody>
                     <tr>
-                        <th>Name</th>
+                        <th>Namdfdfe</th>
                         <th></th>
                         <th>Players</th>
                         <th>Started</th>
@@ -86,7 +74,7 @@ onMounted(() => {
                                 <path d="M50 65 V75" stroke="white" />
                             </svg>
                         </td>
-                        <td>{{ game.game_users.length }}</td>
+                        <td>{{ game.gameUsers?.length }}</td>
                         <td>{{ game.started }}</td>
                         <td>{{ game.hands }}</td>
                     </tr>

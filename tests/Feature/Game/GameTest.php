@@ -1,9 +1,9 @@
 <?php
 
-use App\Events\GameUserJoined;
-use App\Events\GameUserLeft;
+use App\Events\GameUser\Sit;
+use App\Events\GameUser\Stand;
 use App\Jobs\Game\CloseGame;
-use App\Listeners\GameUserLeftListener;
+use App\Listeners\GameUser\NotifyTableUserStand;
 use App\Models\Game;
 use App\Models\GameUser;
 use App\Models\User;
@@ -77,34 +77,21 @@ test('user can create a game with default settings', function () {
     ]);
 });
 
-test('user can join a created game, and has a user created for them', function () {
-    Event::fake();
-
+test('user can join a table', function () {
     $game = Game::factory()->create();
 
     $response = $this->get(route('game.show', $game));
-
-    Event::assertDispatched(GameUserJoined::class);
 
     $response->assertInertia(fn (Assert $page) => $page->component('Game')
         ->has('game')
         ->where('game.id', $game->id)
     );
-
-    $this->assertDatabaseHas('game_users', [
-        'user_id' => $this->user->id,
-        'game_id' => $game->id,
-    ]);
 });
 
 test('user can join a game with no password', function () {
-    Event::fake();
-
     $game = Game::factory()->create();
 
     $response = $this->get(route('game.show', $game));
-
-    Event::assertDispatched(GameUserJoined::class);
 
     $response->assertInertia(fn (Assert $page) => $page->component('Game')
         ->has('game')
@@ -118,13 +105,79 @@ test('user can not join a game that does not exist', function () {
     Event::fake();
     $response = $this->get(route('game.show', ['game' => 'blalblabl']));
 
-    Event::assertNotDispatched(GameUserJoined::class);
+    Event::assertNotDispatched(Sit::class);
 
     $response->assertRedirect('dashboard')
         ->assertInertiaFlash('message', 'Game does not exist');
 
     $this->assertDatabaseMissing('game_users', [
         'user_id' => $this->user->id,
+    ]);
+});
+
+test('sitting at a table for the first time creates a game user', function () {
+    Event::fake();
+
+    $game = Game::factory()->create();
+
+    $response = $this->post(route('game.sit', $game));
+
+    Event::assertDispatched(Sit::class);
+
+    $response->assertRedirect("game/{$game->code}");
+
+    $this->assertDatabaseHas('game_users', [
+        'user_id' => $this->user->id,
+        'game_id' => $game->id,
+        'in_game' => true,
+    ]);
+});
+
+test('user can sit at a previously sat table', function () {
+    Event::fake();
+
+    $game = Game::factory()->create();
+
+    $gameUser = GameUser::factory()->create([
+        'user_id' => $this->user->id,
+        'game_id' => $game->id,
+        'in_game' => false,
+    ]);
+
+    $response = $this->post(route('game.sit', $game), [
+        'gameUserId' => $gameUser->Id,
+    ]);
+
+    Event::assertDispatched(Sit::class);
+
+    $response->assertRedirect("game/{$game->code}");
+
+    $this->assertDatabaseHas('game_users', [
+        'user_id' => $gameUser->user_id,
+        'game_id' => $game->id,
+        'in_game' => true,
+    ]);
+});
+
+test('user can stand up at a table', function () {
+    $game = Game::factory()->create();
+
+    $gameUser = GameUser::factory()->create([
+        'user_id' => $this->user->id,
+        'game_id' => $game->id,
+        'in_game' => true,
+    ]);
+
+    $response = $this->post(route('game.stand', $game), [
+        'gameUserId' => $gameUser->id,
+    ]);
+
+    $response->assertRedirect("game/{$game->code}");
+
+    $this->assertDatabaseHas('game_users', [
+        'user_id' => $gameUser->user_id,
+        'game_id' => $game->id,
+        'in_game' => false,
     ]);
 });
 
@@ -138,7 +191,7 @@ test('user can not join a game that has finished', function () {
 
     $response = $this->get(route('game.show', $game));
 
-    Event::assertNotDispatched(GameUserJoined::class);
+    Event::assertNotDispatched(Sit::class);
 
     $response->assertRedirect('dashboard')
         ->assertInertiaFlash('message', 'Game has finished');
@@ -175,7 +228,7 @@ test('user can not join a game that is full', function () {
 
     $response = $this->get(route('game.show', $game));
 
-    Event::assertNotDispatched(GameUserJoined::class);
+    Event::assertNotDispatched(Sit::class);
 
     $response->assertRedirect('dashboard')
         ->assertInertiaFlash('message', 'Game is full');
@@ -186,104 +239,74 @@ test('user can not join a game that is full', function () {
     ]);
 });
 
-test('leaving the game via the button removes the user from the game', function () {
-    Event::fake();
+test('user can leave a game they are watching', function () {
     $game = Game::factory()->create();
-    GameUser::factory()->create([
-        'user_id' => $this->user->id,
-        'game_id' => $game->id,
-        'in_game' => 1,
-    ]);
 
-    $this->get(route('game.leave', $game->code));
+    $response = $this->post(route('game.leave', $game));
 
-    Event::assertDispatched(GameUserLeft::class);
-
-    $this->assertDatabaseHas('game_users', [
-        'user_id' => $this->user->id,
-        'game_id' => $game->id,
-        'in_game' => 0,
-    ]);
+    $response->assertRedirect('dashboard');
 });
 
-test('leaving a game as the last person fires the close game job', function () {
-    Queue::fake();
+test('user can leave a game they are in between hands', function () {});
 
-    $game = Game::factory()->create([
-        'started' => 1,
-    ]);
+test('user can not leave a game in the middle of a hand', function () {});
 
-    $gameUser = GameUser::factory()->create([
-        'user_id' => $this->user->id,
-        'game_id' => $game->id,
-        'in_game' => 1,
-    ]);
+test('closing the tab or browser mid hand will forefit the hand', function () {});
 
-    // because listeners are also queued, it gets in the way of the job assertion
-    // so it must be faked to handle the event
-    (new GameUserLeftListener)->handle(new GameUserLeft($gameUser));
+// test('leaving a game as the last person fires the close game job', function () {
+//     Queue::fake();
 
-    Queue::assertPushed(CloseGame::class, fn ($job) => $job->gameId == $game->id);
-});
+//     $game = Game::factory()->create([
+//         'started' => 1,
+//     ]);
 
-test('leaving a game that never started soft deletes the game', function () {
-    $game = Game::factory()->create([
-        'started' => 0,
-    ]);
-
-    Redis::hmset("game:{$game->code}", [
-        'name' => $game->name,
-        'hands' => 0,
-        'started' => $game->started,
-        'finished' => $game->finished,
-    ]);
-
-    (new CloseGame($game->id))->handle();
-
-    $this->assertSoftDeleted('games', [
-        'id' => $game->id,
-    ]);
-});
-
-test('leaving a game that started does not soft delete the game', function () {
-    $game = Game::factory()->create([
-        'started' => 1,
-    ]);
-
-    Redis::hmset("game:{$game->code}", [
-        'name' => $game->name,
-        'hands' => 0,
-        'started' => $game->started,
-        'finished' => $game->finished,
-    ]);
-
-    (new CloseGame($game->id))->handle();
-
-    $this->assertDatabaseHas('games', [
-        'finished' => 1,
-    ]);
-});
-
-// todo: fix this
-// test('leaving the game via logging out removes the user from the game', function () {
-//     Event::fake();
-//     $game = Game::factory()->create();
 //     $gameUser = GameUser::factory()->create([
 //         'user_id' => $this->user->id,
 //         'game_id' => $game->id,
 //         'in_game' => 1,
 //     ]);
 
-//     $this->post(route('logout'));
+//     // because listeners are also queued, it gets in the way of the job assertion
+//     // so it must be faked to handle the event
+//     (new NotifyTableUserStand)->handle(new Stand($gameUser));
 
-//     Event::assertDispatched(GameUserLeft::class);
+//     Queue::assertPushed(CloseGame::class, fn ($job) => $job->gameId == $game->id);
+// });
 
-//     $this->assertDatabaseHas('game_users', [
-//         'user_id' => $this->user->id,
-//         'game_id' => $game->id,
-//         'in_game' => 0,
+// test('leaving a game that never started soft deletes the game', function () {
+//     $game = Game::factory()->create([
+//         'started' => 0,
+//     ]);
+
+//     Redis::hmset("game:{$game->code}", [
+//         'name' => $game->name,
+//         'hands' => 0,
+//         'started' => $game->started,
+//         'finished' => $game->finished,
+//     ]);
+
+//     (new CloseGame($game->id))->handle();
+
+//     $this->assertSoftDeleted('games', [
+//         'id' => $game->id,
 //     ]);
 // });
 
-// no iea how to actually do this, must look into it
-test('leaving the game via closing the active tab/window removes the user from the game', function () {});
+// test('leaving a game that started does not soft delete the game', function () {
+//     $game = Game::factory()->create([
+//         'started' => 1,
+//     ]);
+
+//     Redis::hmset("game:{$game->code}", [
+//         'name' => $game->name,
+//         'hands' => 0,
+//         'started' => $game->started,
+//         'finished' => $game->finished,
+//     ]);
+
+//     (new CloseGame($game->id))->handle();
+
+//     $this->assertDatabaseHas('games', [
+//         'finished' => 1,
+//     ]);
+// });

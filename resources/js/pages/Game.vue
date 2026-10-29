@@ -1,44 +1,43 @@
 <script setup lang="ts">
 import { usePage, router } from '@inertiajs/vue3';
-import { useEchoNotification } from '@laravel/echo-vue';
+import { useEchoPresence } from '@laravel/echo-vue';
 import { onMounted, ref } from 'vue';
+import PlayerSeat from '@/components/game/PlayerSeat.vue';
+import type { GameUser, PageProps, Sit, Stand, User } from '@/interfaces';
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue';
-
-interface GameUser {
-    id: number;
-    name: string;
-}
-
-interface PageProps {
-    [key: string]: unknown;
-    game: {
-        id: number;
-        name: string;
-        hands: number;
-        code: string;
-    };
-    user: object;
-}
 
 const page = usePage<PageProps>();
 const game = page.props.game;
 const activePlayers = ref<GameUser[]>([]);
 
-// function playHand() {
-//     router.post('/play-hand', { game_id: game.id });
-// }
+const { channel } = useEchoPresence(
+    `App.Models.Game.${game.id}`,
+    ['.player.sit', '.player.stand'],
+    (event: Sit | Stand) => {
+        console.log('e', event);
+    },
+);
 
-useEchoNotification(`App.Models.Game.${game.id}`, (notification: any) => {
-    console.log('g', notification);
-    activePlayers.value.push(notification.gameUser.user.name);
-});
+channel()
+    .here(() => {
+        console.log('anyone here?');
+    })
+    .joining((user: User) => {
+        console.log('join', user);
+    })
+    .leaving((user: User) => {
+        console.log('leave', user);
+    })
+    .error((error: unknown) => {
+        console.error('e', error);
+    });
 
 function leaveGame() {
-    router.get(`/game/${game.code}/leave`);
+    router.post(`/game/${game.code}/leave`);
 }
 
 onMounted(() => {
-    console.log('g', game);
+    // console.log('g', game);
 });
 </script>
 <template>
@@ -59,7 +58,9 @@ onMounted(() => {
                 </div>
             </div>
             <div>
+                <PlayerSeat />
                 <button
+                    v-if="page.props.gameUser && !page.props.gameUser.in_game"
                     @click="leaveGame"
                     class="m-4 rounded border border-1 bg-red-300 p-4"
                 >

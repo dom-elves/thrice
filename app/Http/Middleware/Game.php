@@ -12,6 +12,7 @@ class Game
 {
     /**
      * Handle an incoming request.
+     * Check for game existence is attached to the route, as binding comes before middleware.
      *
      * @param  Closure(Request): (Response)  $next
      */
