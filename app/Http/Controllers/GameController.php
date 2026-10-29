@@ -66,7 +66,7 @@ class GameController extends Controller
     public function sit(Request $request, Game $game): RedirectResponse
     {
         $validated = $request->validate([
-            'gameUserId' => 'sometimes|nullable|exists:game_users,id',
+            'gameUserId' => 'sometimes|nullable|number|exists:game_users,id',
         ]);
 
         $gameUser = GameUser::find($validated['gameUserId'] ?? null)
