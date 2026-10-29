@@ -69,11 +69,8 @@ class GameController extends Controller
             'gameUserId' => 'sometimes|nullable|exists:game_users,id',
         ]);
 
-        $gameUser = GameUser::where('id', $validated['gameUserId'])->first();
-
-        if (! $gameUser) {
-            $gameUser = app(CreateGameUserAction::class)->execute($game->id, (int) auth()->id());
-        }
+        $gameUser = GameUser::find($validated['gameUserId'] ?? null)
+            ?? app(CreateGameUserAction::class)->execute($game->id, (int) auth()->id());
 
         $this->gameService->sit($gameUser);
 

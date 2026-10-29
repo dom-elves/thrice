@@ -77,39 +77,92 @@ test('user can create a game with default settings', function () {
     ]);
 });
 
-test('user can join a created game, and has a user created for them', function () {
-    Event::fake();
-
+test('user can join a table', function () {
     $game = Game::factory()->create();
 
     $response = $this->get(route('game.show', $game));
-
-    Event::assertDispatched(Sit::class);
 
     $response->assertInertia(fn (Assert $page) => $page->component('Game')
         ->has('game')
         ->where('game.id', $game->id)
     );
+});
+
+test('user can join a game with no password', function () {
+    $game = Game::factory()->create();
+
+    $response = $this->get(route('game.show', $game));
+
+    $response->assertInertia(fn (Assert $page) => $page->component('Game')
+        ->has('game')
+        ->where('game.id', $game->id)
+    );
+});
+
+test('sitting at a table for the first time creates a game user', function () {
+    Event::fake();
+
+    $game = Game::factory()->create();
+
+    $response = $this->post(route('game.sit', $game));
+
+    Event::assertDispatched(Sit::class);
+
+    $response->assertRedirect("game/{$game->code}");
 
     $this->assertDatabaseHas('game_users', [
         'user_id' => $this->user->id,
         'game_id' => $game->id,
+        'in_game' => true,
     ]);
 });
 
-test('user can join a game with no password', function () {
+test('user can sit at a previously sat table', function () {
     Event::fake();
 
     $game = Game::factory()->create();
 
-    $response = $this->get(route('game.show', $game));
+    $gameUser = GameUser::factory()->create([
+        'user_id' => $this->user->id,
+        'game_id' => $game->id,
+        'in_game' => false,
+    ]);
+
+    $response = $this->post(route('game.sit', $game), [
+        'gameUserId' => $gameUser->Id,
+    ]);
 
     Event::assertDispatched(Sit::class);
 
-    $response->assertInertia(fn (Assert $page) => $page->component('Game')
-        ->has('game')
-        ->where('game.id', $game->id)
-    );
+    $response->assertRedirect("game/{$game->code}");
+
+    $this->assertDatabaseHas('game_users', [
+        'user_id' => $gameUser->user_id,
+        'game_id' => $game->id,
+        'in_game' => true,
+    ]);
+});
+
+test('user can stand up at a table', function () {
+    $game = Game::factory()->create();
+
+    $gameUser = GameUser::factory()->create([
+        'user_id' => $this->user->id,
+        'game_id' => $game->id,
+        'in_game' => true,
+    ]);
+
+    $response = $this->post(route('game.stand', $game), [
+        'gameUserId' => $gameUser->id,
+    ]);
+
+    $response->assertRedirect("game/{$game->code}");
+
+    $this->assertDatabaseHas('game_users', [
+        'user_id' => $gameUser->user_id,
+        'game_id' => $game->id,
+        'in_game' => false,
+    ]);
 });
 
 test('user can join a game with a password', function () {});
