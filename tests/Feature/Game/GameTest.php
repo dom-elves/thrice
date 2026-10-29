@@ -247,17 +247,11 @@ test('user can leave a game they are watching', function () {
     $response->assertRedirect('dashboard');
 });
 
-test('user can leave a game they are in between hands', function () {
+test('user can leave a game they are in between hands', function () {});
 
-});
+test('user can not leave a game in the middle of a hand', function () {});
 
-test('user can not leave a game in the middle of a hand', function () {
-
-});
-
-test('closing the tab or browser mid hand will forefit the hand', function () {
-
-});
+test('closing the tab or browser mid hand will forefit the hand', function () {});
 
 // test('leaving a game as the last person fires the close game job', function () {
 //     Queue::fake();
@@ -316,4 +310,3 @@ test('closing the tab or browser mid hand will forefit the hand', function () {
 //         'finished' => 1,
 //     ]);
 // });
-
