@@ -239,25 +239,25 @@ test('user can not join a game that is full', function () {
     ]);
 });
 
-// test('leaving the game via the button removes the user from the game', function () {
-//     Event::fake();
-//     $game = Game::factory()->create();
-//     GameUser::factory()->create([
-//         'user_id' => $this->user->id,
-//         'game_id' => $game->id,
-//         'in_game' => 1,
-//     ]);
+test('user can leave a game they are watching', function () {
+    $game = Game::factory()->create();
 
-//     $this->get(route('game.leave', $game->code));
+    $response = $this->post(route('game.leave', $game));
 
-//     Event::assertDispatched(Stand::class);
+    $response->assertRedirect('dashboard');
+});
 
-//     $this->assertDatabaseHas('game_users', [
-//         'user_id' => $this->user->id,
-//         'game_id' => $game->id,
-//         'in_game' => 0,
-//     ]);
-// });
+test('user can leave a game they are in between hands', function () {
+
+});
+
+test('user can not leave a game in the middle of a hand', function () {
+
+});
+
+test('closing the tab or browser mid hand will forefit the hand', function () {
+
+});
 
 // test('leaving a game as the last person fires the close game job', function () {
 //     Queue::fake();
@@ -317,26 +317,3 @@ test('user can not join a game that is full', function () {
 //     ]);
 // });
 
-// // todo: fix this
-// // test('leaving the game via logging out removes the user from the game', function () {
-// //     Event::fake();
-// //     $game = Game::factory()->create();
-// //     $gameUser = GameUser::factory()->create([
-// //         'user_id' => $this->user->id,
-// //         'game_id' => $game->id,
-// //         'in_game' => 1,
-// //     ]);
-
-// //     $this->post(route('logout'));
-
-// //     Event::assertDispatched(Stand::class);
-
-// //     $this->assertDatabaseHas('game_users', [
-// //         'user_id' => $this->user->id,
-// //         'game_id' => $game->id,
-// //         'in_game' => 0,
-// //     ]);
-// // });
-
-// // no iea how to actually do this, must look into it
-// test('leaving the game via closing the active tab/window removes the user from the game', function () {});

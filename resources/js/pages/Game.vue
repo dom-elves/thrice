@@ -60,6 +60,7 @@ onMounted(() => {
             <div>
                 <PlayerSeat />
                 <button
+                    v-if="page.props.gameUser && !page.props.gameUser.in_game"
                     @click="leaveGame"
                     class="m-4 rounded border border-1 bg-red-300 p-4"
                 >
