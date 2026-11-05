@@ -8,9 +8,10 @@ import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue';
 
 const page = usePage<PageProps>();
 const game = page.props.game;
+const seats = ref(page.props.seats);
 const activePlayers = ref<GameUser[]>([]);
 
-const { channel } = useEchoPresence(
+useEchoPresence(
     `App.Models.Game.${game.id}`,
     ['.player.sit', '.player.stand'],
     (event: Sit | Stand) => {
@@ -18,26 +19,13 @@ const { channel } = useEchoPresence(
     },
 );
 
-channel()
-    .here(() => {
-        console.log('anyone here?');
-    })
-    .joining((user: User) => {
-        console.log('join', user);
-    })
-    .leaving((user: User) => {
-        console.log('leave', user);
-    })
-    .error((error: unknown) => {
-        console.error('e', error);
-    });
 
 function leaveGame() {
     router.post(`/game/${game.code}/leave`);
 }
 
 onMounted(() => {
-    // console.log('g', game);
+    console.log('seats', seats.value);
 });
 </script>
 <template>
@@ -58,7 +46,11 @@ onMounted(() => {
                 </div>
             </div>
             <div>
-                <PlayerSeat />
+                <PlayerSeat
+                    v-for="(guid, seat) in seats"
+                    :seat="seat"
+                    :guid="guid"
+                />
                 <button
                     v-if="page.props.gameUser && !page.props.gameUser.in_game"
                     @click="leaveGame"

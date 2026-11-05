@@ -18,6 +18,7 @@ export interface GameUser {
     id: number;
     name: string;
     in_game: boolean;
+    start_balance: number;
 }
 
 export interface PageProps {

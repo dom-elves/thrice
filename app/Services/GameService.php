@@ -39,6 +39,15 @@ class GameService
             // start time to be done later
         ]);
 
+        Redis::hmset("game_seats:{$game->code}", [
+            '1' => '',
+            '2' => '',
+            '3' => '',
+            '4' => '',
+            '5' => '',
+            '6' => '',
+        ]);
+
         // maybe add automatic seating for created game?
 
         return $game;
@@ -51,8 +60,9 @@ class GameService
      * - broadcast to table
      *
      * @param  GameUser  $gameUser
+     * @param int $seat
      */
-    public function sit($gameUser): void
+    public function sit($gameUser, $seat): void
     {
         $key = "game_user:{$gameUser->id}";
 
@@ -67,8 +77,9 @@ class GameService
             'user_session_id' => session()->getId(),
         ]);
 
-        // i can remove this if i change it in middleware
-        Redis::sadd("game:{$gameUser->game->id}:game_user_ids", $gameUser->id);
+        Redis::hmset("game_seats:{$gameUser->game->code}", [
+            $seat => $gameUser->id,
+        ]);
 
         $gameUser->update([
             'in_game' => true,
@@ -84,8 +95,9 @@ class GameService
      * - broadcast to table
      *
      * @param  GameUser  $gameUser
+     * @param int $seat
      */
-    public function stand($gameUser): void
+    public function stand($gameUser, $seat): void
     {
         // this will eventually need to include a bunch of logic for game state
         // but for now, just as if the user is leaving the game without doing anything
@@ -103,7 +115,9 @@ class GameService
             'user_session_id',
         ]);
 
-        Redis::srem("game:{$gameUser->game->id}:game_user_ids", $gameUser->id);
+        Redis::hgetdel("game_seats:{$gameUser->game->code}", [
+            '1', '2', '3', '4', '5', '6'
+        ]);
 
         $gameUser->update([
             // balance incr
