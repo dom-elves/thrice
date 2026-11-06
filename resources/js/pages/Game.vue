@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { usePage, router } from '@inertiajs/vue3';
 import { useEchoPresence } from '@laravel/echo-vue';
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import PlayerSeat from '@/components/game/PlayerSeat.vue';
-import type { GameUser, PageProps, Sit, Stand, User } from '@/interfaces';
+import type { GameUser, PageProps, Sit, Stand } from '@/interfaces';
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue';
 
 const page = usePage<PageProps>();
 const game = page.props.game;
-const seats = ref(page.props.seats);
+const seats = computed(() => page.props.seats);
 const activePlayers = ref<GameUser[]>([]);
 
 useEchoPresence(
@@ -16,6 +16,12 @@ useEchoPresence(
     ['.player.sit', '.player.stand'],
     (event: Sit | Stand) => {
         console.log('e', event);
+        router.reload(
+            {
+                only: ['seats'],
+            },
+        );
+        console.log('seats reloaded', seats.value);
     },
 );
 
@@ -47,9 +53,9 @@ onMounted(() => {
             </div>
             <div>
                 <PlayerSeat
-                    v-for="(guid, seat) in seats"
+                    v-for="(seat, position) in seats"
                     :seat="seat"
-                    :guid="guid"
+                    :position="position"
                 />
                 <button
                     v-if="page.props.gameUser && !page.props.gameUser.in_game"

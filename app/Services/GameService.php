@@ -60,9 +60,9 @@ class GameService
      * - broadcast to table
      *
      * @param  GameUser  $gameUser
-     * @param int $seat
+     * @param int $position
      */
-    public function sit($gameUser, $seat): void
+    public function sit($gameUser, $position): void
     {
         $key = "game_user:{$gameUser->id}";
 
@@ -78,7 +78,7 @@ class GameService
         ]);
 
         Redis::hmset("game_seats:{$gameUser->game->code}", [
-            $seat => $gameUser->id,
+            $position => $gameUser->id,
         ]);
 
         $gameUser->update([
@@ -95,9 +95,9 @@ class GameService
      * - broadcast to table
      *
      * @param  GameUser  $gameUser
-     * @param int $seat
+     * @param int $position
      */
-    public function stand($gameUser, $seat): void
+    public function stand($gameUser, $position): void
     {
         // this will eventually need to include a bunch of logic for game state
         // but for now, just as if the user is leaving the game without doing anything
@@ -115,8 +115,8 @@ class GameService
             'user_session_id',
         ]);
 
-        Redis::hgetdel("game_seats:{$gameUser->game->code}", [
-            '1', '2', '3', '4', '5', '6'
+        Redis::hmset("game_seats:{$gameUser->game->code}", [
+            $position => '',
         ]);
 
         $gameUser->update([

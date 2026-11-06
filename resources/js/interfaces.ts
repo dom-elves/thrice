@@ -16,6 +16,7 @@ export interface Game {
 
 export interface GameUser {
     id: number;
+    user_id: number;
     name: string;
     in_game: boolean;
     start_balance: number;
@@ -26,6 +27,7 @@ export interface PageProps {
     game: Game;
     user: User;
     gameUser?: GameUser;
+    seats: R<string, string | null>;
 }
 
 // events

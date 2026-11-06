@@ -21,9 +21,19 @@ class GameController extends Controller
 
     public function show(Game $game): InertiaResponse
     {
+        $code = $game->code;
+        $seats = Redis::hgetall("game_seats:{$code}");
+
+        $seats = Redis::pipeline(function ($pipe) use ($code, $seats) {
+            foreach ($seats as $seat => $gameUserId) {
+                $pipe->hgetall("game_user:{$gameUserId}");
+            }
+        });
+
+        // dd($seats);
         return Inertia::render('Game', [
             'game' => $game,
-            'seats' => Redis::hgetall("game_seats:{$game->code}"),
+            'seats' => $seats,
             'gameUser' => fn () => $game->gameUsers()->where('user_id', auth()->id())->first(),
         ]);
     }
@@ -68,7 +78,7 @@ class GameController extends Controller
     public function sit(Request $request, Game $game): RedirectResponse
     {
         $validated = $request->validate([
-            'seat' => 'required|integer|min:1|max:6',
+            'position' => 'required|integer|min:0|max:5',
         ]);
 
         $gameUser = $game->gameUsers()->where('user_id', auth()->id())->first();
@@ -77,7 +87,7 @@ class GameController extends Controller
             $gameUser = app(CreateGameUserAction::class)->execute($game->id, (int) auth()->id());
         }
 
-        $this->gameService->sit($gameUser, $validated['seat']);
+        $this->gameService->sit($gameUser, $validated['position']);
 
         // todo: check for 2+ players being ready
 
@@ -93,12 +103,12 @@ class GameController extends Controller
     public function stand(Request $request, Game $game): RedirectResponse
     {
         $validated = $request->validate([
-            'seat' => 'required|integer|min:1|max:6',
+            'position' => 'required|integer|min:0|max:5',
         ]);
 
         $gameUser = $game->gameUsers()->where('user_id', auth()->id())->first();
         
-        $this->gameService->stand($gameUser, $validated['seat']);
+        $this->gameService->stand($gameUser, $validated['position']);
 
         // return redirect()->route('game.show', $game->code);
         return back();
