@@ -12,7 +12,7 @@ const props = defineProps({
         required: true,
     },
     seat: {
-        type: Array,
+        type: Object,
         required: false,
     },
     // guid: {

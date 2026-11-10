@@ -40,12 +40,12 @@ class GameService
         ]);
 
         Redis::hmset("game_seats:{$game->code}", [
+            '0' => '',
             '1' => '',
             '2' => '',
             '3' => '',
             '4' => '',
             '5' => '',
-            '6' => '',
         ]);
 
         // maybe add automatic seating for created game?

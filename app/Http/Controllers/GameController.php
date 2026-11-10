@@ -23,14 +23,13 @@ class GameController extends Controller
     {
         $code = $game->code;
         $seats = Redis::hgetall("game_seats:{$code}");
-
+        
         $seats = Redis::pipeline(function ($pipe) use ($code, $seats) {
             foreach ($seats as $seat => $gameUserId) {
                 $pipe->hgetall("game_user:{$gameUserId}");
             }
         });
 
-        // dd($seats);
         return Inertia::render('Game', [
             'game' => $game,
             'seats' => $seats,
