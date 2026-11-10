@@ -15,24 +15,18 @@ const props = defineProps({
         type: Object,
         required: false,
     },
-    // guid: {
-    //     type: String,
-    //     required: false,
-    // },
 });
 
 const gameUser = computed(() => page.props.gameUser);
-
-const seated = computed(() => {
-    return !!gameUser.value &&
-    gameUser.value.in_game &&
-    String(gameUser.value.user_id) === String(props.seat?.user_id)
-})
-
-const empty = computed(() => props.seat?.length === 0);
+const seatEmpty = computed(() => props.seat?.length == 0);
+const satHere = computed(() => {
+    return gameUser.value ? gameUser.value?.user_id == props.seat?.user_id : false;
+});
 
 onMounted(() => {
-    // console.log(props.guid);
+    console.log('id', props.seat?.user_id);
+    console.log('seate', gameUser.value?.user_id, props.seat?.user_id);
+
 });
 
 function sit() {
@@ -70,24 +64,26 @@ function stand() {
 </script>
 <template>
     <div>
-        <p>seat {{ props.position }}</p>
-        <button
-            v-if="empty"
-            @click="sit"
-            :disabled="gameUser?.in_game"
-            class="m-4 rounded border border-1 p-4"
-            :class="gameUser?.in_game ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-300'"
-        >
-            sit down
-        </button>
-        <div v-else-if="gameUser?.in_game">
-            <p>taken by playerid {{ gameUser?.id}}</p>
+        <p>seat {{ props.position + 1 }}</p>
+        <div v-if="seatEmpty">
             <button
+                @click="sit"
+                :disabled="gameUser?.in_game"
+                class="m-4 rounded border border-1 p-4"
+                :class="gameUser?.in_game ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-300'"
+            >
+                sit down
+            </button>
+        </div>
+        <div v-if="!seatEmpty">
+            <button
+                v-if="satHere"
                 @click="stand"
                 class="m-4 rounded border border-1 bg-blue-300 p-4"
             >
                 stand up
             </button>
+            <p v-else>taken by playerid {{ props.seat?.user_id}}</p>
         </div>
     </div>
 </template>
