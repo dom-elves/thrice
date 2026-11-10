@@ -76,8 +76,18 @@ class GameController extends Controller
     public function sit(Request $request, Game $game): RedirectResponse
     {
         $validated = $request->validate([
-            'position' => 'required|integer|min:0|max:5',
-        ]);
+            'position' => [
+                'required',
+                'integer',
+                'min:0',
+                'max:5',
+                function($attribute, $value, $fail) use ($game) {
+                    $seats = Redis::hgetall("game_seats:{$game->code}");
+                    if (isset($seats[$value]) && !empty($seats[$value])) {
+                        $fail('You are already sat at the table');
+                    }
+                }],
+            ]);
 
         $gameUser = $game->gameUsers()->where('user_id', auth()->id())->first();
 
@@ -89,7 +99,6 @@ class GameController extends Controller
 
         // todo: check for 2+ players being ready
 
-        // return redirect()->route('game.show', $game->code);
         return back();
     }
 
@@ -101,14 +110,13 @@ class GameController extends Controller
     public function stand(Request $request, Game $game): RedirectResponse
     {
         $validated = $request->validate([
-            'position' => 'required|integer|min:0|max:5',
+            'position' => ['required', 'integer', 'min:0', 'max:5'],
         ]);
 
         $gameUser = $game->gameUsers()->where('user_id', auth()->id())->first();
 
         $this->gameService->stand($gameUser, $validated['position']);
 
-        // return redirect()->route('game.show', $game->code);
         return back();
     }
 

@@ -120,16 +120,40 @@ test('sitting at a table for the first time creates a game user', function () {
 
     $game = Game::factory()->create();
 
-    $response = $this->post(route('game.sit', $game));
+    $response = $this->post(route('game.sit', $game ), [
+        'position' => 0,
+    ]);
 
     Event::assertDispatched(Sit::class);
 
-    $response->assertRedirect("game/{$game->code}");
+    $response->assertRedirectBack();
 
     $this->assertDatabaseHas('game_users', [
         'user_id' => $this->user->id,
         'game_id' => $game->id,
         'in_game' => true,
+    ]);
+});
+
+test('user can not sit at an occupied seat', function () {
+    $game = Game::factory()->create();
+
+    $gameUser = GameUser::factory()->create([
+        'user_id' => $this->users->last()->id,
+        'game_id' => $game->id,
+        'in_game' => true,
+    ]);
+
+    Redis::hmset("game_seats:{$gameUser->game->code}", [
+        '0' => $gameUser->id,
+    ]);
+
+    $response = $this->post(route('game.sit', $game), [
+        'position' => 0,
+    ]);
+
+    $response->assertSessionHasErrors([
+        'position' => 'You are already sat at the table',
     ]);
 });
 
@@ -145,12 +169,12 @@ test('user can sit at a previously sat table', function () {
     ]);
 
     $response = $this->post(route('game.sit', $game), [
-        'gameUserId' => $gameUser->Id,
+        'position' => 0,
     ]);
 
     Event::assertDispatched(Sit::class);
 
-    $response->assertRedirect("game/{$game->code}");
+    $response->assertRedirectBack();
 
     $this->assertDatabaseHas('game_users', [
         'user_id' => $gameUser->user_id,
@@ -169,10 +193,10 @@ test('user can stand up at a table', function () {
     ]);
 
     $response = $this->post(route('game.stand', $game), [
-        'gameUserId' => $gameUser->id,
+        'position' => 0,
     ]);
 
-    $response->assertRedirect("game/{$game->code}");
+    $response->assertRedirectBack();
 
     $this->assertDatabaseHas('game_users', [
         'user_id' => $gameUser->user_id,

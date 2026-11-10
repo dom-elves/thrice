@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { usePage, router } from '@inertiajs/vue3';
-import { onMounted, computed } from 'vue';
+import { onMounted, computed, ref } from 'vue';
 import type { PageProps } from '@/interfaces';
 
 const page = usePage<PageProps>();
@@ -25,18 +25,14 @@ const satHere = computed(() => {
         : false;
 });
 
+const errors = ref(page.props.errors.position || null);
+
 onMounted(() => {
     console.log('id', props.seat?.user_id);
     console.log('seate', gameUser.value?.user_id, props.seat?.user_id);
 });
 
 function sit() {
-    console.log(
-        'player',
-        gameUser.value?.id,
-        'sitting at seat',
-        props.position,
-    );
     router.post(
         `/game/${game.code}/sit`,
         {
@@ -49,17 +45,12 @@ function sit() {
             onSuccess: () => {
                 console.log('successfully sat down at seat', props.position);
             },
+
         },
     );
 }
 
 function stand() {
-    console.log(
-        'player',
-        gameUser.value?.id,
-        'standing from seat',
-        props.position,
-    );
     router.post(
         `/game/${game.code}/stand`,
         {
@@ -100,5 +91,6 @@ function stand() {
             </button>
             <p v-else>taken by playerid {{ props.seat?.user_id }}</p>
         </div>
+        <p v-if="errors">{{ errors }}</p>
     </div>
 </template>
