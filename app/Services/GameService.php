@@ -60,7 +60,7 @@ class GameService
      * - broadcast to table
      *
      * @param  GameUser  $gameUser
-     * @param int $position
+     * @param  int  $position
      */
     public function sit($gameUser, $position): void
     {
@@ -95,7 +95,7 @@ class GameService
      * - broadcast to table
      *
      * @param  GameUser  $gameUser
-     * @param int $position
+     * @param  int  $position
      */
     public function stand($gameUser, $position): void
     {

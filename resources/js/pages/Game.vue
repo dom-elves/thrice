@@ -16,15 +16,12 @@ useEchoPresence(
     ['.player.sit', '.player.stand'],
     (event: Sit | Stand) => {
         console.log('e', event);
-        router.reload(
-            {
-                only: ['seats'],
-            },
-        );
+        router.reload({
+            only: ['seats'],
+        });
         console.log('seats reloaded', seats.value);
     },
 );
-
 
 function leaveGame() {
     router.post(`/game/${game.code}/leave`);

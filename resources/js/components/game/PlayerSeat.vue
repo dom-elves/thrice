@@ -20,21 +20,27 @@ const props = defineProps({
 const gameUser = computed(() => page.props.gameUser);
 const seatEmpty = computed(() => props.seat?.length == 0);
 const satHere = computed(() => {
-    return gameUser.value ? gameUser.value?.user_id == props.seat?.user_id : false;
+    return gameUser.value
+        ? gameUser.value?.user_id == props.seat?.user_id
+        : false;
 });
 
 onMounted(() => {
     console.log('id', props.seat?.user_id);
     console.log('seate', gameUser.value?.user_id, props.seat?.user_id);
-
 });
 
 function sit() {
-    console.log('player', gameUser.value?.id, 'sitting at seat', props.position);
+    console.log(
+        'player',
+        gameUser.value?.id,
+        'sitting at seat',
+        props.position,
+    );
     router.post(
         `/game/${game.code}/sit`,
         {
-            'position': props.position
+            position: props.position,
         },
         {
             only: ['gameUser'],
@@ -48,11 +54,16 @@ function sit() {
 }
 
 function stand() {
-    console.log('player', gameUser.value?.id,'standing from seat', props.position);
+    console.log(
+        'player',
+        gameUser.value?.id,
+        'standing from seat',
+        props.position,
+    );
     router.post(
         `/game/${game.code}/stand`,
         {
-            'position': props.position
+            position: props.position,
         },
         {
             only: ['gameUser'],
@@ -70,7 +81,11 @@ function stand() {
                 @click="sit"
                 :disabled="gameUser?.in_game"
                 class="m-4 rounded border border-1 p-4"
-                :class="gameUser?.in_game ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-300'"
+                :class="
+                    gameUser?.in_game
+                        ? 'cursor-not-allowed bg-gray-400'
+                        : 'bg-green-300'
+                "
             >
                 sit down
             </button>
@@ -83,7 +98,7 @@ function stand() {
             >
                 stand up
             </button>
-            <p v-else>taken by playerid {{ props.seat?.user_id}}</p>
+            <p v-else>taken by playerid {{ props.seat?.user_id }}</p>
         </div>
     </div>
 </template>
