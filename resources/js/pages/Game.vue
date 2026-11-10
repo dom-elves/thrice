@@ -54,6 +54,7 @@ onMounted(() => {
             <div>
                 <PlayerSeat
                     v-for="(seat, position) in seats"
+                    :key="position"
                     :seat="seat"
                     :position="position"
                 />
