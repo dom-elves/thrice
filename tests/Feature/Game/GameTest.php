@@ -120,7 +120,7 @@ test('sitting at a table for the first time creates a game user', function () {
 
     $game = Game::factory()->create();
 
-    $response = $this->post(route('game.sit', $game ), [
+    $response = $this->post(route('game.sit', $game), [
         'position' => 0,
     ]);
 

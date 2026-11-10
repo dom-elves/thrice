@@ -81,13 +81,13 @@ class GameController extends Controller
                 'integer',
                 'min:0',
                 'max:5',
-                function($attribute, $value, $fail) use ($game) {
+                function ($attribute, $value, $fail) use ($game) {
                     $seats = Redis::hgetall("game_seats:{$game->code}");
-                    if (isset($seats[$value]) && !empty($seats[$value])) {
+                    if (isset($seats[$value]) && ! empty($seats[$value])) {
                         $fail('You are already sat at the table');
                     }
                 }],
-            ]);
+        ]);
 
         $gameUser = $game->gameUsers()->where('user_id', auth()->id())->first();
 

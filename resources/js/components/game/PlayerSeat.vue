@@ -45,7 +45,6 @@ function sit() {
             onSuccess: () => {
                 console.log('successfully sat down at seat', props.position);
             },
-
         },
     );
 }
