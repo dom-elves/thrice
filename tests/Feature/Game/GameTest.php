@@ -271,6 +271,46 @@ test('user can leave a game they are watching', function () {
     $response->assertRedirect('dashboard');
 });
 
+test('game does not start when only 1 user is sat down', function () {
+    $game = Game::factory()->create([
+        'started' => false,
+    ]);
+
+    $this->post(route('game.sit', $game), [
+        'position' => 0,
+    ]);
+
+    $this->assertDatabaseHas('games', [
+        'id' => $game->id,
+        'started' => false,
+    ]);
+});
+
+test('game starts when 2 or more users are sat down', function () {
+    $game = Game::factory()->create([
+        'started' => false,
+    ]);
+
+    $gameUser = GameUser::factory()->create([
+        'user_id' => $this->users->last()->id,
+        'game_id' => $game->id,
+        'in_game' => true,
+    ]);
+
+    Redis::hmset("game_seats:{$gameUser->game->code}", [
+        '0' => $gameUser->id,
+    ]);
+
+    $this->post(route('game.sit', $game), [
+        'position' => 1,
+    ]);
+
+    $this->assertDatabaseHas('games', [
+        'id' => $game->id,
+        'started' => true,
+    ]);
+});
+
 test('user can leave a game they are in between hands', function () {});
 
 test('user can not leave a game in the middle of a hand', function () {});
