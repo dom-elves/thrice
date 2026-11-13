@@ -32,7 +32,7 @@ class SitListener
 
             // no need to lock requests, as that will be done at a seat level
             // this will be where the first 'deal' event will sit
-            // use shouldQueue in the event of a game being in progress
+            // use shouldQueue() here in the event of a game being in progress
         }
     }
 }

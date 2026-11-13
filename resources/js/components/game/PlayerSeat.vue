@@ -28,8 +28,7 @@ const satHere = computed(() => {
 const errors = ref(page.props.errors.position || null);
 
 onMounted(() => {
-    console.log('id', props.seat?.user_id);
-    console.log('seate', gameUser.value?.user_id, props.seat?.user_id);
+    console.log(props.position, seatEmpty.value, satHere.value)
 });
 
 function sit() {
