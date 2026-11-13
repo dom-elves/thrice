@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Actions\Game\CreateGameUserAction;
 use App\Models\Game;
-use App\Models\GameUser;
 use App\Services\GameService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -21,19 +20,19 @@ class GameController extends Controller
 
     public function show(Game $game): InertiaResponse
     {
-        $user = auth()->user();
-        $gameUser = GameUser::where('game_id', $game->id)
-            ->where('user_id', $user->id)
-            ->first();
+        $code = $game->code;
+        $seats = Redis::hgetall("game_seats:{$code}");
 
-        if (! $gameUser) {
-            $gameUser = app(CreateGameUserAction::class)->execute($game->id, $user->id);
-        }
-
-        $this->gameService->join($gameUser);
+        $seatData = Redis::pipeline(function ($pipe) use ($seats) {
+            foreach ($seats as $seat => $gameUserId) {
+                $pipe->hgetall("game_user:{$gameUserId}");
+            }
+        });
 
         return Inertia::render('Game', [
             'game' => $game,
+            'seats' => $seatData,
+            'gameUser' => fn () => $game->gameUsers()->where('user_id', auth()->id())->first(),
         ]);
     }
 
@@ -68,22 +67,65 @@ class GameController extends Controller
         return redirect()->route('game.show', $code);
     }
 
-    public function leave(Request $request, Game $game): RedirectResponse
+    /**
+     * Sit at the table.
+     * - query user from id, only id is passed as param to avoid editing any other attrbiutes
+     * - check if user exists already, create if not
+     * - sit
+     */
+    public function sit(Request $request, Game $game): RedirectResponse
     {
-        $gameUser = GameUser::where('game_id', $game->id)
-            ->where('user_id', auth()->id())
-            ->firstOrFail();
+        $validated = $request->validate([
+            'position' => [
+                'required',
+                'integer',
+                'min:0',
+                'max:5',
+                function ($attribute, $value, $fail) use ($game) {
+                    $seats = Redis::hgetall("game_seats:{$game->code}");
+                    if (isset($seats[$value]) && ! empty($seats[$value])) {
+                        $fail('You are already sat at the table');
+                    }
+                }],
+        ]);
 
-        $gameService = app(GameService::class);
-        $gameService->leave($gameUser);
+        $gameUser = $game->gameUsers()->where('user_id', auth()->id())->first();
 
-        $request->session()->pull('game_code');
+        if (! $gameUser) {
+            $gameUser = app(CreateGameUserAction::class)->execute($game->id, (int) auth()->id());
+        }
 
-        return redirect('dashboard');
+        $this->gameService->sit($gameUser, $validated['position']);
+
+        // todo: check for 2+ players being ready
+
+        return back();
     }
 
-    // public function play(Request $request)
-    // {
-    //     Redis::hincrby("game:{$request->game_id}", 'hands', 1);
-    // }
+    /**
+     * Stand at the table (stop playing, just spectate)
+     * - basically the same as sit()
+     * - though instead of logic for creating a game user, there'll be bits for settling balances
+     */
+    public function stand(Request $request, Game $game): RedirectResponse
+    {
+        $validated = $request->validate([
+            'position' => ['required', 'integer', 'min:0', 'max:5'],
+        ]);
+
+        $gameUser = $game->gameUsers()->where('user_id', auth()->id())->first();
+
+        $this->gameService->stand($gameUser, $validated['position']);
+
+        return back();
+    }
+
+    /**
+     * Returns to dash.
+     * - leaves game if user is in
+     */
+    public function leave(Request $request, Game $game): RedirectResponse
+    {
+        return redirect('dashboard');
+    }
 }

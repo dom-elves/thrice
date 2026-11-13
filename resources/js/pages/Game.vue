@@ -1,44 +1,34 @@
 <script setup lang="ts">
 import { usePage, router } from '@inertiajs/vue3';
-import { useEchoNotification } from '@laravel/echo-vue';
-import { onMounted, ref } from 'vue';
+import { useEchoPresence } from '@laravel/echo-vue';
+import { computed, onMounted, ref } from 'vue';
+import PlayerSeat from '@/components/game/PlayerSeat.vue';
+import type { GameUser, PageProps, Sit, Stand } from '@/interfaces';
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue';
-
-interface GameUser {
-    id: number;
-    name: string;
-}
-
-interface PageProps {
-    [key: string]: unknown;
-    game: {
-        id: number;
-        name: string;
-        hands: number;
-        code: string;
-    };
-    user: object;
-}
 
 const page = usePage<PageProps>();
 const game = page.props.game;
+const seats = computed(() => page.props.seats);
 const activePlayers = ref<GameUser[]>([]);
 
-// function playHand() {
-//     router.post('/play-hand', { game_id: game.id });
-// }
-
-useEchoNotification(`App.Models.Game.${game.id}`, (notification: any) => {
-    console.log('g', notification);
-    activePlayers.value.push(notification.gameUser.user.name);
-});
+useEchoPresence(
+    `App.Models.Game.${game.id}`,
+    ['.player.sit', '.player.stand'],
+    (event: Sit | Stand) => {
+        console.log('e', event);
+        router.reload({
+            only: ['seats'],
+        });
+        console.log('seats reloaded', seats.value);
+    },
+);
 
 function leaveGame() {
-    router.get(`/game/${game.code}/leave`);
+    router.post(`/game/${game.code}/leave`);
 }
 
 onMounted(() => {
-    console.log('g', game);
+    console.log('seats', seats.value);
 });
 </script>
 <template>
@@ -59,7 +49,14 @@ onMounted(() => {
                 </div>
             </div>
             <div>
+                <PlayerSeat
+                    v-for="(seat, position) in seats"
+                    :key="position"
+                    :seat="seat"
+                    :position="position"
+                />
                 <button
+                    v-if="page.props.gameUser && !page.props.gameUser.in_game"
                     @click="leaveGame"
                     class="m-4 rounded border border-1 bg-red-300 p-4"
                 >
