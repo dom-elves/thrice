@@ -28,7 +28,7 @@ const satHere = computed(() => {
 const errors = ref(page.props.errors.position || null);
 
 onMounted(() => {
-    console.log(props.position, seatEmpty.value, satHere.value)
+    console.log(props.position, seatEmpty.value, satHere.value);
 });
 
 function sit() {
