@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Events\Lobby;
+namespace App\Events\GameUser;
 
-use App\Models\User;
+use App\Models\GameUser;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -10,17 +10,14 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class UserToggleReady implements ShouldBroadcast
+class Stand implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     /**
      * Create a new event instance.
      */
-    public function __construct(public string $code, public User $user, public bool $status)
-    {
-        //
-    }
+    public function __construct(public GameUser $gameUser) {}
 
     /**
      * Get the channels the event should broadcast on.
@@ -30,13 +27,13 @@ class UserToggleReady implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new PresenceChannel("lobby.{$this->code}"),
+            new PresenceChannel("App.Models.Game.{$this->gameUser->game->id}"),
         ];
     }
 
     public function broadcastAs(): string
     {
-        return 'user.toggleReady';
+        return 'player.stand';
     }
 
     /**
@@ -47,8 +44,7 @@ class UserToggleReady implements ShouldBroadcast
     public function broadcastWith(): array
     {
         return [
-            'user' => $this->user,
-            'status' => $this->status,
+            'message' => $this->gameUser->user->name.' has left',
         ];
     }
 }

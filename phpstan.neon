@@ -9,5 +9,8 @@ parameters:
         - config/
         - database/
         - routes/
-        
+    ignoreErrors:
+        -
+            message: '#Static method .*Redis::pipeline\(\) invoked with 1 parameter, 0 required#'
+            identifier: arguments.count
     level: 7

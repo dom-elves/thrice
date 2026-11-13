@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\GameController;
-use App\Http\Controllers\LobbyController;
+use App\Models\Game;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -10,24 +10,26 @@ Route::inertia('/', 'Welcome')->name('home');
 
 // auth
 Route::middleware('auth')->group(function () {
-    Route::inertia('/dashboard', 'Dashboard')->name('dashboard');
-});
-
-// lobby
-// extra middleware logic only really applies to joining lobbies
-// but is a bit too much for the show() method
-// since that is hit via a redirect from create()
-Route::middleware('auth')->group(function () {
-    Route::get('/lobby/{code}', [LobbyController::class, 'show'])->name('lobby.show')
-        ->middleware('lobby');
-    Route::post('/lobby/create', [LobbyController::class, 'create'])->name('lobby.create');
-    Route::post('/lobby/{code}/ready', [LobbyController::class, 'ready'])->name('lobby.ready');
-    Route::post('/lobby/{code}/leave', [LobbyController::class, 'leave'])->name('lobby.leave');
+    // move to controller to make optional games prop
+    Route::get('/dashboard', function () {
+        // todo, when testing at scale:
+        // - index 'finished'
+        // - paginate, do that when researching interfaces
+        return Inertia::render('Dashboard', [
+            'games' => Inertia::optional(fn () => Game::where('finished', 0)
+                ->with([
+                    'gameUsers' => fn ($query) => $query->where('in_game', 1),
+                ])
+                ->get()
+            ),
+        ]);
+    })->name('dashboard');
 });
 
 // game
-// follows the same pattern as lobby group
 Route::middleware('auth')->group(function () {
+    Route::post('/game/create', [GameController::class, 'create'])->name('game.create');
+
     // sets to game:code just so it appears that way in browser, rather than /game/1 etc
     // ->missing() callback is necessary because binding comes before middleware
     Route::get('/game/{game:code}', [GameController::class, 'show'])->name('game.show')
@@ -39,6 +41,7 @@ Route::middleware('auth')->group(function () {
 
             return redirect('dashboard');
         });
-
-    Route::get('/game/{game:code}/leave', [GameController::class, 'leave'])->name('game.leave');
+    Route::post('/game/{game:code}/sit', [GameController::class, 'sit'])->name('game.sit');
+    Route::post('/game/{game:code}/stand', [GameController::class, 'stand'])->name('game.stand');
+    Route::post('/game/{game:code}/leave', [GameController::class, 'leave'])->name('game.leave');
 });

@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
 
@@ -17,6 +18,7 @@ use Illuminate\Support\Carbon;
  * @property int $id
  * @property string|null $name
  * @property string $code
+ * @property bool $private
  * @property string|null $password
  * @property int|string|null $hands
  * @property bool $started
@@ -24,13 +26,13 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['name', 'code', 'hands', 'started', 'finished'])]
+#[Fillable(['name', 'private', 'code', 'hands', 'started', 'finished'])]
 #[Hidden(['password'])]
 
 class Game extends Model
 {
     /** @use HasFactory<GameFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, SoftDeletes;
 
     /**
      * Users from a given game.

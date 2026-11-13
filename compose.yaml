@@ -65,7 +65,7 @@ services:
             retries: 3
             timeout: 5s
     reverb:
-        image: sail-8.4/app
+        image: sail-8.5/app
         command: ["php", "/var/www/html/artisan", "reverb:start"]
         restart: unless-stopped
         stop_signal: SIGTERM

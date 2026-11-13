@@ -3,8 +3,8 @@
 namespace App\Services;
 
 use App\Actions\Game\CreateGameAction;
-use App\Events\GameUserJoined;
-use App\Events\GameUserLeft;
+use App\Events\GameUser\Sit;
+use App\Events\GameUser\Stand;
 use App\Models\Game;
 use App\Models\GameUser;
 use Carbon\Carbon;
@@ -21,30 +21,48 @@ class GameService
 {
     /**
      * Create an instance of the game in Redis
-     * Adding to the hash appears incomplete, the basics are done in LobbyService
+     * - call action for creating game
+     * - set in redis
      *
-     * @param  string  $code
+     * @param  array<string, string>  $data
      */
-    public function create($code): Game
+    public function create(array $data): Game
     {
-        $game = app(CreateGameAction::class)->execute($code);
+        $game = app(CreateGameAction::class)->execute($data);
 
         Redis::hmset("game:{$game->code}", [
+            'name' => $game->name,
+            // don't think i need pw here
             'hands' => 0,
             'started' => $game->started,
-            'finished' => 0,
-            'start_time' => $game->created_at->toDateTimeString(),
+            'finished' => $game->finished,
+            // start time to be done later
         ]);
+
+        Redis::hmset("game_seats:{$game->code}", [
+            '0' => '',
+            '1' => '',
+            '2' => '',
+            '3' => '',
+            '4' => '',
+            '5' => '',
+        ]);
+
+        // maybe add automatic seating for created game?
 
         return $game;
     }
 
     /**
-     * Join a game, set the game user in Redis and broadcast the join event to the fe
+     * Sit at the table of a game.
+     * - set game user in redis
+     * - update status to in game
+     * - broadcast to table
      *
      * @param  GameUser  $gameUser
+     * @param  int  $position
      */
-    public function join($gameUser): void
+    public function sit($gameUser, $position): void
     {
         $key = "game_user:{$gameUser->id}";
 
@@ -59,22 +77,27 @@ class GameService
             'user_session_id' => session()->getId(),
         ]);
 
-        // i can remove this if i change it in middleware
-        Redis::sadd("game:{$gameUser->game->id}:game_user_ids", $gameUser->id);
+        Redis::hmset("game_seats:{$gameUser->game->code}", [
+            $position => $gameUser->id,
+        ]);
 
         $gameUser->update([
             'in_game' => true,
         ]);
 
-        event(new GameUserJoined($gameUser));
+        event(new Sit($gameUser));
     }
 
     /**
-     * Leave a game, set the game user in Redis and broadcast the leave event to the fe
+     * Stand at the table of a game. Just the inverse of sit()
+     * - remove user from redis
+     * - update in game status to false
+     * - broadcast to table
      *
      * @param  GameUser  $gameUser
+     * @param  int  $position
      */
-    public function leave($gameUser): void
+    public function stand($gameUser, $position): void
     {
         // this will eventually need to include a bunch of logic for game state
         // but for now, just as if the user is leaving the game without doing anything
@@ -92,13 +115,15 @@ class GameService
             'user_session_id',
         ]);
 
-        Redis::srem("game:{$gameUser->game->id}:game_user_ids", $gameUser->id);
+        Redis::hmset("game_seats:{$gameUser->game->code}", [
+            $position => '',
+        ]);
 
         $gameUser->update([
             // balance incr
             'in_game' => false,
         ]);
 
-        event(new GameUserLeft($gameUser));
+        event(new Stand($gameUser));
     }
 }
