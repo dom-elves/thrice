@@ -8,6 +8,7 @@ use App\Events\GameUser\Stand;
 use App\Models\Game;
 use App\Models\GameUser;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
 
 /**
@@ -51,6 +52,26 @@ class GameService
         // maybe add automatic seating for created game?
 
         return $game;
+    }
+
+    /**
+     * Start the game.
+     * - re-fetch the game with lockForUpdate, to prevent race conditions
+     * - wrap start in mysql & redis in a transaction
+     */
+    public function start(Game $game): void
+    {
+        $game = Game::query()->lockForUpdate()->find($game->id);
+
+        DB::transaction(function () use ($game) {
+            $game->update(['started' => true]);
+
+            Redis::hmset("game:{$game->code}", [
+                'started' => true,
+            ]);
+        });
+
+        // fire event
     }
 
     /**
