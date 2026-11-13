@@ -74,7 +74,6 @@ class GameService
             'join_time' => Carbon::now()->toDateTimeString(),
             'leave_time' => '',
             'in_game' => 1,
-            'user_session_id' => session()->getId(),
         ]);
 
         Redis::hmset("game_seats:{$gameUser->game->code}", [
@@ -112,7 +111,6 @@ class GameService
             'join_time',
             'leave_time',
             'in_game',
-            'user_session_id',
         ]);
 
         Redis::hmset("game_seats:{$gameUser->game->code}", [

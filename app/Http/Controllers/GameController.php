@@ -18,6 +18,11 @@ class GameController extends Controller
         private GameService $gameService
     ) {}
 
+    /**
+     * Take the user to the table of the game
+     * - seats are hardcoded in redis like [0 => ''] where empty string is user_id
+     * - maps the gameUser data in redis to the relative seats so the above kv becomes [0 => [gameUserData]]
+     */
     public function show(Game $game): InertiaResponse
     {
         $code = $game->code;
@@ -69,7 +74,7 @@ class GameController extends Controller
 
     /**
      * Sit at the table.
-     * - query user from id, only id is passed as param to avoid editing any other attrbiutes
+     * - 'position' is a param, hardcoded 0-5'
      * - check if user exists already, create if not
      * - sit
      */
@@ -96,8 +101,6 @@ class GameController extends Controller
         }
 
         $this->gameService->sit($gameUser, $validated['position']);
-
-        // todo: check for 2+ players being ready
 
         return back();
     }
