@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Actions\Game\CreateGameAction;
+use App\Events\Game\Deal;
 use App\Events\GameUser\Sit;
 use App\Events\GameUser\Stand;
 use App\Models\Game;
@@ -13,10 +14,11 @@ use Illuminate\Support\Facades\Redis;
 
 /**
  * Service layer for handing game logic, basically anything that interacts with Redis.
- * - Game creation
- * - Joining
- * - Leaving
- * - gameplay logic, tbc
+ * - creating
+ * - starting
+ * - sit (joining)
+ * - stand (leaving)
+ *
  */
 class GameService
 {
@@ -58,6 +60,8 @@ class GameService
      * Start the game.
      * - re-fetch the game with lockForUpdate, to prevent race conditions
      * - wrap start in mysql & redis in a transaction
+     *
+     * @param Game $game
      */
     public function start(Game $game): void
     {
@@ -71,7 +75,7 @@ class GameService
             ]);
         });
 
-        // fire event
+        Deal::dispatch($game);
     }
 
     /**
