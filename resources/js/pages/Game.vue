@@ -9,7 +9,7 @@ import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue';
 const page = usePage<PageProps>();
 const game = page.props.game;
 const seats = computed(() => page.props.seats);
-const activePlayers = ref<GameUser[]>([]);
+const board = computed(() => page.props.board);
 
 useEchoPresence(
     `App.Models.Game.${game.id}`,
@@ -39,13 +39,7 @@ onMounted(() => {
                 <div class="bg-blue-100 p-2">col1</div>
                 <div class="col-span-2 bg-blue-100 p-2">col2</div>
                 <div class="bg-blue-100 p-2">
-                    <p>active players</p>
-                    <p
-                        v-for="activePlayer in activePlayers"
-                        :key="activePlayer.id"
-                    >
-                        {{ activePlayer }}
-                    </p>
+                    {{ board }}
                 </div>
             </div>
             <div>

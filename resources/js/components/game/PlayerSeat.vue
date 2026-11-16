@@ -38,7 +38,7 @@ function sit() {
             position: props.position,
         },
         {
-            only: ['gameUser'],
+            only: ['gameUser', 'board'],
             preserveScroll: true,
             preserveState: true,
             onSuccess: () => {

@@ -91,5 +91,7 @@ class DeckService
             'top_turn' => $top[3]->shorthand,
             'top_river' => $top[4]->shorthand,
         ]);
+
+        // todo: event notif for board
     }
 }

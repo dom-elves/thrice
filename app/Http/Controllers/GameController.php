@@ -35,11 +35,19 @@ class GameController extends Controller
         });
 
         // if game in progress, also get cards
+        if ($game->started) {
+            $bottom = Redis::hgetall("bottom:{$code}");
+            $middle = Redis::hgetall("middle:{$code}");
+            $top = Redis::hgetall("top:{$code}");
+
+            $board = [$bottom, $middle, $top];
+        }
 
         return Inertia::render('Game', [
             'game' => $game,
             'seats' => $seatData,
             'gameUser' => fn () => $game->gameUsers()->where('user_id', auth()->id())->first(),
+            'board' => $board ?? [],
         ]);
     }
 
