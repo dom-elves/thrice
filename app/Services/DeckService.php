@@ -65,25 +65,31 @@ class DeckService
             ]);
         }
 
-        $bottom = $deck->splice(0, 3);
+        $bottom = $deck->splice(0, 5);
         Redis::hmset("bottom:{$game->code}", [
             'bottom_flop_1' => $bottom[0]->shorthand,
             'bottom_flop_2' => $bottom[1]->shorthand,
             'bottom_flop_3' => $bottom[2]->shorthand,
+            'bottom_turn' => $bottom[3]->shorthand,
+            'bottom_river' => $bottom[4]->shorthand,
         ]);
 
-        $middle = $deck->splice(0, 3);
+        $middle = $deck->splice(0, 5);
         Redis::hmset("middle:{$game->code}", [
             'middle_flop_1' => $middle[0]->shorthand,
             'middle_flop_2' => $middle[1]->shorthand,
             'middle_flop_3' => $middle[2]->shorthand,
+            'middle_turn' => $middle[3]->shorthand,
+            'middle_river' => $middle[4]->shorthand,
         ]);
 
-        $top = $deck->splice(0, 3);
+        $top = $deck->splice(0, 5);
         Redis::hmset("top:{$game->code}", [
             'top_flop_1' => $top[0]->shorthand,
             'top_flop_2' => $top[1]->shorthand,
             'top_flop_3' => $top[2]->shorthand,
+            'top_turn' => $top[3]->shorthand,
+            'top_river' => $top[4]->shorthand,
         ]);
     }
 }

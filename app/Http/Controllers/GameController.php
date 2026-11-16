@@ -69,8 +69,6 @@ class GameController extends Controller
 
         $game = $this->gameService->create($validated);
 
-        $request->session()->put('game_code', $code);
-
         return redirect()->route('game.show', $code);
     }
 
