@@ -39,10 +39,19 @@ export interface PageProps {
 }
 
 // events
+export interface Board {
+    board: Array<Row>;
+}
+
 export interface Sit {
     message: string;
 }
 
 export interface Stand {
     message: string;
+}
+
+// misc
+export interface Row {
+    row: Array<string>;
 }

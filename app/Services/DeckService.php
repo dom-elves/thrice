@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Game;
 use App\Enums\Rank;
 use App\Enums\Suit;
+use App\Events\Game\Board;
 use App\ValueObjects\Card;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Redis;
@@ -63,35 +64,43 @@ class DeckService
                 'top_card_1' => $cards[4]->shorthand,
                 'top_card_2' => $cards[5]->shorthand,
             ]);
+
+            // broadcast here?
         }
 
-        $bottom = $deck->splice(0, 5);
+        $bottomCards = $deck->splice(0, 5);
         Redis::hmset("bottom:{$game->code}", [
-            'bottom_flop_1' => $bottom[0]->shorthand,
-            'bottom_flop_2' => $bottom[1]->shorthand,
-            'bottom_flop_3' => $bottom[2]->shorthand,
-            'bottom_turn' => $bottom[3]->shorthand,
-            'bottom_river' => $bottom[4]->shorthand,
+            'bottom_flop_1' => $bottomCards[0]->shorthand,
+            'bottom_flop_2' => $bottomCards[1]->shorthand,
+            'bottom_flop_3' => $bottomCards[2]->shorthand,
+            'bottom_turn' => $bottomCards[3]->shorthand,
+            'bottom_river' => $bottomCards[4]->shorthand,
         ]);
 
-        $middle = $deck->splice(0, 5);
+        $bottom = $bottomCards->pluck('shorthand')->toArray();
+
+        $middleCards = $deck->splice(0, 5);
         Redis::hmset("middle:{$game->code}", [
-            'middle_flop_1' => $middle[0]->shorthand,
-            'middle_flop_2' => $middle[1]->shorthand,
-            'middle_flop_3' => $middle[2]->shorthand,
-            'middle_turn' => $middle[3]->shorthand,
-            'middle_river' => $middle[4]->shorthand,
+            'middle_flop_1' => $middleCards[0]->shorthand,
+            'middle_flop_2' => $middleCards[1]->shorthand,
+            'middle_flop_3' => $middleCards[2]->shorthand,
+            'middle_turn' => $middleCards[3]->shorthand,
+            'middle_river' => $middleCards[4]->shorthand,
         ]);
 
-        $top = $deck->splice(0, 5);
+        $middle = $middleCards->pluck('shorthand')->toArray();
+
+        $topCards = $deck->splice(0, 5);
         Redis::hmset("top:{$game->code}", [
-            'top_flop_1' => $top[0]->shorthand,
-            'top_flop_2' => $top[1]->shorthand,
-            'top_flop_3' => $top[2]->shorthand,
-            'top_turn' => $top[3]->shorthand,
-            'top_river' => $top[4]->shorthand,
+            'top_flop_1' => $topCards[0]->shorthand,
+            'top_flop_2' => $topCards[1]->shorthand,
+            'top_flop_3' => $topCards[2]->shorthand,
+            'top_turn' => $topCards[3]->shorthand,
+            'top_river' => $topCards[4]->shorthand,
         ]);
 
-        // todo: event notif for board
+        $top = $topCards->pluck('shorthand')->toArray();
+
+        event(new Board($game, [$bottom, $middle, $top]));
     }
 }

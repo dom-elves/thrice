@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { usePage, router } from '@inertiajs/vue3';
 import { useEchoPresence } from '@laravel/echo-vue';
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted } from 'vue';
 import PlayerSeat from '@/components/game/PlayerSeat.vue';
-import type { GameUser, PageProps, Sit, Stand } from '@/interfaces';
+import type { Board, PageProps, Sit, Stand } from '@/interfaces';
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue';
 
 const page = usePage<PageProps>();
@@ -13,13 +13,20 @@ const board = computed(() => page.props.board);
 
 useEchoPresence(
     `App.Models.Game.${game.id}`,
-    ['.player.sit', '.player.stand'],
-    (event: Sit | Stand) => {
+    ['.player.sit', '.player.stand', '.game.board'],
+    (event: Sit | Stand | Board) => {
         console.log('e', event);
-        router.reload({
-            only: ['seats'],
-        });
-        console.log('seats reloaded', seats.value);
+
+        if ('message' in event) {
+            router.reload({
+                only: ['seats'],
+            });
+            console.log('seats reloaded', seats.value);
+        }
+
+        if ('board' in event) {
+            console.log(event);
+        }
     },
 );
 

@@ -25,6 +25,9 @@ const satHere = computed(() => {
         : false;
 });
 
+// here can be a channel of some sort that just broadcasts cards to the user
+// in order to keep data hidden
+
 const errors = ref(page.props.errors.position || null);
 
 onMounted(() => {
