@@ -34,6 +34,8 @@ class GameController extends Controller
             }
         });
 
+        // if game in progress, also get cards
+
         return Inertia::render('Game', [
             'game' => $game,
             'seats' => $seatData,
