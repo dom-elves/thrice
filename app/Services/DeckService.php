@@ -6,6 +6,7 @@ use App\Models\Game;
 use App\Enums\Rank;
 use App\Enums\Suit;
 use App\Events\Game\Board;
+use App\Events\GameUser\Hand;
 use App\ValueObjects\Card;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Redis;
@@ -65,7 +66,7 @@ class DeckService
                 'top_card_2' => $cards[5]->shorthand,
             ]);
 
-            // broadcast here?
+            event(new Hand($gameUserId, $cards->pluck('shorthand')->toArray()));
         }
 
         $rows = ['bottom', 'middle', 'top'];

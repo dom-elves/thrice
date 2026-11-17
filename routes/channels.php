@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Broadcast;
+use Illuminate\Support\Facades\Log;
 
 Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
     return (int) $user->id === (int) $id;
@@ -8,5 +9,10 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
 
 Broadcast::channel('App.Models.Game.{id}', function ($game, $id) {
     // return (int) $game->id === (int) $id;
+    return true;
+});
+
+Broadcast::channel('App.Models.GameUser.{id}', function ($gameUser, $id) {
+    // return (int) $gameUser->id === (int) $id;
     return true;
 });

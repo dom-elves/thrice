@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { usePage, router } from '@inertiajs/vue3';
+import { useEcho } from '@laravel/echo-vue';
 import { onMounted, computed, ref } from 'vue';
-import type { PageProps } from '@/interfaces';
+import type { PageProps, Hand } from '@/interfaces';
 
 const page = usePage<PageProps>();
 const game = page.props.game;
@@ -18,7 +19,7 @@ const props = defineProps({
 });
 
 const gameUser = computed(() => page.props.gameUser);
-const seatEmpty = computed(() => props.seat?.length == 0);
+const seatEmpty = computed(() => props.seat?.user_id === false);
 const satHere = computed(() => {
     return gameUser.value
         ? gameUser.value?.user_id == props.seat?.user_id
@@ -29,13 +30,18 @@ const gameUserCards = computed(() =>
     satHere.value ? page.props.gameUserCards : null,
 );
 
-// here can be a channel of some sort that just broadcasts cards to the user
-// in order to keep data hidden
-
 const errors = ref(page.props.errors.position || null);
 
+useEcho(
+    `App.Models.GameUser.${gameUser.value?.id}`,
+    ['.player.hand'],
+    (event: Hand) => {
+        console.log('hand dealt:', event);
+    },
+);
+
 onMounted(() => {
-    console.log('card', gameUserCards.value);
+    console.log(props.seat?.user_id);
 });
 
 function sit() {

@@ -43,6 +43,10 @@ export interface Board {
     board: Array<Row>;
 }
 
+export interface Hand {
+    cards: Array<string>;
+}
+
 export interface Sit {
     message: string;
 }
