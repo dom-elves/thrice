@@ -15,17 +15,16 @@ useEchoPresence(
     `App.Models.Game.${game.id}`,
     ['.player.sit', '.player.stand', '.game.board'],
     (event: Sit | Stand | Board) => {
-        console.log('e', event);
-
         if ('message' in event) {
             router.reload({
                 only: ['seats'],
             });
-            console.log('seats reloaded', seats.value);
         }
 
         if ('board' in event) {
-            console.log(event);
+            router.reload({
+                only: ['gameUser'],
+            });
         }
     },
 );

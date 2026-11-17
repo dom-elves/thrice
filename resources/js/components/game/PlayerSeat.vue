@@ -25,13 +25,17 @@ const satHere = computed(() => {
         : false;
 });
 
+const gameUserCards = computed(() =>
+    satHere.value ? page.props.gameUserCards : null,
+);
+
 // here can be a channel of some sort that just broadcasts cards to the user
 // in order to keep data hidden
 
 const errors = ref(page.props.errors.position || null);
 
 onMounted(() => {
-    console.log(props.position, seatEmpty.value, satHere.value);
+    console.log('card', gameUserCards.value);
 });
 
 function sit() {
@@ -91,6 +95,12 @@ function stand() {
                 stand up
             </button>
             <p v-else>taken by playerid {{ props.seat?.user_id }}</p>
+        </div>
+        <div>
+            <p>You cards are:</p>
+            <p v-for="card in gameUserCards">
+                {{ card }}
+            </p>
         </div>
         <p v-if="errors">{{ errors }}</p>
     </div>

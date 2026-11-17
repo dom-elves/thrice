@@ -41,16 +41,25 @@ class GameController extends Controller
             $top = Redis::hgetall("top:{$code}");
 
             $board = [$bottom, $middle, $top];
-
-            // $cards = Redis::hgetall()
         }
+
+        $gameUser = $game->gameUsers()->where('user_id', auth()->id())->first();
 
         return Inertia::render('Game', [
             'game' => $game,
             'seats' => $seatData,
-            // todo: append player cards tio thud
-            'gameUser' => fn () => $game->gameUsers()->where('user_id', auth()->id())->first(),
             'board' => $board ?? [],
+            'gameUser' => fn () => $gameUser,
+            'gameUserCards' => fn () => $gameUser
+                ? Redis::hmget("game_user:{$gameUser->id}", [
+                    'bottom_card_1',
+                    'bottom_card_2',
+                    'middle_card_1',
+                    'middle_card_2',
+                    'top_card_1',
+                    'top_card_2',
+                ])
+                : null,
         ]);
     }
 
