@@ -68,39 +68,22 @@ class DeckService
             // broadcast here?
         }
 
-        $bottomCards = $deck->splice(0, 5);
-        Redis::hmset("bottom:{$game->code}", [
-            'bottom_flop_1' => $bottomCards[0]->shorthand,
-            'bottom_flop_2' => $bottomCards[1]->shorthand,
-            'bottom_flop_3' => $bottomCards[2]->shorthand,
-            'bottom_turn' => $bottomCards[3]->shorthand,
-            'bottom_river' => $bottomCards[4]->shorthand,
-        ]);
+        $rows = ['bottom', 'middle', 'top'];
 
-        $bottom = $bottomCards->pluck('shorthand')->toArray();
+        foreach ($rows as $row) {
+            $cards = $deck->splice(0, 5);
 
-        $middleCards = $deck->splice(0, 5);
-        Redis::hmset("middle:{$game->code}", [
-            'middle_flop_1' => $middleCards[0]->shorthand,
-            'middle_flop_2' => $middleCards[1]->shorthand,
-            'middle_flop_3' => $middleCards[2]->shorthand,
-            'middle_turn' => $middleCards[3]->shorthand,
-            'middle_river' => $middleCards[4]->shorthand,
-        ]);
+            Redis::hmset("$row:{$game->code}", [
+                "{$row}_flop_1" => $cards[0]->shorthand,
+                "{$row}_flop_2" => $cards[1]->shorthand,
+                "{$row}_flop_3" => $cards[2]->shorthand,
+                "{$row}_turn" => $cards[3]->shorthand,
+                "{$row}_river" => $cards[4]->shorthand,
+            ]);
 
-        $middle = $middleCards->pluck('shorthand')->toArray();
+            $board[] = [$row => $cards->pluck('shorthand')->toArray()];
+        }
 
-        $topCards = $deck->splice(0, 5);
-        Redis::hmset("top:{$game->code}", [
-            'top_flop_1' => $topCards[0]->shorthand,
-            'top_flop_2' => $topCards[1]->shorthand,
-            'top_flop_3' => $topCards[2]->shorthand,
-            'top_turn' => $topCards[3]->shorthand,
-            'top_river' => $topCards[4]->shorthand,
-        ]);
-
-        $top = $topCards->pluck('shorthand')->toArray();
-
-        event(new Board($game, [$bottom, $middle, $top]));
+        event(new Board($game, $board));
     }
 }
