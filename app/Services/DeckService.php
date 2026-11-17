@@ -2,34 +2,31 @@
 
 namespace App\Services;
 
-use App\Models\Game;
 use App\Enums\Rank;
 use App\Enums\Suit;
 use App\Events\Game\Board;
 use App\Events\GameUser\Hand;
+use App\Models\Game;
 use App\ValueObjects\Card;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Redis;
 
 class DeckService
 {
-    public function __construct() {
-
-    }
+    public function __construct() {}
 
     /**
      * Builds the deck using enums for Rank & Case
      * basically a safer version of looping within a loop
      *
      * @return Collection<int, Card>
-     *
      */
     public function build(): Collection
     {
         $deck = collect(Rank::cases())
             ->crossJoin(Suit::cases())
             ->map(fn ($pair) => new Card(...$pair));
-        
+
         return $deck;
     }
 
@@ -49,7 +46,7 @@ class DeckService
         $seats = $seats->filter(fn ($gameUserId) => filled($gameUserId))
             ->map(fn ($gameUserId) => [
                 'gameUserId' => $gameUserId,
-                'cards'  => $deck->splice(0, 6)->values(),
+                'cards' => $deck->splice(0, 6)->values(),
             ]);
 
         // adding cards to each game user hash

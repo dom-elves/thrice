@@ -4,8 +4,6 @@ namespace App\Listeners\Game;
 
 use App\Events\Game\Deal;
 use App\Services\DeckService;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Support\Facades\Redis;
 
 class DealListener
 {
@@ -16,7 +14,6 @@ class DealListener
 
     /**
      * Handle the event.
-     * 
      */
     public function handle(Deal $event): void
     {

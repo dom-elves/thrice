@@ -18,7 +18,6 @@ use Illuminate\Support\Facades\Redis;
  * - starting
  * - sit (joining)
  * - stand (leaving)
- *
  */
 class GameService
 {
@@ -60,8 +59,6 @@ class GameService
      * Start the game.
      * - re-fetch the game with lockForUpdate, to prevent race conditions
      * - wrap start in mysql & redis in a transaction
-     *
-     * @param Game $game
      */
     public function start(Game $game): void
     {

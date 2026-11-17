@@ -13,7 +13,7 @@ readonly class Card
         public Rank $rank,
         public Suit $suit,
     ) {
-        $this->shorthand = $rank->shorthand() . $suit->shorthand();
+        $this->shorthand = $rank->shorthand().$suit->shorthand();
     }
 
     public function toArray(): array

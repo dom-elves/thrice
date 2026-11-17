@@ -20,7 +20,7 @@ enum Rank: int
 
     // single letter shorthands for suits
     // used in generating card code, like '2h' for two of hearts
-    public function shorthand() : string
+    public function shorthand(): string
     {
         return match ($this) {
             self::Ace => 'A',
