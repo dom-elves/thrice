@@ -74,11 +74,11 @@ class DeckService
             $cards = $deck->splice(0, 5);
 
             Redis::hmset("$row:{$game->code}", [
-                "flop_1" => $cards[0]->shorthand,
-                "flop_2" => $cards[1]->shorthand,
-                "flop_3" => $cards[2]->shorthand,
-                "turn" => $cards[3]->shorthand,
-                "river" => $cards[4]->shorthand,
+                'flop_1' => $cards[0]->shorthand,
+                'flop_2' => $cards[1]->shorthand,
+                'flop_3' => $cards[2]->shorthand,
+                'turn' => $cards[3]->shorthand,
+                'river' => $cards[4]->shorthand,
             ]);
 
             $board[] = [$row => $cards->pluck('shorthand')->toArray()];

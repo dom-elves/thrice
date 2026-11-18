@@ -1,6 +1,5 @@
 <script setup lang="ts">
-
-import Card from '@/components/game/Card.vue'
+import Card from '@/components/game/Card.vue';
 
 const props = defineProps({
     name: {
@@ -17,9 +16,7 @@ const props = defineProps({
     <div>
         <p>this is row {{ props.name }}</p>
         <div class="flex flex-row">
-            <Card v-for="card in cards" 
-                :name="card"
-            />
+            <Card v-for="card in cards" :name="card" />
         </div>
     </div>
 </template>

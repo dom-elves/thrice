@@ -48,7 +48,6 @@ class GameController extends Controller
 
         $gameUser = $game->gameUsers()->where('user_id', auth()->id())->first();
 
-        
         return Inertia::render('Game', [
             'game' => $game,
             'seats' => $seatData,

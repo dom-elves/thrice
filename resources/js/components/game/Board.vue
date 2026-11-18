@@ -14,11 +14,8 @@ onMounted(() => {
 <template>
     <div>
         <p>This is the board</p>
-        <div v-for="cards, row in board">
-            <Row 
-                :name="row"
-                :cards="cards" 
-            />
+        <div v-for="(cards, row) in board">
+            <Row :name="row" :cards="cards" />
         </div>
     </div>
 </template>

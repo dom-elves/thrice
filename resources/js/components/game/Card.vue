@@ -31,15 +31,14 @@ onMounted(() => {
 </script>
 <template>
     <div class="card" :class="suit">
-        <p class="text-2xl bold">{{ value }}{{ code }}</p>
+        <p class="bold text-2xl">{{ value }}{{ code }}</p>
     </div>
 </template>
 <style>
-
 .card {
     background-color: white;
-    height:140px;
-    width:100px;
+    height: 140px;
+    width: 100px;
     border-radius: var(--radius-lg);
     border: 4px solid;
     margin: 0px 5px;
@@ -47,13 +46,15 @@ onMounted(() => {
     justify-content: center;
     align-items: center;
 }
- .h, .d {
+.h,
+.d {
     color: red;
-    border-color:red;   
- }
+    border-color: red;
+}
 
- .c, .s {
+.c,
+.s {
     color: black;
     border-color: black;
- }
+}
 </style>
