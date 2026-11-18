@@ -28,7 +28,7 @@ onMounted(() => {});
             <p v-if="errors.password_confirmation">
                 {{ errors.password_confirmation }}
             </p>
-            <input type="hidden" name="token" :value="token" />
+            <input type="hidden" name="token" :value="props.token" />
             <button type="submit">Reset</button>
         </Form>
     </GuestLayout>

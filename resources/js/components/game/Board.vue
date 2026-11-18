@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { usePage } from '@inertiajs/vue3';
-import { computed, onMounted } from 'vue';
+import { onMounted } from 'vue';
 import Row from '@/components/game/Row.vue';
 import type { PageProps } from '@/interfaces.ts';
 
@@ -15,7 +15,7 @@ onMounted(() => {
     <div>
         <p>This is the board</p>
         <div v-for="(cards, row) in board">
-            <Row :name="row" :cards="cards" />
+            <Row :name="row" :cards="cards" :key="row"/>
         </div>
     </div>
 </template>

@@ -35,7 +35,9 @@ const errors = ref(page.props.errors.position || null);
 useEcho(
     `App.Models.GameUser.${gameUser.value?.id}`,
     ['.player.hand'],
-    (event: Hand) => {},
+    (event: Hand) => {
+        console.log(event);
+    },
 );
 
 onMounted(() => {});
