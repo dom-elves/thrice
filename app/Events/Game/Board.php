@@ -16,6 +16,9 @@ class Board implements ShouldBroadcast
 
     /**
      * Create a new event instance.
+     * 
+     * @param Game $game
+     * @param  array<int, string|null>  $board
      */
     public function __construct(public Game $game, public array $board)
     {
