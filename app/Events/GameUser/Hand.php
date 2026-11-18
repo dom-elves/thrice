@@ -15,8 +15,8 @@ class Hand implements ShouldBroadcast
 
     /**
      * Create a new event instance.
-     * 
-     * @param array<int, string|null>  $hand
+     *
+     * @param  array<int, string|null>  $hand
      */
     public function __construct(public string $gameUserId, public array $hand)
     {
