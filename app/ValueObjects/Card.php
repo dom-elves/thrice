@@ -17,7 +17,7 @@ readonly class Card
     }
 
     /**
-     * @return array {rank: string|int, suit: string|int, shorthand: string}
+     * @return array<string, string|int>
      */
     public function toArray(): array
     {
