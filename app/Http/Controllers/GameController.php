@@ -43,12 +43,12 @@ class GameController extends Controller
             $middle = Redis::hgetall("middle:{$code}");
             $top = Redis::hgetall("top:{$code}");
 
-            $board = [$bottom, $middle, $top];
+            $board = ['bottom' => $bottom, 'middle' => $middle, 'top' => $top];
         }
 
         $gameUser = $game->gameUsers()->where('user_id', auth()->id())->first();
 
-        // dd($seatData);
+        
         return Inertia::render('Game', [
             'game' => $game,
             'seats' => $seatData,

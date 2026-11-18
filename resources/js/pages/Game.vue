@@ -35,21 +35,21 @@ function leaveGame() {
 }
 
 onMounted(() => {
-    console.log('seats', seats.value);
+    
 });
 </script>
 <template>
     <AuthenticatedLayout>
         <div class="flex flex-col">
             <h1 class="text-2xl">{{ game.name }}</h1>
-            <div class="grid grid-cols-4 text-center">
+            <!-- <div class="grid grid-cols-4 text-center">
                 <div class="bg-blue-100 p-2">col1</div>
                 <div class="col-span-2 bg-blue-100 p-2">col2</div>
                 <div class="bg-blue-100 p-2">
-                    
                     <Board />
                 </div>
-            </div>
+            </div> -->
+            <Board />
             <div>
                 <PlayerSeat
                     v-for="(seat, position) in seats"

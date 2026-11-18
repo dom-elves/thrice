@@ -9,10 +9,7 @@ const props = defineProps<{
     token: string;
 }>();
 
-onMounted(() => {
-    // this is to stop linting being angry
-    console.log(props);
-});
+onMounted(() => {});
 </script>
 <template>
     <GuestLayout>

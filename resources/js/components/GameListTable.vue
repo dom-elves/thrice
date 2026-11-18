@@ -12,10 +12,10 @@ function load() {
     router.reload({
         only: ['games'],
         onSuccess: (data) => {
-            console.log(data);
+            
         },
         onError: (errors) => {
-            console.error(errors);
+            
         },
     });
 }

@@ -36,12 +36,12 @@ useEcho(
     `App.Models.GameUser.${gameUser.value?.id}`,
     ['.player.hand'],
     (event: Hand) => {
-        console.log('hand dealt:', event);
+        
     },
 );
 
 onMounted(() => {
-    console.log(props.seat?.user_id);
+    
 });
 
 function sit() {
@@ -55,7 +55,7 @@ function sit() {
             preserveScroll: true,
             preserveState: true,
             onSuccess: () => {
-                console.log('successfully sat down at seat', props.position);
+                
             },
         },
     );
