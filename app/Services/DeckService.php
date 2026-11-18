@@ -26,6 +26,7 @@ class DeckService
         $deck = collect(Rank::cases())
             ->crossJoin(collect(Suit::cases()))
             /** @param array{0: Rank, 1: Suit} $pair */
+            // @phpstan-ignore argument.type
             ->map(fn (array $pair) => new Card($pair[0], $pair[1]));
 
         return $deck;
@@ -82,7 +83,7 @@ class DeckService
 
             $board[] = [$row => $cards->pluck('shorthand')->toArray()];
         }
-
+        // @phpstan-ignore argument.type
         event(new Board($game, $board));
     }
 }
