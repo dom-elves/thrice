@@ -13,4 +13,13 @@ parameters:
         -
             message: '#Static method .*Redis::pipeline\(\) invoked with 1 parameter, 0 required#'
             identifier: arguments.count
+            message: 'Parameter #2 $suit of class App\ValueObjects\Card constructor expects
+            App\Enums\Suit,
+            App\Enums\Rank::Ace|App\Enums\Rank::Eight|App\Enums\Rank::Five|App\En
+            ums\Rank::Four|App\Enums\Rank::Jack|App\Enums\Rank::King|App\Enums\Ra
+            nk::Nine|App\Enums\Rank::Queen|App\Enums\Rank::Seven|App\Enums\Rank::
+            Six|App\Enums\Rank::Ten|App\Enums\Rank::Three|App\Enums\Rank::Two|App
+            \Enums\Suit::Clubs|App\Enums\Suit::Diamonds|App\Enums\Suit::Hearts|Ap
+            p\Enums\Suit::Spades given.'
+            identifier: arguments.type
     level: 7
