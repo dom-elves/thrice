@@ -25,6 +25,7 @@ class DeckService
     {
         $deck = collect(Rank::cases())
             ->crossJoin(Suit::cases())
+            /** @param array{0: Rank, 1: Suit} $pair */
             ->map(fn (array $pair) => new Card($pair[0], $pair[1]));
 
         return $deck;
