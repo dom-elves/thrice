@@ -39,7 +39,7 @@ export interface PageProps {
 }
 
 // events
-export interface Board {
+export interface DealBoard {
     board: Array<Row>;
 }
 

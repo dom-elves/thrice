@@ -2,19 +2,20 @@
 import { usePage, router } from '@inertiajs/vue3';
 import { useEchoPresence } from '@laravel/echo-vue';
 import { computed, onMounted } from 'vue';
+import Board from '@/components/game/Board.vue';
 import PlayerSeat from '@/components/game/PlayerSeat.vue';
-import type { Board, PageProps, Sit, Stand } from '@/interfaces';
+import type { DealBoard, PageProps, Sit, Stand } from '@/interfaces';
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue';
 
 const page = usePage<PageProps>();
 const game = page.props.game;
 const seats = computed(() => page.props.seats);
-const board = computed(() => page.props.board);
+// const board = computed(() => page.props.board);
 
 useEchoPresence(
     `App.Models.Game.${game.id}`,
     ['.player.sit', '.player.stand', '.game.board'],
-    (event: Sit | Stand | Board) => {
+    (event: Sit | Stand | DealBoard) => {
         if ('message' in event) {
             router.reload({
                 only: ['seats'],
@@ -45,7 +46,8 @@ onMounted(() => {
                 <div class="bg-blue-100 p-2">col1</div>
                 <div class="col-span-2 bg-blue-100 p-2">col2</div>
                 <div class="bg-blue-100 p-2">
-                    {{ board }}
+                    
+                    <Board />
                 </div>
             </div>
             <div>
