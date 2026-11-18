@@ -16,6 +16,9 @@ readonly class Card
         $this->shorthand = $rank->shorthand().$suit->shorthand();
     }
 
+    /**
+     * @return array {rank: string|int, suit: string|int, shorthand: string}
+     */
     public function toArray(): array
     {
         return [
