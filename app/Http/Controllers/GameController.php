@@ -18,6 +18,11 @@ class GameController extends Controller
         private GameService $gameService
     ) {}
 
+    /**
+     * Take the user to the table of the game
+     * - seats are hardcoded in redis like [0 => ''] where empty string is user_id
+     * - maps the gameUser data in redis to the relative seats so the above kv becomes [0 => [gameUserData]]
+     */
     public function show(Game $game): InertiaResponse
     {
         $code = $game->code;
@@ -25,14 +30,40 @@ class GameController extends Controller
 
         $seatData = Redis::pipeline(function ($pipe) use ($seats) {
             foreach ($seats as $seat => $gameUserId) {
-                $pipe->hgetall("game_user:{$gameUserId}");
+                $pipe->hmget("game_user:{$gameUserId}", [
+                    'user_id',
+                ]);
+                // $pipe->hgetall("game_user:{$gameUserId}");
             }
         });
 
+        // if game in progress, also get cards
+        if ($game->started) {
+            $bottom = Redis::hgetall("bottom:{$code}");
+            $middle = Redis::hgetall("middle:{$code}");
+            $top = Redis::hgetall("top:{$code}");
+
+            $board = [$bottom, $middle, $top];
+        }
+
+        $gameUser = $game->gameUsers()->where('user_id', auth()->id())->first();
+
+        // dd($seatData);
         return Inertia::render('Game', [
             'game' => $game,
             'seats' => $seatData,
-            'gameUser' => fn () => $game->gameUsers()->where('user_id', auth()->id())->first(),
+            'board' => $board ?? [],
+            'gameUser' => fn () => $gameUser,
+            'gameUserCards' => fn () => $gameUser
+                ? Redis::hmget("game_user:{$gameUser->id}", [
+                    'bottom_card_1',
+                    'bottom_card_2',
+                    'middle_card_1',
+                    'middle_card_2',
+                    'top_card_1',
+                    'top_card_2',
+                ])
+                : null,
         ]);
     }
 
@@ -62,14 +93,12 @@ class GameController extends Controller
 
         $game = $this->gameService->create($validated);
 
-        $request->session()->put('game_code', $code);
-
         return redirect()->route('game.show', $code);
     }
 
     /**
      * Sit at the table.
-     * - query user from id, only id is passed as param to avoid editing any other attrbiutes
+     * - 'position' is a param, hardcoded 0-5'
      * - check if user exists already, create if not
      * - sit
      */
@@ -96,8 +125,6 @@ class GameController extends Controller
         }
 
         $this->gameService->sit($gameUser, $validated['position']);
-
-        // todo: check for 2+ players being ready
 
         return back();
     }

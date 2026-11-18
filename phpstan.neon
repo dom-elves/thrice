@@ -13,4 +13,7 @@ parameters:
         -
             message: '#Static method .*Redis::pipeline\(\) invoked with 1 parameter, 0 required#'
             identifier: arguments.count
+        -  
+            identifier: argument.type
+            path: app/Services/DeckService.php
     level: 7

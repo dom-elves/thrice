@@ -3,19 +3,21 @@
 namespace App\Services;
 
 use App\Actions\Game\CreateGameAction;
+use App\Events\Game\Deal;
 use App\Events\GameUser\Sit;
 use App\Events\GameUser\Stand;
 use App\Models\Game;
 use App\Models\GameUser;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
 
 /**
  * Service layer for handing game logic, basically anything that interacts with Redis.
- * - Game creation
- * - Joining
- * - Leaving
- * - gameplay logic, tbc
+ * - creating
+ * - starting
+ * - sit (joining)
+ * - stand (leaving)
  */
 class GameService
 {
@@ -54,6 +56,26 @@ class GameService
     }
 
     /**
+     * Start the game.
+     * - re-fetch the game with lockForUpdate, to prevent race conditions
+     * - wrap start in mysql & redis in a transaction
+     */
+    public function start(Game $game): void
+    {
+        $game = Game::query()->lockForUpdate()->find($game->id);
+
+        DB::transaction(function () use ($game) {
+            $game->update(['started' => true]);
+
+            Redis::hmset("game:{$game->code}", [
+                'started' => true,
+            ]);
+        });
+
+        Deal::dispatch($game);
+    }
+
+    /**
      * Sit at the table of a game.
      * - set game user in redis
      * - update status to in game
@@ -74,7 +96,6 @@ class GameService
             'join_time' => Carbon::now()->toDateTimeString(),
             'leave_time' => '',
             'in_game' => 1,
-            'user_session_id' => session()->getId(),
         ]);
 
         Redis::hmset("game_seats:{$gameUser->game->code}", [
@@ -112,7 +133,6 @@ class GameService
             'join_time',
             'leave_time',
             'in_game',
-            'user_session_id',
         ]);
 
         Redis::hmset("game_seats:{$gameUser->game->code}", [

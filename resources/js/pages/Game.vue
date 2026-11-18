@@ -1,25 +1,31 @@
 <script setup lang="ts">
 import { usePage, router } from '@inertiajs/vue3';
 import { useEchoPresence } from '@laravel/echo-vue';
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted } from 'vue';
 import PlayerSeat from '@/components/game/PlayerSeat.vue';
-import type { GameUser, PageProps, Sit, Stand } from '@/interfaces';
+import type { Board, PageProps, Sit, Stand } from '@/interfaces';
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue';
 
 const page = usePage<PageProps>();
 const game = page.props.game;
 const seats = computed(() => page.props.seats);
-const activePlayers = ref<GameUser[]>([]);
+const board = computed(() => page.props.board);
 
 useEchoPresence(
     `App.Models.Game.${game.id}`,
-    ['.player.sit', '.player.stand'],
-    (event: Sit | Stand) => {
-        console.log('e', event);
-        router.reload({
-            only: ['seats'],
-        });
-        console.log('seats reloaded', seats.value);
+    ['.player.sit', '.player.stand', '.game.board'],
+    (event: Sit | Stand | Board) => {
+        if ('message' in event) {
+            router.reload({
+                only: ['seats'],
+            });
+        }
+
+        if ('board' in event) {
+            router.reload({
+                only: ['gameUser'],
+            });
+        }
     },
 );
 
@@ -39,13 +45,7 @@ onMounted(() => {
                 <div class="bg-blue-100 p-2">col1</div>
                 <div class="col-span-2 bg-blue-100 p-2">col2</div>
                 <div class="bg-blue-100 p-2">
-                    <p>active players</p>
-                    <p
-                        v-for="activePlayer in activePlayers"
-                        :key="activePlayer.id"
-                    >
-                        {{ activePlayer }}
-                    </p>
+                    {{ board }}
                 </div>
             </div>
             <div>

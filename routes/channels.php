@@ -10,3 +10,8 @@ Broadcast::channel('App.Models.Game.{id}', function ($game, $id) {
     // return (int) $game->id === (int) $id;
     return true;
 });
+
+Broadcast::channel('App.Models.GameUser.{id}', function ($gameUser, $id) {
+    // return (int) $gameUser->id === (int) $id;
+    return true;
+});
