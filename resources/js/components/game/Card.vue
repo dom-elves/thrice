@@ -18,11 +18,11 @@ const suit = computed(() => {
 
 const code = computed(() => {
     return {
-        h: '\u2665', // ♥ Hearts
-        d: '\u2666', // ♦ Diamonds
-        s: '\u2660', // ♠ Spades
-        c: '\u2663', // ♣ Clubs
-    }[suit.value];
+        h: '\u2665',
+        d: '\u2666',
+        s: '\u2660',
+        c: '\u2663',
+    }[suit.value ?? ''];
 });
 
 onMounted(() => {
