@@ -15,5 +15,5 @@ parameters:
             identifier: arguments.count
         -  
             identifier: argument.type
-            path: app/Services/DeckBuilder.php
+            path: app/Services/DeckService.php
     level: 7
