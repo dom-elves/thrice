@@ -11,8 +11,8 @@ const games = computed<Game[]>(
 function load() {
     router.reload({
         only: ['games'],
-        onSuccess: (data) => {},
-        onError: (errors) => {},
+        onSuccess: () => {},
+        onError: () => {},
     });
 }
 
