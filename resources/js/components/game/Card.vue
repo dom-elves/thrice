@@ -16,18 +16,28 @@ const suit = computed(() => {
     return props.name.at(-1);
 });
 
+const code = computed(() => {
+    return {
+        h: '\u2665', // ♥ Hearts
+        d: '\u2666', // ♦ Diamonds
+        s: '\u2660', // ♠ Spades
+        c: '\u2663', // ♣ Clubs
+    }[suit.value];
+});
+
 onMounted(() => {
     console.log('card');
 });
 </script>
 <template>
-    <div :class="suit">
-        {{ value }}{{ suit }}
+    <div class="card" :class="suit">
+        <p class="text-2xl bold">{{ value }}{{ code }}</p>
     </div>
 </template>
 <style>
 
 .card {
+    background-color: white;
     height:140px;
     width:100px;
     border-radius: var(--radius-lg);
