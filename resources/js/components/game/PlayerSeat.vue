@@ -101,10 +101,8 @@ function stand() {
                 stand up
             </button>
             <p v-else>taken by playerid {{ props.seat?.user_id }}</p>
-        </div>
-        <div>
             <p>You cards are:</p>
-            <p v-for="card in gameUserCards">
+            <p v-for="(card, index) in gameUserCards" :key="index">
                 {{ card }}
             </p>
         </div>
