@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 const props = defineProps({
     hole: {
         type: String,
@@ -11,7 +10,6 @@ const props = defineProps({
         default: null,
     },
 });
-
 </script>
 <template>
     <div>

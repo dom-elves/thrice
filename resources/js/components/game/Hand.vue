@@ -12,21 +12,21 @@ const game = page.props.game;
 const gameUserCards = computed(() => page.props.gameUserCards);
 
 const dealtCards = ref({
-    'bottom_card_1': gameUserCards.value?.[0] ?? '',
-    'bottom_card_2': gameUserCards.value?.[1] ?? '',
-    'middle_card_1': gameUserCards.value?.[2] ?? '',
-    'middle_card_2': gameUserCards.value?.[3] ?? '',
-    'top_card_1': gameUserCards.value?.[4] ?? '',
-    'top_card_2': gameUserCards.value?.[5] ?? '',
+    bottom_card_1: gameUserCards.value?.[0] ?? '',
+    bottom_card_2: gameUserCards.value?.[1] ?? '',
+    middle_card_1: gameUserCards.value?.[2] ?? '',
+    middle_card_2: gameUserCards.value?.[3] ?? '',
+    top_card_1: gameUserCards.value?.[4] ?? '',
+    top_card_2: gameUserCards.value?.[5] ?? '',
 });
 
 const selectedHand = ref({
-    'bottom_card_1': '',
-    'bottom_card_2': '',
-    'middle_card_1': '',
-    'middle_card_2': '',
-    'top_card_1': '',
-    'top_card_2': '',
+    bottom_card_1: '',
+    bottom_card_2: '',
+    middle_card_1: '',
+    middle_card_2: '',
+    top_card_1: '',
+    top_card_2: '',
 });
 
 const selectedCard = ref('');
@@ -43,15 +43,15 @@ function lockIn() {
 
 onMounted(() => {
     console.log('guc', gameUserCards.value);
-})
-
+});
 </script>
 <template>
     <div>
         <p>these are my cards</p>
         <div class="flex flex-row">
             <!-- todo: either emit event down or use a store -->
-            <Hole v-for="slot, hole in selectedHand"
+            <Hole
+                v-for="(slot, hole) in selectedHand"
                 @click="selectedHand[hole] = selectedCard"
                 :key="hole"
                 :hole="hole"
@@ -60,13 +60,11 @@ onMounted(() => {
         </div>
         <div class="flex flex-row justify-center">
             <!-- separate parent to cover interactivity only applicable in hand cards -->
-            <HandCard v-for="(card, index) in dealtCards"
+            <HandCard
+                v-for="(card, index) in dealtCards"
                 @click="selectCard(card, index)"
             >
-                <Card   
-                    :name="card"
-                    :key="index"
-                />
+                <Card :name="card" :key="index" />
             </HandCard>
         </div>
         <button @click="lockIn">lock in</button>

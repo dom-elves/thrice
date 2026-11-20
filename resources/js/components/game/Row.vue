@@ -17,7 +17,7 @@ const props = defineProps({
         <p>this is row {{ props.name }}</p>
         <div class="flex flex-row">
             <Card
-                v-for="(card, index) in cards" 
+                v-for="(card, index) in cards"
                 :name="card"
                 :invisible="['turn', 'river'].includes(index)"
                 :key="index"

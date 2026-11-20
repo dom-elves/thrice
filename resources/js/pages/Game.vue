@@ -12,7 +12,9 @@ const page = usePage<PageProps>();
 const game = page.props.game;
 const gameUser = computed(() => page.props.gameUser);
 const seats = computed(() => page.props.seats);
-const seated = computed(() => seats.value.some((user) => user.user_id == gameUser.value?.user_id))
+const seated = computed(() =>
+    seats.value.some((user) => user.user_id == gameUser.value?.user_id),
+);
 
 useEchoPresence(
     `App.Models.Game.${game.id}`,
@@ -69,13 +71,9 @@ onMounted(() => {
                 </div>
                 <div class="flex flex-col">
                     <Board />
-                    <Hand
-                        v-if="seated"    
-                    />
+                    <Hand v-if="seated" />
                 </div>
-                <div>
-                    this is where messages/status etc will go
-                </div>
+                <div>this is where messages/status etc will go</div>
             </div>
         </div>
     </AuthenticatedLayout>

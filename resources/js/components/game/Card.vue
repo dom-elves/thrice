@@ -35,7 +35,7 @@ const code = computed(() => {
 // although, maybe that needs to be from the backend
 const invisible = computed(() => {
     return props.invisible;
-})
+});
 
 onMounted(() => {
     console.log('card', props.invisible);
