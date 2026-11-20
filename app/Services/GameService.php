@@ -91,6 +91,7 @@ class GameService
         Redis::hmset($key, [
             'game_id' => $gameUser->game->id,
             'user_id' => $gameUser->user->id,
+            'name' => $gameUser->name,
             'start_balance' => $gameUser->start_balance,
             'end_balance' => $gameUser->end_balance,
             'join_time' => Carbon::now()->toDateTimeString(),

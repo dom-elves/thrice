@@ -32,6 +32,7 @@ class GameController extends Controller
             foreach ($seats as $seat => $gameUserId) {
                 $pipe->hmget("game_user:{$gameUserId}", [
                     'user_id',
+                    'name',
                 ]);
             }
         });

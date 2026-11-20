@@ -28,6 +28,7 @@ export interface Seat {
     user_id: number;
     in_game: boolean;
     start_balance: number;
+    name: string;
 }
 
 export interface PageProps {

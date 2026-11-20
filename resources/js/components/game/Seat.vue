@@ -70,21 +70,21 @@ function stand() {
 <template>
     <div>
         <p>seat {{ props.position + 1 }}</p>
-        <div v-if="seatEmpty">
-            <button
-                @click="sit"
-                :disabled="gameUser?.in_game"
-                class="m-2 rounded border border-1 p-2"
-                :class="
-                    gameUser?.in_game
-                        ? 'cursor-not-allowed bg-gray-400'
-                        : 'bg-green-300'
-                "
-            >
-                sit down
-            </button>
-        </div>
-        <div v-if="!seatEmpty">
+        <button
+            v-if="seatEmpty"
+            @click="sit"
+            :disabled="gameUser?.in_game"
+            class="m-2 rounded border border-1 p-2"
+            :class="
+                gameUser?.in_game
+                    ? 'cursor-not-allowed bg-gray-400'
+                    : 'bg-green-300'
+            "
+        >
+            sit down
+        </button>
+        <div v-else>
+            <p class="text-xl">{{ props.seat?.name }}</p>
             <button
                 v-if="satHere"
                 @click="stand"
@@ -92,7 +92,6 @@ function stand() {
             >
                 stand up
             </button>
-            <p v-else>taken by playerid {{ props.seat?.user_id }}</p>
         </div>
         <p v-if="errors">{{ errors }}</p>
     </div>

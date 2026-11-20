@@ -37,7 +37,7 @@ function leaveGame() {
 }
 
 onMounted(() => {
-    console.log('seasted', seated.value);
+    console.log('seats', seats.value);
 });
 </script>
 <template>
