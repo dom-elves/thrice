@@ -10,8 +10,9 @@ import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue';
 
 const page = usePage<PageProps>();
 const game = page.props.game;
+const gameUser = computed(() => page.props.gameUser);
 const seats = computed(() => page.props.seats);
-// const board = computed(() => page.props.board);
+const seated = computed(() => seats.value.some((user) => user.user_id == gameUser.value?.user_id))
 
 useEchoPresence(
     `App.Models.Game.${game.id}`,
@@ -36,7 +37,7 @@ function leaveGame() {
 }
 
 onMounted(() => {
-    console.log(page.props);
+    console.log('seasted', seated.value);
 });
 </script>
 <template>
@@ -59,7 +60,7 @@ onMounted(() => {
                         :position="position"
                     />
                     <button
-                        v-if="page.props.gameUser && !page.props.gameUser.in_game"
+                        v-if="!seated"
                         @click="leaveGame"
                         class="m-4 rounded border border-1 bg-red-300 p-4"
                     >
@@ -69,7 +70,7 @@ onMounted(() => {
                 <div class="flex flex-col">
                     <Board />
                     <Hand
-                        v-if="page.props.gameUser && page.props.gameUser.in_game"    
+                        v-if="seated"    
                     />
                 </div>
             </div>
