@@ -79,7 +79,7 @@ function stand() {
             <button
                 @click="sit"
                 :disabled="gameUser?.in_game"
-                class="m-4 rounded border border-1 p-4"
+                class="m-2 rounded border border-1 p-2"
                 :class="
                     gameUser?.in_game
                         ? 'cursor-not-allowed bg-gray-400'
@@ -93,20 +93,18 @@ function stand() {
             <button
                 v-if="satHere"
                 @click="stand"
-                class="m-4 rounded border border-1 bg-blue-300 p-4"
+                class="m-2 rounded border border-1 bg-blue-300 p-2"
             >
                 stand up
             </button>
             <p v-else>taken by playerid {{ props.seat?.user_id }}</p>
-            <p>You cards are:</p>
-            <div class="flex flex-row justify-center">
-                <!-- maybe do a slot thing when it comes to selecting -->
+            <!-- <div class="flex flex-row justify-center">
                 <Card
                     v-for="(card, index) in gameUserCards"
                     :name="card"
                     :key="index"
                 />
-            </div>
+            </div> -->
         </div>
         <p v-if="errors">{{ errors }}</p>
     </div>
