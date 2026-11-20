@@ -34,7 +34,9 @@ function leaveGame() {
     router.post(`/game/${game.code}/leave`);
 }
 
-onMounted(() => {});
+onMounted(() => {
+    console.log(page.props);
+});
 </script>
 <template>
     <AuthenticatedLayout>

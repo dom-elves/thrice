@@ -2,6 +2,7 @@
 import { usePage, router } from '@inertiajs/vue3';
 import { useEcho } from '@laravel/echo-vue';
 import { onMounted, computed, ref } from 'vue';
+import Card from '@/components/game/Card.vue';
 import type { PageProps, Hand } from '@/interfaces';
 
 const page = usePage<PageProps>();
@@ -98,9 +99,14 @@ function stand() {
             </button>
             <p v-else>taken by playerid {{ props.seat?.user_id }}</p>
             <p>You cards are:</p>
-            <p v-for="(card, index) in gameUserCards" :key="index">
-                {{ card }}
-            </p>
+            <div class="flex flex-row justify-center">
+                <!-- maube do a slot thinbg -->
+                <Card
+                    v-for="(card, index) in gameUserCards"
+                    :name="card"
+                    :key="index"
+                />
+            </div>
         </div>
         <p v-if="errors">{{ errors }}</p>
     </div>

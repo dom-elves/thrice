@@ -33,7 +33,6 @@ class GameController extends Controller
                 $pipe->hmget("game_user:{$gameUserId}", [
                     'user_id',
                 ]);
-                // $pipe->hgetall("game_user:{$gameUserId}");
             }
         });
 
@@ -43,7 +42,11 @@ class GameController extends Controller
             $middle = Redis::hgetall("middle:{$code}");
             $top = Redis::hgetall("top:{$code}");
 
-            $board = ['bottom' => $bottom, 'middle' => $middle, 'top' => $top];
+            $board = [
+                'top' => $top,
+                'middle' => $middle,
+                'bottom' => $bottom,
+            ];
         }
 
         $gameUser = $game->gameUsers()->where('user_id', auth()->id())->first();
