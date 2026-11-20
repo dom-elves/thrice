@@ -27,10 +27,6 @@ const satHere = computed(() => {
         : false;
 });
 
-const gameUserCards = computed(() =>
-    satHere.value ? page.props.gameUserCards : null,
-);
-
 const errors = ref(page.props.errors.position || null);
 
 useEcho(
@@ -98,13 +94,6 @@ function stand() {
                 stand up
             </button>
             <p v-else>taken by playerid {{ props.seat?.user_id }}</p>
-            <!-- <div class="flex flex-row justify-center">
-                <Card
-                    v-for="(card, index) in gameUserCards"
-                    :name="card"
-                    :key="index"
-                />
-            </div> -->
         </div>
         <p v-if="errors">{{ errors }}</p>
     </div>
