@@ -36,6 +36,7 @@ export interface PageProps {
     game: Game;
     user: User;
     gameUser?: GameUser;
+    gameUserCards?: Array<string>;
     seats: Array<Seat>;
 }
 

@@ -11,6 +11,15 @@ const page = usePage<PageProps>();
 const game = page.props.game;
 const gameUserCards = computed(() => page.props.gameUserCards);
 
+const dealtCards = ref({
+    'bottom_card_1': gameUserCards.value?.[0] ?? '',
+    'bottom_card_2': gameUserCards.value?.[1] ?? '',
+    'middle_card_1': gameUserCards.value?.[2] ?? '',
+    'middle_card_2': gameUserCards.value?.[3] ?? '',
+    'top_card_1': gameUserCards.value?.[4] ?? '',
+    'top_card_2': gameUserCards.value?.[5] ?? '',
+});
+
 const selectedHand = ref({
     'bottom_card_1': '',
     'bottom_card_2': '',
@@ -22,13 +31,19 @@ const selectedHand = ref({
 
 const selectedCard = ref('');
 
-function selectCard(card: string) {
+function selectCard(card: string, index: string) {
+    console.log('pick', card, index);
     selectedCard.value = card;
+    dealtCards[index] = '';
 }
 
 function lockIn() {
     console.log('hand', selectedHand.value);
 }
+
+onMounted(() => {
+    console.log('guc', gameUserCards.value);
+})
 
 </script>
 <template>
@@ -45,8 +60,8 @@ function lockIn() {
         </div>
         <div class="flex flex-row justify-center">
             <!-- separate parent to cover interactivity only applicable in hand cards -->
-            <HandCard v-for="(card, index) in gameUserCards"
-                @click="selectCard(card)"
+            <HandCard v-for="(card, index) in dealtCards"
+                @click="selectCard(card, index)"
             >
                 <Card   
                     :name="card"
