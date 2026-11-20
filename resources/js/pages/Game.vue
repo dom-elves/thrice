@@ -3,7 +3,7 @@ import { usePage, router } from '@inertiajs/vue3';
 import { useEchoPresence } from '@laravel/echo-vue';
 import { computed, onMounted } from 'vue';
 import Board from '@/components/game/Board.vue';
-import PlayerSeat from '@/components/game/PlayerSeat.vue';
+import Seat from '@/components/game/Seat.vue';
 import type { DealBoard, PageProps, Sit, Stand } from '@/interfaces';
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue';
 
@@ -51,7 +51,7 @@ onMounted(() => {
             </div> -->
             <Board />
             <div>
-                <PlayerSeat
+                <Seat
                     v-for="(seat, position) in seats"
                     :key="position"
                     :seat="seat"

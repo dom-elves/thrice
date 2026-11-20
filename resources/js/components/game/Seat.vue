@@ -100,7 +100,7 @@ function stand() {
             <p v-else>taken by playerid {{ props.seat?.user_id }}</p>
             <p>You cards are:</p>
             <div class="flex flex-row justify-center">
-                <!-- maube do a slot thinbg -->
+                <!-- maybe do a slot thing when it comes to selecting -->
                 <Card
                     v-for="(card, index) in gameUserCards"
                     :name="card"

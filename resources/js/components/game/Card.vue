@@ -64,4 +64,11 @@ onMounted(() => {
         width: 40px;
     }
 }
+
+@media (width <= 768px) {
+    .card {
+        height: 70px;
+        width: 50px;
+    }
+}
 </style>
