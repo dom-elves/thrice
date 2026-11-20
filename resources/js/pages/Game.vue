@@ -26,7 +26,7 @@ useEchoPresence(
 
         if ('board' in event) {
             router.reload({
-                only: ['gameUser'],
+                only: ['board', 'gameUser', 'gameUserCards'],
             });
         }
     },
@@ -72,6 +72,9 @@ onMounted(() => {
                     <Hand
                         v-if="seated"    
                     />
+                </div>
+                <div>
+                    this is where messages/status etc will go
                 </div>
             </div>
         </div>

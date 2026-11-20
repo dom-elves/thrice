@@ -42,9 +42,6 @@ onMounted(() => {
 });
 </script>
 <template>
-    <!-- <div class="card" :class="[suit, visible]">
-        <p class="bold text-2xl">{{ value }}{{ code }}</p>
-    </div> -->
     <div v-if="!invisible" class="card front" :class="suit">
         <p class="bold text-2xl">{{ value }}{{ code }}</p>
     </div>

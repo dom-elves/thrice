@@ -16,15 +16,12 @@ const props = defineProps({
     <div>
         <p>this is row {{ props.name }}</p>
         <div class="flex flex-row">
-            <Card 
+            <Card
                 v-for="(card, index) in cards" 
                 :name="card"
                 :invisible="['turn', 'river'].includes(index)"
-                :key="index" 
+                :key="index"
             />
-            <!-- <p v-for="(card, index) in cards">{{ index }}</p> -->
-            <!-- <div class="hole"></div>
-            <div class="hole"></div> -->
         </div>
     </div>
 </template>

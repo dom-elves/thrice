@@ -2,7 +2,6 @@
 import { usePage, router } from '@inertiajs/vue3';
 import { useEcho } from '@laravel/echo-vue';
 import { onMounted, computed, ref } from 'vue';
-import Card from '@/components/game/Card.vue';
 import type { PageProps, Hand } from '@/interfaces';
 
 const page = usePage<PageProps>();
