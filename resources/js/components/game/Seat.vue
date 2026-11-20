@@ -26,23 +26,17 @@ const satHere = computed(() => {
         : false;
 });
 
-const gameUserCards = computed(() =>
-    satHere.value ? page.props.gameUserCards : null,
-);
-
 const errors = ref(page.props.errors.position || null);
 
 useEcho(
     `App.Models.GameUser.${gameUser.value?.id}`,
     ['.player.hand'],
     (event: Hand) => {
-        console.log('hand dealt:', event);
+        console.log(event);
     },
 );
 
-onMounted(() => {
-    console.log(props.seat?.user_id);
-});
+onMounted(() => {});
 
 function sit() {
     router.post(
@@ -54,9 +48,7 @@ function sit() {
             only: ['gameUser', 'board'],
             preserveScroll: true,
             preserveState: true,
-            onSuccess: () => {
-                console.log('successfully sat down at seat', props.position);
-            },
+            onSuccess: () => {},
         },
     );
 }
@@ -78,33 +70,28 @@ function stand() {
 <template>
     <div>
         <p>seat {{ props.position + 1 }}</p>
-        <div v-if="seatEmpty">
-            <button
-                @click="sit"
-                :disabled="gameUser?.in_game"
-                class="m-4 rounded border border-1 p-4"
-                :class="
-                    gameUser?.in_game
-                        ? 'cursor-not-allowed bg-gray-400'
-                        : 'bg-green-300'
-                "
-            >
-                sit down
-            </button>
-        </div>
-        <div v-if="!seatEmpty">
+        <button
+            v-if="seatEmpty"
+            @click="sit"
+            :disabled="gameUser?.in_game"
+            class="m-2 rounded border border-1 p-2"
+            :class="
+                gameUser?.in_game
+                    ? 'cursor-not-allowed bg-gray-400'
+                    : 'bg-green-300'
+            "
+        >
+            sit down
+        </button>
+        <div v-else>
+            <p class="text-xl">{{ props.seat?.name }}</p>
             <button
                 v-if="satHere"
                 @click="stand"
-                class="m-4 rounded border border-1 bg-blue-300 p-4"
+                class="m-2 rounded border border-1 bg-blue-300 p-2"
             >
                 stand up
             </button>
-            <p v-else>taken by playerid {{ props.seat?.user_id }}</p>
-            <p>You cards are:</p>
-            <p v-for="(card, index) in gameUserCards" :key="index">
-                {{ card }}
-            </p>
         </div>
         <p v-if="errors">{{ errors }}</p>
     </div>

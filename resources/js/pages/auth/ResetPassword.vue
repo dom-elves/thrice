@@ -9,10 +9,7 @@ const props = defineProps<{
     token: string;
 }>();
 
-onMounted(() => {
-    // this is to stop linting being angry
-    console.log(props);
-});
+onMounted(() => {});
 </script>
 <template>
     <GuestLayout>
@@ -31,7 +28,7 @@ onMounted(() => {
             <p v-if="errors.password_confirmation">
                 {{ errors.password_confirmation }}
             </p>
-            <input type="hidden" name="token" :value="token" />
+            <input type="hidden" name="token" :value="props.token" />
             <button type="submit">Reset</button>
         </Form>
     </GuestLayout>

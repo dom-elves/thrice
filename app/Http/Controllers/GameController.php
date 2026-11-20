@@ -32,8 +32,8 @@ class GameController extends Controller
             foreach ($seats as $seat => $gameUserId) {
                 $pipe->hmget("game_user:{$gameUserId}", [
                     'user_id',
+                    'name',
                 ]);
-                // $pipe->hgetall("game_user:{$gameUserId}");
             }
         });
 
@@ -43,12 +43,15 @@ class GameController extends Controller
             $middle = Redis::hgetall("middle:{$code}");
             $top = Redis::hgetall("top:{$code}");
 
-            $board = [$bottom, $middle, $top];
+            $board = [
+                'top' => $top,
+                'middle' => $middle,
+                'bottom' => $bottom,
+            ];
         }
 
         $gameUser = $game->gameUsers()->where('user_id', auth()->id())->first();
 
-        // dd($seatData);
         return Inertia::render('Game', [
             'game' => $game,
             'seats' => $seatData,
