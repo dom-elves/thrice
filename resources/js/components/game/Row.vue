@@ -15,17 +15,14 @@ const props = defineProps({
 
 </script>
 <template>
-    <div>
-        <p>this is row {{ props.name }}</p>
-        <div class="flex flex-row p-2 rounded" :class="`row-${props.name}`">
-            <Card
-                style="margin: 0px 5px"
-                v-for="(card, index) in cards"
-                :name="card"
-                :invisible="['turn', 'river'].includes(index)"
-                :key="index"
-            />
-        </div>
+    <div class="flex flex-row p-2 rounded justify-center" :class="`row-${props.name}`">
+        <Card
+            style="margin: 0px 5px"
+            v-for="(card, index) in cards"
+            :name="card"
+            :invisible="['turn', 'river'].includes(index)"
+            :key="index"
+        />
     </div>
 </template>
 <style>

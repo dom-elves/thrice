@@ -12,8 +12,7 @@ onMounted(() => {
 });
 </script>
 <template>
-    <div>
-        <p>This is the board</p>
+    <div class="mb-4">
         <Row
             v-for="(cards, row) in board"
             :key="row"

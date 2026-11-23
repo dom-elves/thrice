@@ -45,36 +45,27 @@ onMounted(() => {
 <template>
     <AuthenticatedLayout>
         <h1 class="text-2xl">{{ game.name }}</h1>
-        <div class="flex flex-col">
-            <!-- <div class="grid grid-cols-4 text-center">
-                <div class="bg-blue-100 p-2">col1</div>
-                <div class="col-span-2 bg-blue-100 p-2">col2</div>
-                <div class="bg-blue-100 p-2">
-                    <Board />
-                </div>
-            </div> -->
-            <div class="flex flex-row">
-                <div class="flex flex-col">
-                    <Seat
-                        v-for="(seat, position) in seats"
-                        :key="position"
-                        :seat="seat"
-                        :position="position"
-                    />
-                    <button
-                        v-if="!seated"
-                        @click="leaveGame"
-                        class="m-4 rounded border border-1 bg-red-300 p-4"
-                    >
-                        leave game
-                    </button>
-                </div>
-                <div class="flex flex-col">
-                    <Board />
-                    <Hand v-if="seated && game.started" />
-                </div>
-                <div>this is where messages/status etc will go</div>
+        <div class="grid grid-cols-5">
+            <div class="flex flex-col p-2">
+                <Seat
+                    v-for="(seat, position) in seats"
+                    :key="position"
+                    :seat="seat"
+                    :position="position"
+                />
+                <button
+                    v-if="!seated"
+                    @click="leaveGame"
+                    class="m-4 rounded border border-1 bg-red-300 p-4"
+                >
+                    leave game
+                </button>
             </div>
+            <div class="flex flex-col col-span-3">
+                <Board />
+                <Hand v-if="seated && game.started" />
+            </div>
+            <div class="p-2">this is where messages/status etc will go</div>
         </div>
     </AuthenticatedLayout>
 </template>

@@ -55,18 +55,7 @@ onMounted(() => {
 });
 </script>
 <template>
-    <div>
-        <p>these are my cards</p>
-        <div class="flex flex-row">
-            <!-- todo: either emit event down or use a store -->
-            <!-- <Hole
-                v-for="(slot, hole) in selectedHand"
-                @click="placeCard(hole)"
-                :key="hole"
-                :hole="hole"
-            >
-            </Hole> -->
-        </div>
+    <div class="m-2">
         <div class="flex flex-row justify-center">
             <Hole
                 v-for="(card, key) in dealtCards"
@@ -82,6 +71,6 @@ onMounted(() => {
                 </HandCard>
             </Hole>
         </div>
-        <button @click="lockIn">lock in</button>
+        <button @click="lockIn" class="bg-green-400 p-4 rounded">lock in</button>
     </div>
 </template>
