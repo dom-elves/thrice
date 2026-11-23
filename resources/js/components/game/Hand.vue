@@ -39,7 +39,7 @@ function selectCard(slot: CardSlot) {
     // deselect the card
     if (selectedSlot.value === slot) {
         selectedSlot.value = null;
-        
+
         return;
     }
 
@@ -60,8 +60,8 @@ onMounted(() => {
 });
 </script>
 <template>
-    <div class="m-2">
-        <div class="flex flex-row justify-center">
+    <div class="flex flex-col m-2 items-center">
+        <div class="flex flex-row mb-4">
             <Hole
                 v-for="(card, key) in dealtCards"
                 :key="key"
@@ -76,7 +76,7 @@ onMounted(() => {
                 </HandCard>
             </Hole>
         </div>
-        <button @click="lockIn" class="rounded bg-green-400 p-4">
+        <button @click="lockIn" class="rounded bg-green-400 p-4 w-1/3">
             lock in
         </button>
     </div>
