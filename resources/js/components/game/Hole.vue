@@ -1,15 +1,11 @@
 <script setup lang="ts">
-import { onMounted, computed, ref } from 'vue';
+import { onMounted } from 'vue';
 
 const props = defineProps({
     row: {
         type: String,
         required: true,
     },
-    // hole: {
-    //     type: String,
-    //     required: true,
-    // },
     value: {
         type: String,
         required: false,

@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { usePage } from '@inertiajs/vue3';
-import { onMounted, computed, ref, mergeProps } from 'vue';
+import { onMounted, computed, ref } from 'vue';
+import Card from '@/components/game/Card.vue';
 import HandCard from '@/components/game/HandCard.vue';
 import Hole from '@/components/game/Hole.vue';
-import Card from '@/components/game/Card.vue';
 import type { PageProps } from '@/interfaces';
 
 const page = usePage<PageProps>();
@@ -32,12 +32,14 @@ const selectedSlot = ref<CardSlot | null>(null);
 function selectCard(slot: CardSlot) {
     if (selectedSlot.value === null) {
         selectedSlot.value = slot;
+
         return;
     }
 
     // deselect the card
     if (selectedSlot.value === slot) {
         selectedSlot.value = null;
+        
         return;
     }
 

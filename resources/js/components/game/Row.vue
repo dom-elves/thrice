@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { computed } from 'vue';
 import Card from '@/components/game/Card.vue';
 
 const props = defineProps({
@@ -12,6 +11,7 @@ const props = defineProps({
         required: true,
     },
 });
+
 </script>
 <template>
     <div
@@ -27,23 +27,5 @@ const props = defineProps({
         />
     </div>
 </template>
-<style>
-.hole {
-    background-color: white;
-    height: 140px;
-    width: 100px;
-    border-radius: var(--radius-lg);
-    border: 4px solid green;
-    margin: 0px 5px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
 
-@media (width <= 384px) {
-    .hole {
-        height: 56px;
-        width: 40px;
-    }
-}
-</style>
+
