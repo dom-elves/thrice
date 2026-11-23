@@ -21,7 +21,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $updated_at
  */
 #[Fillable(['game_id', 'user_id', 'start_balance', 'end_balance', 'in_game'])]
-#[Appends(['name'])]
+
 class GameUser extends Model
 {
     /** @use HasFactory<GameUserFactory> */
@@ -49,6 +49,8 @@ class GameUser extends Model
 
     /**
      * Append the name from the related User.
+        *
+        * @return Attribute<string, never>
      */
     protected function name(): Attribute
     {
