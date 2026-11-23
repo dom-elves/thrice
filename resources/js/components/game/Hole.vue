@@ -1,20 +1,31 @@
 <script setup lang="ts">
+import { onMounted, computed, ref } from 'vue';
+
 const props = defineProps({
-    hole: {
+    row: {
         type: String,
         required: true,
     },
+    // hole: {
+    //     type: String,
+    //     required: true,
+    // },
     value: {
         type: String,
         required: false,
         default: null,
     },
 });
+
+onMounted(() => {
+    console.log(props.row);
+})
 </script>
 <template>
     <div>
-        <div class="hole">
+        <div class="p-2" :class="`row-${props.row}`">
             <p v-if="value">{{ value }}</p>
+            <slot></slot>
         </div>
     </div>
 </template>

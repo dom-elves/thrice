@@ -1,17 +1,21 @@
 <script setup lang="ts">
-import { usePage, router } from '@inertiajs/vue3';
-import { useEcho } from '@laravel/echo-vue';
+import { usePage } from '@inertiajs/vue3';
 import { onMounted, computed, ref, mergeProps } from 'vue';
 import HandCard from '@/components/game/HandCard.vue';
 import Hole from '@/components/game/Hole.vue';
 import Card from '@/components/game/Card.vue';
-import type { PageProps, Hand } from '@/interfaces';
+import type { PageProps  } from '@/interfaces';
 
 const page = usePage<PageProps>();
 const game = page.props.game;
 const gameUserCards = computed(() => page.props.gameUserCards);
 
-const dealtCards = ref({
+type CardSlot =
+    | 'bottom_card_1' | 'bottom_card_2'
+    | 'middle_card_1' | 'middle_card_2'
+    | 'top_card_1' | 'top_card_2';
+
+const dealtCards = ref<Record<CardSlot, string>>({
     bottom_card_1: gameUserCards.value?.[0] ?? '',
     bottom_card_2: gameUserCards.value?.[1] ?? '',
     middle_card_1: gameUserCards.value?.[2] ?? '',
@@ -20,29 +24,30 @@ const dealtCards = ref({
     top_card_2: gameUserCards.value?.[5] ?? '',
 });
 
-const selectedHand = ref({
-    bottom_card_1: '',
-    bottom_card_2: '',
-    middle_card_1: '',
-    middle_card_2: '',
-    top_card_1: '',
-    top_card_2: '',
-});
+const selectedSlot = ref<CardSlot | null>(null);
 
-const selectedCard = ref('');
+function selectCard(slot: CardSlot) {
+    if (selectedSlot.value === null) {
+        selectedSlot.value = slot;
+        return;
+    }
 
-function selectCard(card: string, index: string) {
-    console.log('pick', card, index);
-    selectedCard.value = card;
-    dealtCards[index] = '';
-}
+    // deselect the card
+    if (selectedSlot.value === slot) {
+        selectedSlot.value = null;
+        return;
+    }
 
-function placeCard(index: string) {
-    // selectedHand.value[index as keyof typeof selectedHand.value] = selectedCard.value;
+    // set the slot, then the target, and swap, reset slot
+    const first = selectedSlot.value;
+    const temp = dealtCards.value[first];
+    dealtCards.value[first] = dealtCards.value[slot];
+    dealtCards.value[slot] = temp;
+    selectedSlot.value = null;
 }
 
 function lockIn() {
-    console.log('hand', selectedHand.value);
+    console.log('hand', dealtCards.value);
 }
 
 onMounted(() => {
@@ -54,23 +59,24 @@ onMounted(() => {
         <p>these are my cards</p>
         <div class="flex flex-row">
             <!-- todo: either emit event down or use a store -->
-            <Hole
+            <!-- <Hole
                 v-for="(slot, hole) in selectedHand"
                 @click="placeCard(hole)"
                 :key="hole"
                 :hole="hole"
             >
-            </Hole>
+            </Hole> -->
         </div>
         <div class="flex flex-row justify-center">
-            <!-- separate parent to cover interactivity only applicable in hand cards -->
-            <HandCard
+            <Hole
                 v-for="(card, key) in dealtCards"
-                @click="selectCard(card, key.toString())"
+                :key="key"
+                :row="key.slice(0, -7)"
             >
-            {{  card  }}
-                <Card :name="card" :key="key" />
-            </HandCard>
+                <HandCard @click="selectCard(key)">
+                    <Card :name="card" />
+                </HandCard>
+            </Hole>
         </div>
         <button @click="lockIn">lock in</button>
     </div>
