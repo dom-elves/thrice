@@ -60,8 +60,8 @@ onMounted(() => {
 });
 </script>
 <template>
-    <div class="flex flex-col m-2 items-center">
-        <div class="flex flex-row mb-4">
+    <div class="m-2 flex flex-col items-center">
+        <div class="mb-4 flex flex-row">
             <Hole
                 v-for="(card, key) in dealtCards"
                 :key="key"
@@ -76,7 +76,7 @@ onMounted(() => {
                 </HandCard>
             </Hole>
         </div>
-        <button @click="lockIn" class="rounded bg-green-400 p-4 w-1/3">
+        <button @click="lockIn" class="w-1/3 rounded bg-green-400 p-4">
             lock in
         </button>
     </div>

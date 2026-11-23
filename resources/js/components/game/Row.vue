@@ -11,7 +11,6 @@ const props = defineProps({
         required: true,
     },
 });
-
 </script>
 <template>
     <div
@@ -27,5 +26,3 @@ const props = defineProps({
         />
     </div>
 </template>
-
-
