@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed } from 'vue';
 import Card from '@/components/game/Card.vue';
 
 const props = defineProps({
@@ -11,11 +12,12 @@ const props = defineProps({
         required: true,
     },
 });
+
 </script>
 <template>
     <div>
         <p>this is row {{ props.name }}</p>
-        <div class="flex flex-row">
+        <div class="flex flex-row p-2 rounded" :class="`row-${props.name}`">
             <Card
                 v-for="(card, index) in cards"
                 :name="card"
