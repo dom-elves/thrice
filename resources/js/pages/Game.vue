@@ -5,11 +5,11 @@ import { computed, onMounted } from 'vue';
 import Board from '@/components/game/Board.vue';
 import Hand from '@/components/game/Hand.vue';
 import Seat from '@/components/game/Seat.vue';
-import type { DealBoard, PageProps, Sit, Stand } from '@/interfaces';
+import type { DealBoard, PageProps, Sit, Stand, Game } from '@/interfaces';
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue';
 
 const page = usePage<PageProps>();
-const game = page.props.game;
+const game = computed<Game>(() => page.props.game);
 const gameUser = computed(() => page.props.gameUser);
 const seats = computed(() => page.props.seats);
 const seated = computed(() =>
@@ -17,7 +17,7 @@ const seated = computed(() =>
 );
 
 useEchoPresence(
-    `App.Models.Game.${game.id}`,
+    `App.Models.Game.${game.value.id}`,
     ['.player.sit', '.player.stand', '.game.board'],
     (event: Sit | Stand | DealBoard) => {
         if ('message' in event) {
@@ -28,14 +28,14 @@ useEchoPresence(
 
         if ('board' in event) {
             router.reload({
-                only: ['board', 'gameUser', 'gameUserCards'],
+                only: ['board', 'gameUser', 'gameUserCards', 'game'],
             });
         }
     },
 );
 
 function leaveGame() {
-    router.post(`/game/${game.code}/leave`);
+    router.post(`/game/${game.value.code}/leave`);
 }
 
 onMounted(() => {
@@ -71,7 +71,7 @@ onMounted(() => {
                 </div>
                 <div class="flex flex-col">
                     <Board />
-                    <Hand v-if="seated" />
+                    <Hand v-if="seated && game.started" />
                 </div>
                 <div>this is where messages/status etc will go</div>
             </div>

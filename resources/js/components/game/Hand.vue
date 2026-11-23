@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { usePage, router } from '@inertiajs/vue3';
 import { useEcho } from '@laravel/echo-vue';
-import { onMounted, computed, ref } from 'vue';
+import { onMounted, computed, ref, mergeProps } from 'vue';
 import HandCard from '@/components/game/HandCard.vue';
 import Hole from '@/components/game/Hole.vue';
 import Card from '@/components/game/Card.vue';
@@ -37,12 +37,16 @@ function selectCard(card: string, index: string) {
     dealtCards[index] = '';
 }
 
+function placeCard(index: string) {
+    // selectedHand.value[index as keyof typeof selectedHand.value] = selectedCard.value;
+}
+
 function lockIn() {
     console.log('hand', selectedHand.value);
 }
 
 onMounted(() => {
-    console.log('guc', gameUserCards.value);
+    console.log('g', game);
 });
 </script>
 <template>
@@ -52,7 +56,7 @@ onMounted(() => {
             <!-- todo: either emit event down or use a store -->
             <Hole
                 v-for="(slot, hole) in selectedHand"
-                @click="selectedHand[hole] = selectedCard"
+                @click="placeCard(hole)"
                 :key="hole"
                 :hole="hole"
             >
@@ -61,10 +65,11 @@ onMounted(() => {
         <div class="flex flex-row justify-center">
             <!-- separate parent to cover interactivity only applicable in hand cards -->
             <HandCard
-                v-for="(card, index) in dealtCards"
-                @click="selectCard(card, index)"
+                v-for="(card, key) in dealtCards"
+                @click="selectCard(card, key.toString())"
             >
-                <Card :name="card" :key="index" />
+            {{  card  }}
+                <Card :name="card" :key="key" />
             </HandCard>
         </div>
         <button @click="lockIn">lock in</button>

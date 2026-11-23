@@ -38,7 +38,7 @@ const invisible = computed(() => {
 });
 
 onMounted(() => {
-    console.log('card', props.invisible);
+
 });
 </script>
 <template>
