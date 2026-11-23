@@ -49,8 +49,8 @@ class GameUser extends Model
 
     /**
      * Append the name from the related User.
-        *
-        * @return Attribute<string, never>
+     *
+     * @return Attribute<string, never>
      */
     protected function name(): Attribute
     {
