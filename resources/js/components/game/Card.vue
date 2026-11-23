@@ -55,7 +55,6 @@ onMounted(() => {
     width: 100px;
     border-radius: var(--radius-lg);
     border: 4px solid;
-    margin: 0px 5px;
     display: flex;
     justify-content: center;
     align-items: center;

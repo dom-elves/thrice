@@ -73,7 +73,11 @@ onMounted(() => {
                 :key="key"
                 :row="key.slice(0, -7)"
             >
-                <HandCard @click="selectCard(key)">
+                <HandCard
+                    @click="selectCard(key)"
+                    style="border-radius: var(--radius-lg)"
+                    :class="{ 'ring-4 ring-yellow-400': selectedSlot === key }"
+                >
                     <Card :name="card" />
                 </HandCard>
             </Hole>
