@@ -4,16 +4,19 @@ import { onMounted, computed, ref, mergeProps } from 'vue';
 import HandCard from '@/components/game/HandCard.vue';
 import Hole from '@/components/game/Hole.vue';
 import Card from '@/components/game/Card.vue';
-import type { PageProps  } from '@/interfaces';
+import type { PageProps } from '@/interfaces';
 
 const page = usePage<PageProps>();
 const game = page.props.game;
 const gameUserCards = computed(() => page.props.gameUserCards);
 
 type CardSlot =
-    | 'bottom_card_1' | 'bottom_card_2'
-    | 'middle_card_1' | 'middle_card_2'
-    | 'top_card_1' | 'top_card_2';
+    | 'bottom_card_1'
+    | 'bottom_card_2'
+    | 'middle_card_1'
+    | 'middle_card_2'
+    | 'top_card_1'
+    | 'top_card_2';
 
 const dealtCards = ref<Record<CardSlot, string>>({
     bottom_card_1: gameUserCards.value?.[0] ?? '',
@@ -71,6 +74,8 @@ onMounted(() => {
                 </HandCard>
             </Hole>
         </div>
-        <button @click="lockIn" class="bg-green-400 p-4 rounded">lock in</button>
+        <button @click="lockIn" class="rounded bg-green-400 p-4">
+            lock in
+        </button>
     </div>
 </template>

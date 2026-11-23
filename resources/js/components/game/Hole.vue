@@ -19,7 +19,7 @@ const props = defineProps({
 
 onMounted(() => {
     console.log(props.row);
-})
+});
 </script>
 <template>
     <div>

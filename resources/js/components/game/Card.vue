@@ -37,9 +37,7 @@ const invisible = computed(() => {
     return props.invisible;
 });
 
-onMounted(() => {
-
-});
+onMounted(() => {});
 </script>
 <template>
     <div v-if="!invisible" class="card front" :class="suit">

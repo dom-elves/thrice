@@ -12,10 +12,12 @@ const props = defineProps({
         required: true,
     },
 });
-
 </script>
 <template>
-    <div class="flex flex-row p-2 rounded justify-center" :class="`row-${props.name}`">
+    <div
+        class="flex flex-row justify-center rounded p-2"
+        :class="`row-${props.name}`"
+    >
         <Card
             style="margin: 0px 5px"
             v-for="(card, index) in cards"

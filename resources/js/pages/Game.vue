@@ -61,7 +61,7 @@ onMounted(() => {
                     leave game
                 </button>
             </div>
-            <div class="flex flex-col col-span-3">
+            <div class="col-span-3 flex flex-col">
                 <Board />
                 <Hand v-if="seated && game.started" />
             </div>
