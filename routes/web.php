@@ -47,8 +47,5 @@ Route::middleware('auth')->group(function () {
     Route::post('/game/{game:code}/leave', [GameController::class, 'leave'])->name('game.leave');
 
     // hand
-    // i know this isn't very laravel-y naming culture,
-    // but it seems silly to just have a HandController for one function
-    // save goes for service
     Route::post('/hand/{gameUser:id}/lock', [HandController::class, 'lock'])->name('hand.lock');
 });

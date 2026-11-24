@@ -86,4 +86,12 @@ class DeckService
         // @phpstan-ignore argument.type
         event(new DealBoard($game, $board));
     }
+
+    /**
+     * Locks the player's hand in the order they've set.
+     */
+    public function lockHand(array $cards, string $gameUserId): void
+    {
+        Redis::hmset("game_user:{$gameUserId}", $cards);
+    }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\GameUser;
+use App\Services\DeckService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
@@ -18,6 +19,8 @@ class HandController extends Controller
             'cards.*' => ['required', 'string'],
         ]);
 
-        dd($validated);
+        app(DeckService::class)->lockHand($validated['cards'], $gameUser->id);
+
+        return back();
     }
 }
