@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Redis;
 
 beforeEach(function () {
     Redis::flushDB();
-    
+
     $this->user = User::factory()->create([
         'name' => 'Dom Elves',
         'email' => 'dom@example.com',
@@ -26,8 +26,8 @@ beforeEach(function () {
  * Fake hand so each user hand can be asserted after deal
  */
 test('starting a game deals hands to seated players', function () {
-    Event::fake([Hand::class]); 
-    
+    Event::fake([Hand::class]);
+
     $game = Game::factory()->create();
     $gameUsers = $this->users->map(fn ($user) => GameUser::factory()->create([
         'user_id' => $user->id,
@@ -59,7 +59,7 @@ test('starting a game deals hands to seated players', function () {
  * Fake only DealBoard, so it can be asserted after actually firing Deal
  */
 test('starting a game deals the board', function () {
-    Event::fake([DealBoard::class]); 
+    Event::fake([DealBoard::class]);
 
     $game = Game::factory()->create();
     $this->users->map(fn ($user) => GameUser::factory()->create([
@@ -77,13 +77,13 @@ test('starting a game deals the board', function () {
     $this->assertEquals(true, Redis::exists("top:{$game->code}"));
 });
 
-/** 
+/**
  * Inverse of firstd test, just create a gameUser that has been in the game before,
  * but isn't now
  */
 test('starting a game does not deal hands to non-seated players', function () {
-    Event::fake([Hand::class]); 
-    
+    Event::fake([Hand::class]);
+
     $game = Game::factory()->create();
     $gameUser = GameUser::factory()->create([
         'user_id' => $this->users[1]->id,
@@ -94,6 +94,6 @@ test('starting a game does not deal hands to non-seated players', function () {
     event(new Deal($game));
 
     Event::assertNotDispatched(Hand::class, function (Hand $event) use ($gameUser) {
-            return $event->gameUserId == $gameUser->id;
-        });
+        return $event->gameUserId == $gameUser->id;
+    });
 });
