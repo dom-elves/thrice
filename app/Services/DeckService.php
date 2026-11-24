@@ -93,5 +93,17 @@ class DeckService
     public function lockHand(array $cards, string $gameUserId): void
     {
         Redis::hmset("game_user:{$gameUserId}", $cards);
+
+        // $this->calcHand(collect($cards));
     }
+
+    // for later
+    // private function calcHand(Collection $cards): Collection
+    // {
+    //     $deck = $this->build();
+
+    //     $cardObjects = $deck->filter(fn (Card $card) => $cards->contains($card->shorthand));
+
+    //     dd($cardObjects);
+    // }
 }
