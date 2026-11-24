@@ -161,13 +161,12 @@ class GameController extends Controller
 
     /**
      * Allows a player to lock their hand, after moving their cards.
-     *
      */
     public function lock(Request $request, Game $game): RedirectResponse
     {
         $validated = $request->validate([
             'cards' => ['required', 'array', 'size:6'],
-            'cards.*' => ['required', 'string'], 
+            'cards.*' => ['required', 'string'],
         ]);
 
         dd($validated);
