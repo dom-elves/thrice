@@ -28,6 +28,7 @@ export interface Seat {
     user_id: number;
     in_game: boolean;
     start_balance: number;
+    name: string;
 }
 
 export interface PageProps {
@@ -35,11 +36,12 @@ export interface PageProps {
     game: Game;
     user: User;
     gameUser?: GameUser;
+    gameUserCards?: Array<string>;
     seats: Array<Seat>;
 }
 
 // events
-export interface Board {
+export interface DealBoard {
     board: Array<Row>;
 }
 

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Database\Factories\GameUserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -20,6 +21,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $updated_at
  */
 #[Fillable(['game_id', 'user_id', 'start_balance', 'end_balance', 'in_game'])]
+
 class GameUser extends Model
 {
     /** @use HasFactory<GameUserFactory> */
@@ -43,5 +45,17 @@ class GameUser extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Append the name from the related User.
+     *
+     * @return Attribute<string, never>
+     */
+    protected function name(): Attribute
+    {
+        return Attribute::get(
+            fn (): string => $this->user->name
+        );
     }
 }
