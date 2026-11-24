@@ -26,8 +26,8 @@ Route::middleware('auth')->group(function () {
     })->name('dashboard');
 });
 
-// game
 Route::middleware('auth')->group(function () {
+    // game
     Route::post('/game/create', [GameController::class, 'create'])->name('game.create');
 
     // sets to game:code just so it appears that way in browser, rather than /game/1 etc
@@ -44,4 +44,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/game/{game:code}/sit', [GameController::class, 'sit'])->name('game.sit');
     Route::post('/game/{game:code}/stand', [GameController::class, 'stand'])->name('game.stand');
     Route::post('/game/{game:code}/leave', [GameController::class, 'leave'])->name('game.leave');
+
+    // hand
+    // i know this isn't very laravel-y naming culture,
+    // but it seems silly to just have a HandController for one function
+    // save goes for service
+    Route::post('/game/{game:code}/hand/lock', [GameController::class, 'lock'])->name('game.lock');
 });

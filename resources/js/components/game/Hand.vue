@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { usePage } from '@inertiajs/vue3';
+import { usePage, router } from '@inertiajs/vue3';
 import { onMounted, computed, ref } from 'vue';
 import Card from '@/components/game/Card.vue';
 import HandCard from '@/components/game/HandCard.vue';
@@ -52,7 +52,18 @@ function selectCard(slot: CardSlot) {
 }
 
 function lockIn() {
-    console.log('hand', dealtCards.value);
+    router.post(
+        `/game/${game.code}/hand/lock`,
+        {
+            cards: dealtCards.value,
+        },
+        {
+            // only: ['gameUser', 'board', 'gameUserCards'],
+            preserveScroll: true,
+            preserveState: true,
+            onSuccess: () => {},
+        },
+    );
 }
 
 onMounted(() => {
