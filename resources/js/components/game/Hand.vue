@@ -53,7 +53,7 @@ function selectCard(slot: CardSlot) {
 
 function lockIn() {
     router.post(
-        `/game/${game.code}/hand/lock`,
+        `/hand/${page.props?.gameUser?.id}/lock`,
         {
             cards: dealtCards.value,
         },

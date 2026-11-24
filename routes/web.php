@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\GameController;
+use App\Http\Controllers\HandController;
 use App\Models\Game;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -49,5 +50,5 @@ Route::middleware('auth')->group(function () {
     // i know this isn't very laravel-y naming culture,
     // but it seems silly to just have a HandController for one function
     // save goes for service
-    Route::post('/game/{game:code}/hand/lock', [GameController::class, 'lock'])->name('game.lock');
+    Route::post('/hand/{gameUser:id}/lock', [HandController::class, 'lock'])->name('hand.lock');
 });
