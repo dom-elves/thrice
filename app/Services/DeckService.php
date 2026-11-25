@@ -13,7 +13,14 @@ use Illuminate\Support\Facades\Redis;
 
 class DeckService
 {
-    public function __construct() {}
+    public array $rows;
+
+    public function __construct(
+        protected readonly Game $game
+    )
+    {
+        $this->rows = ['bottom', 'middle', 'top'];
+    }
 
     /**
      * Builds the deck using enums for Rank & Case
@@ -39,9 +46,9 @@ class DeckService
      * - filter by filled seats, then map cards to players, taking the top 6 cards each time
      * - loop over the seats, set the card shorthands in redis
      */
-    public function deal(Game $game): void
+    public function deal(): void
     {
-        $seats = collect(Redis::hgetall("game_seats:{$game->code}"));
+        $seats = collect(Redis::hgetall("game_seats:{$this->game->code}"));
         $deck = $this->build()->shuffle();
 
         // seated players & their cards
@@ -68,12 +75,10 @@ class DeckService
             event(new Hand($gameUserId, $cards->pluck('shorthand')->toArray()));
         }
 
-        $rows = ['bottom', 'middle', 'top'];
-
-        foreach ($rows as $row) {
+        foreach ($this->rows as $row) {
             $cards = $deck->splice(0, 5);
 
-            Redis::hmset("$row:{$game->code}", [
+            Redis::hmset("$row:{$this->game->code}", [
                 'flop_1' => $cards[0]->shorthand,
                 'flop_2' => $cards[1]->shorthand,
                 'flop_3' => $cards[2]->shorthand,
@@ -84,7 +89,7 @@ class DeckService
             $board[] = [$row => $cards->pluck('shorthand')->toArray()];
         }
         // @phpstan-ignore argument.type
-        event(new DealBoard($game, $board));
+        event(new DealBoard($this->game, $board));
     }
 
     /**
@@ -92,18 +97,42 @@ class DeckService
      */
     public function lockHand(array $cards, string $gameUserId): void
     {
-        Redis::hmset("game_user:{$gameUserId}", $cards);
+        Redis::hmset("game_user:{$gameUserId}",
+            array_merge($cards, ['hand_locked' => true]
+        ));
 
-        // $this->calcHand(collect($cards));
+        foreach ($this->rows as $row) {
+            $pairs[$row] = [
+                $cards["{$row}_card_1"], 
+                $cards["{$row}_card_2"]
+            ];
+            // dd(collect($pairs[$row]), $row);
+            $hand[] = $this->calcHand(collect($pairs[$row]), $row);
+        }
+
+        dd($hand);
     }
 
-    // for later
-    // private function calcHand(Collection $cards): Collection
-    // {
-    //     $deck = $this->build();
+    /**
+     * Calculate a player's hand, for a given row.
+     * - build a deck
+     * - filter by player hand to retrieve card objects
+     * - filter by given row to retrieve card object
+     * 
+     * - evaluate potential hands out of the 7 cards
+     */
+    private function calcHand(Collection $cards, string $row): Collection
+    {
+        $deck = $this->build();
 
-    //     $cardObjects = $deck->filter(fn (Card $card) => $cards->contains($card->shorthand));
+        $handCards = $deck->filter(fn (Card $card) => $cards->contains($card->shorthand));
 
-    //     dd($cardObjects);
-    // }
+        $row = collect(Redis::hgetall("{$row}:{$this->game->code}"));
+        $rowCards = $deck->filter(fn (Card $card) => $row->contains($card->shorthand));
+
+        $cards = $handCards->merge($rowCards);
+
+        // dd($cards);
+    
+    }
 }

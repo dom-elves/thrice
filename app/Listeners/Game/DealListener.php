@@ -17,6 +17,6 @@ class DealListener
      */
     public function handle(Deal $event): void
     {
-        app(DeckService::class)->deal($event->game);
+        (new DeckService($event->game))->deal();
     }
 }

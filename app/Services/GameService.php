@@ -97,6 +97,7 @@ class GameService
             'join_time' => Carbon::now()->toDateTimeString(),
             'leave_time' => '',
             'in_game' => 1,
+            'hand_locked' => 0,
         ]);
 
         Redis::hmset("game_seats:{$gameUser->game->code}", [
@@ -129,11 +130,13 @@ class GameService
         Redis::hgetdel($key, [
             'game_id',
             'user_id',
+            'name',
             'start_balance',
             'end_balance',
             'join_time',
             'leave_time',
             'in_game',
+            'hand_locked',
         ]);
 
         Redis::hmset("game_seats:{$gameUser->game->code}", [

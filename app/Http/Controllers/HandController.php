@@ -19,7 +19,8 @@ class HandController extends Controller
             'cards.*' => ['required', 'string'],
         ]);
 
-        app(DeckService::class)->lockHand($validated['cards'], $gameUser->id);
+        (new DeckService($gameUser->game))
+            ->lockHand($validated['cards'], $gameUser->id);
 
         return back();
     }
