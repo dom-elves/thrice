@@ -119,7 +119,7 @@ class DeckService
      * - filter by player hand to retrieve card objects
      * - filter by given row to retrieve card object
      * 
-     * - evaluate potential hands out of the 7 cards
+     * - evaluate potential hands out of the 7 cards, ordered in asc
      */
     private function calcHand(Collection $cards, string $row): Collection
     {
@@ -129,10 +129,74 @@ class DeckService
 
         $row = collect(Redis::hgetall("{$row}:{$this->game->code}"));
         $rowCards = $deck->filter(fn (Card $card) => $row->contains($card->shorthand));
+        
+        $cards = $handCards->merge($rowCards)->sortBy(fn (Card $card) => $card->rank->value);
+        
+        // as royal flush 
+        $flushCards = $cards->groupBy(fn (Card $card) => $card->suit->name)
+            ->first(fn ($group) => $group->count() >= 5);
+        
+        if ($flushCards) {
+            // if there's 6 or 7 cards in the flush, only take the top 5
+            if ($flushCards->count() >= 6) {
+                $flushCards = $flushCards->take(-5);
+            }
 
-        $cards = $handCards->merge($rowCards);
+            // using chunks, check whether the cards are consecutive
+            $consecutiveCards = $flushCards->sort()->values()->chunkWhile(
+                fn ($value, $key, $chunk) => $value === $chunk->last()->rank->value + 1
+            )->count() === 1;
 
-        // dd($cards);
+            // if they are, it's a royal or straight flush
+            if ($consecutiveCards) {
+                // last card being an ace is a royal flush
+                // otherwise, it's a straight flush
+                if ($flushCards->last()->rank === Rank::Ace) {
+                    $hand = 'royal flush';
+                } else {
+                    $hand = 'straight flush';
+                }
+            } else {
+                // so if it's just 5 of the same suit, it's just a flush
+                $hand = 'flush';
+            }
+        }
+
+        // get here, just a regular flush
+        // dd($flushCards);
+        // royal flush
+
+        // straight flush
+
+        // quads
+
+        // house
+
+        // flush
+
+        // straight
+
+        // trips
+
+        // two pair
+        $pairValues = $cards->pluck('rank.value')->duplicates();
+
+        if ($pairValues->count() >= 2) {
+            $pairCards = $cards->filter(fn (Card $card) => $pairValues->contains($card->rank->value));
+            
+            dd($pairCards);
+        }
     
+        // pair
+        
+
+        // high card
+
+        dd($hand);
+    }
+
+    private function checkRoyalFlush()
+    {
+        
     }
 }
