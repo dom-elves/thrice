@@ -130,9 +130,9 @@ class DeckService
      *
      * @param  Collection<int, Card>  $cards
      * @param  string  $row,
-     * @return Collection<int, Card>
+     * @return void
      */
-    private function calcHand($cards, $row): void
+    private function calcHand($cards, $row)
     {
         $deck = $this->build();
 
@@ -156,9 +156,9 @@ class DeckService
 
             // using chunks, check whether the cards are consecutive
             // todo: this is apparently broken according to phpstan but it works so whatever
-            $consecutiveCards = $flushCards->sort()->values()->chunkWhile(
-                fn ($value, $key, $chunk) => $value == $chunk->last()->rank->value + 1
-            )->count() == 1;
+            // $consecutiveCards = $flushCards->sort()->values()->chunkWhile(
+            //     fn ($value, $key, $chunk) => $value == $chunk->last()->rank->value + 1
+            // )->count() == 1;
 
             // if they are, it's a royal or straight flush
             if ($consecutiveCards) {
