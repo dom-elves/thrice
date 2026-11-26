@@ -130,9 +130,9 @@ class DeckService
      *
      * @param  Collection<int, Card>  $cards
      * @param  string  $row,
-     * @return void
+     * @return string
      */
-    private function calcHand($cards, $row)
+    private function calcHand($cards, $row): string
     {
         $deck = $this->build();
 
@@ -161,18 +161,18 @@ class DeckService
             // )->count() == 1;
 
             // if they are, it's a royal or straight flush
-            if ($consecutiveCards) {
-                // last card being an ace is a royal flush
-                // otherwise, it's a straight flush
-                if ($flushCards->last()->rank === Rank::Ace) {
-                    $hand = 'royal flush';
-                } else {
-                    $hand = 'straight flush';
-                }
-            } else {
-                // so if it's just 5 of the same suit, it's just a flush
-                $hand = 'flush';
-            }
+            // if ($consecutiveCards) {
+            //     // last card being an ace is a royal flush
+            //     // otherwise, it's a straight flush
+            //     if ($flushCards->last()->rank === Rank::Ace) {
+            //         $hand = 'royal flush';
+            //     } else {
+            //         $hand = 'straight flush';
+            //     }
+            // } else {
+            //     // so if it's just 5 of the same suit, it's just a flush
+            //     $hand = 'flush';
+            // }
         }
 
         if (! $flushCards) {
