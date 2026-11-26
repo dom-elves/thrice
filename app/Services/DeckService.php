@@ -126,7 +126,7 @@ class DeckService
         $deck = $this->build();
 
         $handCards = $deck->filter(fn (Card $card) => $cards->contains($card->shorthand));
-
+        $hand = '';
         $row = collect(Redis::hgetall("{$row}:{$this->game->code}"));
         $rowCards = $deck->filter(fn (Card $card) => $row->contains($card->shorthand));
         
@@ -202,36 +202,69 @@ class DeckService
                 }
             }
 
+            // this is broken
+            // // straight
+            // $cardValues = $cards->map(fn (Card $card) => $card->rank->value);
+            
+            // // if there is an ace, push a 1 so it can play low
+            // if ($cardValues->contains(14)) {
+            //     $cardValues->unshift(1);
+            // }
+
+            // // last means it will awlays play the highest straight, 
+            // // if there are 6 or 7 consecutive cards
+            // $straightValues = $cardValues->unique()->sort()->values()
+            //     ->sliding(5)
+            //     ->last(fn ($window) => $window->last() - $window->first() === 4);
+
+            // $straight = $straightValues->map(fn ($value) => 
+            //     $cards->first(fn (Card $card) => 
+            //         $card->rank->value === $value));
+
+            // $hand = 'straight';
+
             
             $pairs = $cards->groupBy(fn (Card $card) => $card->rank->value)
                 ->filter(fn ($group) => $group->count() === 2)
                 ->values();
-
+            
+            // covers the condition where a player can have 3 pairs, 
+            // as only two are playable
             if ($pairs->count() >= 2) {
                 $topTwo = $pairs->take(-2);
+
+                $twoPairCards = $topTwo->first()->merge($topTwo->last());
+
+                $kicker = $cards->reject(
+                    fn (Card $card) => $twoPairCards->contains(
+                        fn (Card $c) => $c->rank === $card->rank
+                    )
+                )->last();
+
+                // in a two pair, there is 1 kicker
+                $hand = 'two pair';
+            }
+
+            if ($pairs->count() == 1) {
+                $pair = $pairs[0];
+
+                $kickers = $cards->reject(
+                    fn (Card $card) => $pair->contains(
+                        fn (Card $c) => $c->rank === $card->rank
+                    )
+                )->take(-3);
+
+                // top 3 cards as kickers for pair
+                $hand = 'pair';
+            }
+
+            if ($hand === '') {
+                $handCards = $cards->take(-5);
+                $hand = 'high card';
             }
         }
 
-        
-
-        // straight
-
-
-        // two pair
-        $pairValues = $cards->pluck('rank.value')->duplicates();
-
-        if ($pairValues->count() >= 2) {
-            $pairCards = $cards->filter(fn (Card $card) => $pairValues->contains($card->rank->value));
-            
-            dd($pairCards);
-        }
-    
-        // pair
-        
-
-        // high card
-
-        dd($hand);
+        return $hand;
     }
 
     private function checkRoyalFlush()
