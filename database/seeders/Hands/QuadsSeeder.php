@@ -18,9 +18,9 @@ class QuadsSeeder extends Seeder
 
         $gameUsers = GameUser::where('game_id', $game->id)
             ->where('in_game', true)
-            ->get()
             // should always be the same 2, but jic
-            ->take(2);
+            ->limit(2)
+            ->get();
 
         Redis::hmset("bottom:{$game->code}", [
             'flop_1' => 'Ac',
