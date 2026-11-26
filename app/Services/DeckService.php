@@ -130,6 +130,8 @@ class DeckService
      *
      * @param  Collection<int, Card>  $cards
      * @param  string  $row,
+     * 
+     * @return Collection<int, Card>
      */
     private function calcHand($cards, $row): Collection
     {
@@ -156,7 +158,7 @@ class DeckService
             // using chunks, check whether the cards are consecutive
             $consecutiveCards = $flushCards->sort()->values()->chunkWhile(
                 fn ($value, $key, $chunk) => $value == $chunk->last()->rank->value + 1
-            )->count() === 1;
+            )->count() == 1;
 
             // if they are, it's a royal or straight flush
             if ($consecutiveCards) {
@@ -205,7 +207,7 @@ class DeckService
                 )->take(-2);
 
                 // hand will be [$trips[0], $kickers];
-                if ($kickers->unique()->count === 1) {
+                if ($kickers->unique()->count() === 1) {
                     $hand = 'house';
                 } else {
                     $hand = 'trips';
@@ -273,6 +275,7 @@ class DeckService
             }
         }
 
-        // return $hand;
+        // jsut to shut phpstan up
+        return collect($hand);
     }
 }
