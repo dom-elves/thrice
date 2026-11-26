@@ -8,6 +8,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Database\Seeders\Hands\HouseSeeder;
 use Database\Seeders\Hands\QuadsSeeder;
+use Database\Seeders\Hands\StraightSeeder;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Redis;
 
@@ -73,8 +74,9 @@ class LiveGameSeeder extends Seeder
         }
 
         $this->call(
-            QuadsSeeder::class
+            // QuadsSeeder::class
             // HouseSeeder::class
+            StraightSeeder::class
         );
     }
 }
