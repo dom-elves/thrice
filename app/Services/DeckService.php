@@ -130,7 +130,6 @@ class DeckService
      *
      * @param  Collection<int, Card>  $cards
      * @param  string  $row,
-     * @return string
      */
     private function calcHand($cards, $row): string
     {
