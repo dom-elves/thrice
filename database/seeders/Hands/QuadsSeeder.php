@@ -4,18 +4,13 @@ namespace Database\Seeders\Hands;
 
 use App\Models\Game;
 use App\Models\GameUser;
-use App\Models\User;
-use Database\Seeders\LiveGameSeeder;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Redis;
-use Carbon\Carbon;
 
 class QuadsSeeder extends Seeder
 {
     /**
      * Run the database seeds.
-     * 
      */
     public function run(): void
     {

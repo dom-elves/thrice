@@ -5,12 +5,11 @@ namespace Database\Seeders;
 use App\Models\Game;
 use App\Models\GameUser;
 use App\Models\User;
+use Carbon\Carbon;
 use Database\Seeders\Hands\HouseSeeder;
 use Database\Seeders\Hands\QuadsSeeder;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Redis;
-use Carbon\Carbon;
 
 class LiveGameSeeder extends Seeder
 {
