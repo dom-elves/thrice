@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Game;
 use App\Models\GameUser;
 use App\Models\User;
+use Database\Seeders\Hands\QuadsSeeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Redis;
@@ -14,20 +15,19 @@ class LiveGameSeeder extends Seeder
 {
     /**
      * Run the database seeds.
+     * Creates a live (in redis) game with two in game users
      */
     public function run(): void
     {
         Redis::flushDB();
-
-        $this->call([
-            UserSeeder::class,
-        ]);
 
         $game = Game::factory()->create([
             'name' => 'seed game',
             'code' => 'seedgame',
             'started' => true,
         ]);
+
+        $this->call(UserSeeder::class);
 
         Redis::hmset("game:{$game->code}", [
             'name' => $game->name,
@@ -71,5 +71,7 @@ class LiveGameSeeder extends Seeder
                 'hand_locked' => 0,
             ]);
         }
+
+        $this->call(QuadsSeeder::class);
     }
 }
