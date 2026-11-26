@@ -13,6 +13,9 @@ class HouseSeeder extends Seeder
 {
     /**
      * Run the database seeds.
+     * 
+     * Can be used as TwoPair seeder by changing one of $gameUser[0]s aces
+     * Also can be used as pair seeder by also changing one of the board's sixes
      */
     public function run(): void
     {

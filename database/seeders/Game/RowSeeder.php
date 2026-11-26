@@ -10,6 +10,7 @@ class RowSeeder extends Seeder
 {
     /**
      * Run the database seeds.
+     * Bit more laborious, but keeping this atomic in case I ever need to seed single rows
      */
     public function run(Game $game, string $row, array $cards): void
     {
