@@ -73,8 +73,8 @@ class LiveGameSeeder extends Seeder
         }
 
         $this->call(
-            // QuadsSeeder::class
-            HouseSeeder::class
+            QuadsSeeder::class
+            // HouseSeeder::class
         );
     }
 }

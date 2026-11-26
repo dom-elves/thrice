@@ -4,6 +4,8 @@ namespace Database\Seeders\Hands;
 
 use App\Models\Game;
 use App\Models\GameUser;
+use Database\Seeders\Game\GameUserHandSeeder;
+use Database\Seeders\Game\RowSeeder;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Redis;
 
@@ -22,46 +24,37 @@ class QuadsSeeder extends Seeder
             ->limit(2)
             ->get();
 
-        Redis::hmset("bottom:{$game->code}", [
-            'flop_1' => 'Ac',
-            'flop_2' => 'Ad',
-            'flop_3' => '6h',
-            'turn' => '7h',
-            'river' => '8h',
-        ]);
+        $this->call(RowSeeder::class, false, // false is for silent in console or something
+            [
+                'game' => $game, 
+                'row' => 'bottom', 
+                'cards' => ['Ac', 'Ad', '6h', '7h', '8h'],
+            ]);
 
-        Redis::hmset("middle:{$game->code}", [
-            'flop_1' => '2d',
-            'flop_2' => '3d',
-            'flop_3' => '4d',
-            'turn' => '5d',
-            'river' => '6d',
-        ]);
+         $this->call(RowSeeder::class, false,
+            [
+                'game' => $game, 
+                'row' => 'middle', 
+                'cards' => ['2d', '3d', '4d', '5d', '6d'],
+            ]);
+            
+        $this->call(RowSeeder::class, false,
+            [
+                'game' => $game, 
+                'row' => 'top', 
+                'cards' => ['2c', '3c', '4c', '5c', '6c'],
+            ]);
 
-        Redis::hmset("top:{$game->code}", [
-            'flop_1' => '2c',
-            'flop_2' => '3c',
-            'flop_3' => '4c',
-            'turn' => '5c',
-            'river' => '6c',
-        ]);
+        $this->call(GameUserHandSeeder::class, false,
+            [
+                'gameUser' => $gameUsers[0],
+                'cards' => ['Ah', 'As', '2h', '3h', '4h', '5h'],
+            ]);
 
-        Redis::hmset("game_user:{$gameUsers[0]->id}", [
-            'bottom_card_1' => 'Ah',
-            'bottom_card_2' => 'As',
-            'middle_card_1' => '2h',
-            'middle_card_2' => '3h',
-            'top_card_1' => '4h',
-            'top_card_2' => '5h',
-        ]);
-
-        Redis::hmset("game_user:{$gameUsers[1]->id}", [
-            'bottom_card_1' => 'Jh',
-            'bottom_card_2' => 'Jc',
-            'middle_card_1' => 'Jd',
-            'middle_card_2' => 'Js',
-            'top_card_1' => 'Qh',
-            'top_card_2' => 'Qs',
-        ]);
+        $this->call(GameUserHandSeeder::class, false,
+            [
+                'gameUser' => $gameUsers[1],
+                'cards' => ['Jh', 'Jc', 'Jd', 'Js', 'Qh', '5Qs'],
+            ]);
     }
 }
