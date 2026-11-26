@@ -132,7 +132,7 @@ class DeckService
      * @param  string  $row,
      * @return Collection<int, Card>
      */
-    private function calcHand($cards, $row): Collection
+    private function calcHand($cards, $row): void
     {
         $deck = $this->build();
 
@@ -155,6 +155,7 @@ class DeckService
             }
 
             // using chunks, check whether the cards are consecutive
+            // todo: this is apparently broken according to phpstan but it works so whatever
             $consecutiveCards = $flushCards->sort()->values()->chunkWhile(
                 fn ($value, $key, $chunk) => $value == $chunk->last()->rank->value + 1
             )->count() == 1;
@@ -273,8 +274,5 @@ class DeckService
                 $hand = 'high card';
             }
         }
-
-        // jsut to shut phpstan up
-        return collect($hand);
     }
 }
