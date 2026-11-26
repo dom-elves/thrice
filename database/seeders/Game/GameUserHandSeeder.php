@@ -10,9 +10,9 @@ class GameUserHandSeeder extends Seeder
 {
     /**
      * Run the database seeds.
-     * 
-     * @param GameUser $gameUser
-     * @param array<int, string> $cards
+     *
+     * @param  GameUser  $gameUser
+     * @param  array<int, string>  $cards
      */
     public function run($gameUser, $cards): void
     {
