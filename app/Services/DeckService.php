@@ -175,7 +175,7 @@ class DeckService
                 // remember to return kicker
                 $hand = 'quads';
             }
-            
+
             $trips = $cards->groupBy(fn (Card $card) => $card->rank->value)
                 ->filter(fn ($group) => $group->count() === 3)
                 ->values();
@@ -191,21 +191,31 @@ class DeckService
 
             if ($trips->count() === 1) {
                 $kickers = $cards->reject(
-                    fn (Card $card) => $card->rank->value === $trips[0][0]->rank->value
+                    fn (Card $card) => $card->rank->value == $trips[0][0]->rank->value
                 )->take(-2);
- 
+
                 // hand will be [$trips[0], $kickers];
-                $hand = 'house';
+                if ($kickers->unique()->count === 1) {
+                    $hand = 'house';
+                } else {
+                    $hand = 'trips';
+                }
             }
 
-            dd($hand);
+            
+            $pairs = $cards->groupBy(fn (Card $card) => $card->rank->value)
+                ->filter(fn ($group) => $group->count() === 2)
+                ->values();
+
+            if ($pairs->count() >= 2) {
+                $topTwo = $pairs->take(-2);
+            }
         }
 
         
 
         // straight
 
-        // trips
 
         // two pair
         $pairValues = $cards->pluck('rank.value')->duplicates();
