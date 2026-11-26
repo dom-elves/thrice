@@ -17,8 +17,7 @@ class DeckService
 
     public function __construct(
         protected readonly Game $game
-    )
-    {
+    ) {
         $this->rows = ['bottom', 'middle', 'top'];
     }
 
@@ -99,12 +98,12 @@ class DeckService
     {
         Redis::hmset("game_user:{$gameUserId}",
             array_merge($cards, ['hand_locked' => true]
-        ));
+            ));
 
         foreach ($this->rows as $row) {
             $pairs[$row] = [
-                $cards["{$row}_card_1"], 
-                $cards["{$row}_card_2"]
+                $cards["{$row}_card_1"],
+                $cards["{$row}_card_2"],
             ];
             // dd(collect($pairs[$row]), $row);
             $hand[] = $this->calcHand(collect($pairs[$row]), $row);
@@ -118,7 +117,7 @@ class DeckService
      * - build a deck
      * - filter by player hand to retrieve card objects
      * - filter by given row to retrieve card object
-     * 
+     *
      * - evaluate potential hands out of the 7 cards, ordered in asc
      */
     private function calcHand(Collection $cards, string $row): Collection
@@ -129,14 +128,14 @@ class DeckService
         $hand = '';
         $row = collect(Redis::hgetall("{$row}:{$this->game->code}"));
         $rowCards = $deck->filter(fn (Card $card) => $row->contains($card->shorthand));
-        
+
         $cards = $handCards->merge($rowCards)->sortBy(fn (Card $card) => $card->rank->value);
-        
+
         // as royal flush is the highest ranked hand
         // we check that & similar (straight and normal flush) hands too
         $flushCards = $cards->groupBy(fn (Card $card) => $card->suit->name)
             ->first(fn ($group) => $group->count() >= 5);
-        
+
         if ($flushCards) {
             // if there's 6 or 7 cards in the flush, only take the top 5
             if ($flushCards->count() >= 6) {
@@ -163,7 +162,7 @@ class DeckService
             }
         }
 
-        if (!$flushCards) {
+        if (! $flushCards) {
             $quads = $cards->groupBy(fn (Card $card) => $card->rank->value)
                 ->first(fn ($group) => $group->count() == 4);
 
@@ -171,7 +170,7 @@ class DeckService
                 $kicker = $cards->reject(
                     fn (Card $card) => $card->rank->value == $quads[0]->rank->value
                 )->last();
-                
+
                 // remember to return kicker
                 $hand = 'quads';
             }
@@ -183,11 +182,11 @@ class DeckService
             // this covers the condition that a player can have two trips
             // which isn't a valid hand, but must be treated differently to a normal house
             if ($trips->count() === 2) {
-                
+
                 $pair = $trips[0]->take(2);
                 // hand will be [$trips[1], $pair];
                 $hand = 'house';
-            } 
+            }
 
             if ($trips->count() === 1) {
                 $kickers = $cards->reject(
@@ -205,30 +204,29 @@ class DeckService
             // this is broken
             // // straight
             // $cardValues = $cards->map(fn (Card $card) => $card->rank->value);
-            
+
             // // if there is an ace, push a 1 so it can play low
             // if ($cardValues->contains(14)) {
             //     $cardValues->unshift(1);
             // }
 
-            // // last means it will awlays play the highest straight, 
+            // // last means it will awlays play the highest straight,
             // // if there are 6 or 7 consecutive cards
             // $straightValues = $cardValues->unique()->sort()->values()
             //     ->sliding(5)
             //     ->last(fn ($window) => $window->last() - $window->first() === 4);
 
-            // $straight = $straightValues->map(fn ($value) => 
-            //     $cards->first(fn (Card $card) => 
+            // $straight = $straightValues->map(fn ($value) =>
+            //     $cards->first(fn (Card $card) =>
             //         $card->rank->value === $value));
 
             // $hand = 'straight';
 
-            
             $pairs = $cards->groupBy(fn (Card $card) => $card->rank->value)
                 ->filter(fn ($group) => $group->count() === 2)
                 ->values();
-            
-            // covers the condition where a player can have 3 pairs, 
+
+            // covers the condition where a player can have 3 pairs,
             // as only two are playable
             if ($pairs->count() >= 2) {
                 $topTwo = $pairs->take(-2);
@@ -267,8 +265,5 @@ class DeckService
         return $hand;
     }
 
-    private function checkRoyalFlush()
-    {
-        
-    }
+    private function checkRoyalFlush() {}
 }

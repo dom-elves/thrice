@@ -7,14 +7,13 @@ use App\Models\GameUser;
 use App\Models\User;
 use App\Services\DeckService;
 use Carbon\Carbon;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
 
 class HandSeeder extends Seeder
 {
-    public function __construct() {
+    public function __construct()
+    {
         $this->deck = app(DeckService::class)->build();
     }
 
@@ -39,7 +38,7 @@ class HandSeeder extends Seeder
                 'email' => $name.'@example.com',
             ]);
         }
-        
+
         // $this->quads($game);
 
         // $this->house($game);
@@ -54,7 +53,7 @@ class HandSeeder extends Seeder
     private function quads($game): void
     {
         $users = User::all()->take(2);
-        
+
         foreach ($users as $user) {
             GameUser::factory()->create([
                 'user_id' => $user->id,
@@ -138,7 +137,7 @@ class HandSeeder extends Seeder
     private function house($game): void
     {
         $users = User::all()->take(2);
-        
+
         foreach ($users as $user) {
             GameUser::factory()->create([
                 'user_id' => $user->id,
@@ -223,7 +222,7 @@ class HandSeeder extends Seeder
     private function straight($game): void
     {
         $users = User::all()->take(2);
-        
+
         foreach ($users as $user) {
             GameUser::factory()->create([
                 'user_id' => $user->id,
@@ -309,7 +308,7 @@ class HandSeeder extends Seeder
     private function twoPair($game): void
     {
         $users = User::all()->take(2);
-        
+
         foreach ($users as $user) {
             GameUser::factory()->create([
                 'user_id' => $user->id,
@@ -393,7 +392,7 @@ class HandSeeder extends Seeder
     private function highCard($game): void
     {
         $users = User::all()->take(2);
-        
+
         foreach ($users as $user) {
             GameUser::factory()->create([
                 'user_id' => $user->id,
