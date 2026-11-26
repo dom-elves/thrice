@@ -20,7 +20,7 @@ class HandController extends Controller
         ]);
 
         (new DeckService($gameUser->game))
-            ->lockHand($validated['cards'], $gameUser->id);
+            ->lockHand($validated['cards'], (string) $gameUser->id);
 
         return back();
     }

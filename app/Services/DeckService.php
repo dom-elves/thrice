@@ -13,8 +13,6 @@ use Illuminate\Support\Facades\Redis;
 
 class DeckService
 {
-    public array $rows;
-
     public function __construct(
         protected readonly Game $game
     ) {
