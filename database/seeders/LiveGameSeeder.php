@@ -38,7 +38,7 @@ class LiveGameSeeder extends Seeder
             'finished' => $game->finished,
         ]);
 
-        $users = User::all()->limit(2);
+        $users = User::query()->orderBy('id')->take(2)->get();
 
         foreach ($users as $user) {
             GameUser::factory()->create([
@@ -48,7 +48,7 @@ class LiveGameSeeder extends Seeder
             ]);
         }
 
-        $gameUsers = GameUser::all()->limit(2);
+        $gameUsers = GameUser::query()->orderBy('id')->take(2)->get();
 
         Redis::hmset("game_seats:{$game->code}", [
             '0' => $gameUsers[0]->id,
