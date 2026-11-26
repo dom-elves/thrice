@@ -7,7 +7,6 @@ use App\Models\GameUser;
 use Database\Seeders\Game\GameUserHandSeeder;
 use Database\Seeders\Game\RowSeeder;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Redis;
 
 class StraightSeeder extends Seeder
 {
@@ -26,22 +25,22 @@ class StraightSeeder extends Seeder
 
         $this->call(RowSeeder::class, false, // false is for silent in console or something
             [
-                'game' => $game, 
-                'row' => 'bottom', 
+                'game' => $game,
+                'row' => 'bottom',
                 'cards' => ['5h', '6h', '7h', 'Ad', 'Ac'],
             ]);
 
-         $this->call(RowSeeder::class, false,
-            [
-                'game' => $game, 
-                'row' => 'middle', 
-                'cards' => ['3s', '4s', '5s', '6s', '7s'],
-            ]);
-            
         $this->call(RowSeeder::class, false,
             [
-                'game' => $game, 
-                'row' => 'top', 
+                'game' => $game,
+                'row' => 'middle',
+                'cards' => ['3s', '4s', '5s', '6s', '7s'],
+            ]);
+
+        $this->call(RowSeeder::class, false,
+            [
+                'game' => $game,
+                'row' => 'top',
                 'cards' => ['8s', '9s', '8d', '7d', '6d'],
             ]);
 

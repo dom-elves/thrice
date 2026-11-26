@@ -7,13 +7,12 @@ use App\Models\GameUser;
 use Database\Seeders\Game\GameUserHandSeeder;
 use Database\Seeders\Game\RowSeeder;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Redis;
 
 class HouseSeeder extends Seeder
 {
     /**
      * Run the database seeds.
-     * 
+     *
      * Can be used as TwoPair seeder by changing one of $gameUser[0]s aces
      * Also can be used as pair seeder by also changing one of the board's sixes
      */
@@ -29,22 +28,22 @@ class HouseSeeder extends Seeder
 
         $this->call(RowSeeder::class, false, // false is for silent in console or something
             [
-                'game' => $game, 
-                'row' => 'bottom', 
+                'game' => $game,
+                'row' => 'bottom',
                 'cards' => ['Ac', '6c', '6h', '7h', '8h'],
             ]);
 
-         $this->call(RowSeeder::class, false,
-            [
-                'game' => $game, 
-                'row' => 'middle', 
-                'cards' => ['2d', '3d', '4d', '5d', '6d'],
-            ]);
-            
         $this->call(RowSeeder::class, false,
             [
-                'game' => $game, 
-                'row' => 'top', 
+                'game' => $game,
+                'row' => 'middle',
+                'cards' => ['2d', '3d', '4d', '5d', '6d'],
+            ]);
+
+        $this->call(RowSeeder::class, false,
+            [
+                'game' => $game,
+                'row' => 'top',
                 'cards' => ['2c', '3c', '4c', '5c', '6c'],
             ]);
 
