@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Redis;
 
 class DeckService
 {
+    /** @var list<string> */
     private array $rows;
 
     public function __construct(
@@ -74,6 +75,8 @@ class DeckService
             event(new Hand($gameUserId, $cards->pluck('shorthand')->toArray()));
         }
 
+        $board = [];
+
         foreach ($this->rows as $row) {
             $cards = $deck->splice(0, 5);
 
@@ -93,8 +96,11 @@ class DeckService
 
     /**
      * Locks the player's hand in the order they've set.
+     *
+     * @param  array<string>  $cards,
+     * @param  string  $gameUserId,
      */
-    public function lockHand(array $cards, string $gameUserId): void
+    public function lockHand($cards, $gameUserId): void
     {
         Redis::hmset("game_user:{$gameUserId}",
             array_merge($cards, ['hand_locked' => true]
@@ -119,8 +125,11 @@ class DeckService
      * - filter by given row to retrieve card object
      *
      * - evaluate potential hands out of the 7 cards, ordered in asc
+     *
+     * @param  Collection<Card>  $cards,
+     * @param  string  $row,
      */
-    private function calcHand(Collection $cards, string $row): Collection
+    private function calcHand($cards, $row): Collection
     {
         $deck = $this->build();
 
