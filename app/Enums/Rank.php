@@ -4,7 +4,6 @@ namespace App\Enums;
 
 enum Rank: int
 {
-    case Ace = 1;
     case Two = 2;
     case Three = 3;
     case Four = 4;
@@ -17,6 +16,7 @@ enum Rank: int
     case Jack = 11;
     case Queen = 12;
     case King = 13;
+    case Ace = 14;
 
     // single letter shorthands for suits
     // used in generating card code, like '2h' for two of hearts

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\GameController;
+use App\Http\Controllers\HandController;
 use App\Models\Game;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -26,8 +27,8 @@ Route::middleware('auth')->group(function () {
     })->name('dashboard');
 });
 
-// game
 Route::middleware('auth')->group(function () {
+    // game
     Route::post('/game/create', [GameController::class, 'create'])->name('game.create');
 
     // sets to game:code just so it appears that way in browser, rather than /game/1 etc
@@ -44,4 +45,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/game/{game:code}/sit', [GameController::class, 'sit'])->name('game.sit');
     Route::post('/game/{game:code}/stand', [GameController::class, 'stand'])->name('game.stand');
     Route::post('/game/{game:code}/leave', [GameController::class, 'leave'])->name('game.leave');
+
+    // hand
+    Route::post('/hand/{gameUser:id}/lock', [HandController::class, 'lock'])->name('hand.lock');
 });
