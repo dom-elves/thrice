@@ -132,7 +132,8 @@ class DeckService
         
         $cards = $handCards->merge($rowCards)->sortBy(fn (Card $card) => $card->rank->value);
         
-        // as royal flush 
+        // as royal flush is the highest ranked hand
+        // we check that & similar (straight and normal flush) hands too
         $flushCards = $cards->groupBy(fn (Card $card) => $card->suit->name)
             ->first(fn ($group) => $group->count() >= 5);
         
@@ -162,17 +163,45 @@ class DeckService
             }
         }
 
-        // get here, just a regular flush
-        // dd($flushCards);
-        // royal flush
+        if (!$flushCards) {
+            $quads = $cards->groupBy(fn (Card $card) => $card->rank->value)
+                ->first(fn ($group) => $group->count() == 4);
 
-        // straight flush
+            if ($quads) {
+                $kicker = $cards->reject(
+                    fn (Card $card) => $card->rank->value == $quads[0]->rank->value
+                )->last();
+                
+                // remember to return kicker
+                $hand = 'quads';
+            }
+            
+            $trips = $cards->groupBy(fn (Card $card) => $card->rank->value)
+                ->filter(fn ($group) => $group->count() === 3)
+                ->values();
 
-        // quads
+            // this covers the condition that a player can have two trips
+            // which isn't a valid hand, but must be treated differently to a normal house
+            if ($trips->count() === 2) {
+                
+                $pair = $trips[0]->take(2);
+                // hand will be [$trips[1], $pair];
+                $hand = 'house';
+            } 
 
-        // house
+            if ($trips->count() === 1) {
+                $kickers = $cards->reject(
+                    fn (Card $card) => $card->rank->value === $trips[0][0]->rank->value
+                )->take(-2);
+ 
+                // hand will be [$trips[0], $kickers];
+                $hand = 'house';
+            }
 
-        // flush
+            dd($hand);
+        }
+
+        
 
         // straight
 
