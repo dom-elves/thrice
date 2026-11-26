@@ -27,15 +27,6 @@ class QuadsSeeder extends Seeder
             // should always be the same 2, but jic
             ->take(2);
 
-        Redis::hmset("game_seats:{$game->code}", [
-            '0' => $gameUsers[0]->id,
-            '1' => $gameUsers[1]->id,
-            '2' => '',
-            '3' => '',
-            '4' => '',
-            '5' => '',
-        ]);
-
         Redis::hmset("bottom:{$game->code}", [
             'flop_1' => 'Ac',
             'flop_2' => 'Ad',
