@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Game;
 use App\Models\GameUser;
 use App\Models\User;
+use Database\Seeders\Hands\HouseSeeder;
 use Database\Seeders\Hands\QuadsSeeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -72,6 +73,9 @@ class LiveGameSeeder extends Seeder
             ]);
         }
 
-        $this->call(QuadsSeeder::class);
+        $this->call(
+            // QuadsSeeder::class
+            HouseSeeder::class
+        );
     }
 }
