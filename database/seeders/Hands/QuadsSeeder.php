@@ -54,7 +54,7 @@ class QuadsSeeder extends Seeder
         $this->call(GameUserHandSeeder::class, false,
             [
                 'gameUser' => $gameUsers[1],
-                'cards' => ['Jh', 'Jc', 'Jd', 'Js', 'Qh', '5Qs'],
+                'cards' => ['Jh', 'Jc', 'Jd', 'Js', 'Qh', 'Qs'],
             ]);
     }
 }
