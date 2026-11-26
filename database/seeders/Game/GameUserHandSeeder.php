@@ -10,8 +10,11 @@ class GameUserHandSeeder extends Seeder
 {
     /**
      * Run the database seeds.
+     * 
+     * @param GameUser $gameUser
+     * @param array<int, string> $cards
      */
-    public function run(GameUser $gameUser, array $cards): void
+    public function run($gameUser, $cards): void
     {
         Redis::hmset("game_user:{$gameUser->id}", [
             'bottom_card_1' => $cards[0],
