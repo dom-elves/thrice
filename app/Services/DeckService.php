@@ -106,6 +106,8 @@ class DeckService
             array_merge($cards, ['hand_locked' => true]
             ));
 
+        $hand = [];
+
         foreach ($this->rows as $row) {
             $pairs[$row] = [
                 $cards["{$row}_card_1"],
@@ -126,7 +128,7 @@ class DeckService
      *
      * - evaluate potential hands out of the 7 cards, ordered in asc
      *
-     * @param  Collection<Card>  $cards,
+     * @param  Collection<int, Card>  $cards
      * @param  string  $row,
      */
     private function calcHand($cards, $row): Collection
@@ -153,7 +155,7 @@ class DeckService
 
             // using chunks, check whether the cards are consecutive
             $consecutiveCards = $flushCards->sort()->values()->chunkWhile(
-                fn ($value, $key, $chunk) => $value === $chunk->last()->rank->value + 1
+                fn ($value, $key, $chunk) => $value == $chunk->last()->rank->value + 1
             )->count() === 1;
 
             // if they are, it's a royal or straight flush
@@ -271,8 +273,6 @@ class DeckService
             }
         }
 
-        return $hand;
+        // return $hand;
     }
-
-    private function checkRoyalFlush() {}
 }
