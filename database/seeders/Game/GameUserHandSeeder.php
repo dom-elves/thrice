@@ -6,7 +6,7 @@ use App\Models\GameUser;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Redis;
 
-class GameUserHand extends Seeder
+class GameUserHandSeeder extends Seeder
 {
     /**
      * Run the database seeds.
